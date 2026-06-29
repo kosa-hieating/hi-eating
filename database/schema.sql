@@ -188,11 +188,14 @@ CREATE TABLE promotions (
     img_src VARCHAR2(1000) NOT NULL,
     link VARCHAR2(1000),
     display_order NUMBER(10) NOT NULL,
+    starts_at TIMESTAMP NOT NULL,
+    ends_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     CONSTRAINT pk_promotions PRIMARY KEY (id),
     CONSTRAINT uk_promotions_order UNIQUE (display_order),
-    CONSTRAINT chk_promotions_order CHECK (display_order > 0)
+    CONSTRAINT chk_promotions_order CHECK (display_order > 0),
+    CONSTRAINT chk_promotions_period CHECK (ends_at > starts_at)
 );
 
 CREATE INDEX idx_product_category ON products (category_id);

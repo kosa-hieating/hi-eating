@@ -133,13 +133,15 @@ USING (
         '그린푸드 오픈 기획전' AS title,
         '/images/promotions/greenfood-open.png' AS img_src,
         '/products' AS link,
-        1 AS display_order
+        1000 AS display_order,
+        SYSTIMESTAMP AS starts_at,
+        SYSTIMESTAMP + INTERVAL '30' DAY AS ends_at
     FROM dual
 ) s
 ON (p.display_order = s.display_order)
 WHEN NOT MATCHED THEN
-    INSERT (id, title, img_src, link, display_order, created_at)
-    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, SYSTIMESTAMP);
+    INSERT (id, title, img_src, link, display_order, starts_at, ends_at, created_at)
+    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, s.starts_at, s.ends_at, SYSTIMESTAMP);
 
 MERGE INTO promotions p
 USING (
@@ -148,13 +150,15 @@ USING (
         '제철 신선식품 특가' AS title,
         '/images/promotions/seasonal-fresh.png' AS img_src,
         '/products?sort=latest' AS link,
-        2 AS display_order
+        2000 AS display_order,
+        SYSTIMESTAMP AS starts_at,
+        SYSTIMESTAMP + INTERVAL '30' DAY AS ends_at
     FROM dual
 ) s
 ON (p.display_order = s.display_order)
 WHEN NOT MATCHED THEN
-    INSERT (id, title, img_src, link, display_order, created_at)
-    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, SYSTIMESTAMP);
+    INSERT (id, title, img_src, link, display_order, starts_at, ends_at, created_at)
+    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, s.starts_at, s.ends_at, SYSTIMESTAMP);
 
 MERGE INTO promotions p
 USING (
@@ -163,13 +167,15 @@ USING (
         '건강한 한 끼 밀키트' AS title,
         '/images/promotions/healthy-mealkit.png' AS img_src,
         '/products?category=meal-kit' AS link,
-        3 AS display_order
+        3000 AS display_order,
+        SYSTIMESTAMP AS starts_at,
+        SYSTIMESTAMP + INTERVAL '30' DAY AS ends_at
     FROM dual
 ) s
 ON (p.display_order = s.display_order)
 WHEN NOT MATCHED THEN
-    INSERT (id, title, img_src, link, display_order, created_at)
-    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, SYSTIMESTAMP);
+    INSERT (id, title, img_src, link, display_order, starts_at, ends_at, created_at)
+    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, s.starts_at, s.ends_at, SYSTIMESTAMP);
 
 MERGE INTO promotions p
 USING (
@@ -178,12 +184,14 @@ USING (
         '친환경 장보기 추천' AS title,
         '/images/promotions/eco-market.png' AS img_src,
         '/products?category=organic' AS link,
-        4 AS display_order
+        4000 AS display_order,
+        SYSTIMESTAMP AS starts_at,
+        SYSTIMESTAMP + INTERVAL '30' DAY AS ends_at
     FROM dual
 ) s
 ON (p.display_order = s.display_order)
 WHEN NOT MATCHED THEN
-    INSERT (id, title, img_src, link, display_order, created_at)
-    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, SYSTIMESTAMP);
+    INSERT (id, title, img_src, link, display_order, starts_at, ends_at, created_at)
+    VALUES (s.id, s.title, s.img_src, s.link, s.display_order, s.starts_at, s.ends_at, SYSTIMESTAMP);
 
 COMMIT;
