@@ -28,11 +28,39 @@ jobs:
 
             const issueNumber = issueMatch[1];
             const closingReference = `Closes #${issueNumber}`;
+            const autoLinkStart = '<!-- auto-close-issue: start -->';
+            const autoLinkEnd = '<!-- auto-close-issue: end -->';
+            const autoLinkedReference = `${autoLinkStart}\n${closingReference}\n${autoLinkEnd}`;
+            const autoLinkPattern = new RegExp(
+              `${autoLinkStart}[\\s\\S]*?${autoLinkEnd}`,
+            );
             const body = pullRequest.body || '';
             const existingReferencePattern = new RegExp(
               `\\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\\s+#${issueNumber}\\b`,
               'i',
             );
+
+            if (autoLinkPattern.test(body)) {
+              const bodyWithoutAutoLink = body.replace(autoLinkPattern, '').trimEnd();
+              const nextBody = existingReferencePattern.test(bodyWithoutAutoLink)
+                ? bodyWithoutAutoLink
+                : body.replace(autoLinkPattern, autoLinkedReference);
+
+              if (nextBody === body) {
+                core.info(`PR body already has the current auto-linked issue #${issueNumber}.`);
+                return;
+              }
+
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pullRequest.number,
+                body: nextBody,
+              });
+
+              core.info(`Replaced the auto-linked issue reference with "${closingReference}".`);
+              return;
+            }
 
             if (existingReferencePattern.test(body)) {
               core.info(`PR body already references #${issueNumber} with a closing keyword.`);
@@ -44,9 +72,9 @@ jobs:
             const nextBody = relatedIssueHeadingPattern.test(trimmedBody)
               ? trimmedBody.replace(
                   relatedIssueHeadingPattern,
-                  (heading) => `${heading}\n\n${closingReference}`,
+                  (heading) => `${heading}\n\n${autoLinkedReference}`,
                 )
-              : `${trimmedBody}${trimmedBody ? '\n\n' : ''}## 관련 이슈\n\n${closingReference}`;
+              : `${trimmedBody}${trimmedBody ? '\n\n' : ''}## 관련 이슈\n\n${autoLinkedReference}`;
 
             await github.rest.pulls.update({
               owner: context.repo.owner,
