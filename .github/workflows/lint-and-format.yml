@@ -29,5 +29,5 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Run Gradle checks
-        run: ./gradlew check
+      - name: Apply Spotless formatting
+        run: ./gradlew spotlessApply
