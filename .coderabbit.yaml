@@ -2,7 +2,7 @@ language: "ko-KR"
 
 reviews:
   auto_review:
-    enabled: false
+제    enabled: true
     drafts: false
     labels:
       - "ai-review"
