@@ -1,5 +1,7 @@
 package kr.or.hieating.product.controller;
 
+import kr.or.hieating.product.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
+@RequiredArgsConstructor
 public class ProductController {
+  private final ProductService productService;
 
-  @GetMapping("/products/{id}")
+  @GetMapping("/product/{id}")
   public String detail(@PathVariable Long id, Model model) {
     ProductDetail product = sampleProduct(id);
 
@@ -25,6 +29,12 @@ public class ProductController {
     model.addAttribute("product", product);
     model.addAttribute("reviews", sampleReviews(product.id()));
     return "layout/base";
+  }
+
+  @GetMapping("/product")
+  public String mostPurchasedProducts(Model model) {
+    model.addAttribute("products", productService.findMostPurchasedProducts());
+    return "product/products";
   }
 
   private ProductDetail sampleProduct(Long id) {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.hieating.product.mapper.ProductMapper">
+  <select id="findMostPurchasedProducts" resultType="MostPurchasedProductResponseDto">
+    SELECT
+      p.id AS product_id,
+      p.name AS product_name,
+      p.price AS price,
+    SUM(pc.quantity) AS total_quantity,
+    pp.picture_saved_location AS pictureLocation
+    FROM purchases pc
+    JOIN product_options po
+    ON pc.product_option_id = po.id
+    JOIN products p
+    ON po.product_id = p.id
+    LEFT JOIN product_pictures pp
+      ON pp.id = (
+      SELECT MIN(pp2.id)
+      FROM product_pictures pp2
+      WHERE pp2.product_id = p.id
+      )
+    GROUP BY
+    p.id,
+    p.name,
+    p.price,
+    pp.picture_saved_location
+    ORDER BY
+    total_quantity DESC,
+    p.id ASC
+    FETCH FIRST 4 ROWS ONLY
+  </select>
+</mapper>
