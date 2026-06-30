@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class ProductController {
   private final ProductService productService;
+
   @GetMapping("/product")
   public String mostPurchasedProducts(Model model) {
 
