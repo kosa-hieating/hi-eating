@@ -1,16 +1,25 @@
-name: Pull Request Checks
+# .github/workflows/spotless.yml
+
+name: Spotless Auto Fix
 
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: spotless-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   spotless:
+    name: Spotless Apply
     runs-on: ubuntu-latest
+
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.sender.login != 'github-actions[bot]'
 
     steps:
       - name: Checkout PR branch
@@ -24,15 +33,16 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
 
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Run Spotless Apply
+      - name: Apply Spotless formatting
         run: ./gradlew spotlessApply
 
       - name: Commit Spotless changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "style: apply spotless formatting"
           branch: ${{ github.head_ref }}
