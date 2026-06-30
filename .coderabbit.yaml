@@ -13,3 +13,16 @@ reviews:
       - "renovate[bot]"
       - "github-actions[bot]"
     description_keyword: ""
+
+  profile: "chill"
+
+  sequence_diagrams: true
+
+  assess_linked_issues: true
+
+  related_prs: true
+
+knowledge_base:
+  web_search:
+    enabled: true
+
