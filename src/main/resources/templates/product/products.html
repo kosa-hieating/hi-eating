@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Products</title>
+</head>
+<body>
+<main>
+  <h1>Products</h1>
+
+  <p th:if="${#lists.isEmpty(products)}">노출 중인 프로모션이 없습니다.</p>
+
+  <ul th:if="${!#lists.isEmpty(products)}">
+    <li th:each="product : ${products}">
+        <span th:text="${product.productName}">상품 이름</span><br>
+        <span th:text="${product.pictureLocation}">상품 이미지 경로</span>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
