@@ -62,7 +62,9 @@
 }
 
 .product-main-image:hover .carousel-control-prev,
-.product-main-image:hover .carousel-control-next {
+.product-main-image:hover .carousel-control-next,
+.product-main-image:focus-within .carousel-control-prev,
+.product-main-image:focus-within .carousel-control-next {
   opacity: 1;
 }
 

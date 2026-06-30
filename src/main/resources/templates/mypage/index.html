@@ -63,7 +63,7 @@
 
       <div class="recommend-row row g-2 g-md-3">
         <article class="product-card col-6 col-md-4 col-lg pb-2" th:each="product : ${recommendedProducts}">
-          <a class="product-image-link d-block overflow-hidden mb-2 rounded" th:href="@{/products/{id}(id=${product.id})}">
+          <a class="product-image-link d-block overflow-hidden mb-2 rounded" th:href="@{/product/{id}(id=${product.id})}">
             <img class="d-block w-100" th:src="${productImageUrls[product.id]}" th:alt="${product.name}">
           </a>
           <p class="product-subtitle mb-0" th:text="${product.description}"></p>
