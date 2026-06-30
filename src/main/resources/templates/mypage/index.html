@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마이페이지 | Hi Eating</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+<section class="mypage-shell min-vh-100 py-4 py-md-5" id="top" th:fragment="content">
+  <div class="container-xxl mypage-container">
+    <nav class="mypage-breadcrumb d-inline-flex align-items-center gap-1 mb-4 fw-bold" aria-label="현재 위치">
+      <a th:href="@{/mypage}" th:text="${memberName}">이재우</a>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+    </nav>
+
+    <section class="mypage-summary row g-2 g-lg-3 mb-5" aria-label="마이페이지 요약">
+      <article class="col-4 col-lg-2" th:each="card : ${summaryCards}">
+        <div class="summary-card h-100 d-flex flex-column align-items-center justify-content-center gap-2 border rounded-3 shadow-sm bg-white">
+          <span th:text="${card.label}">주문 상품</span>
+          <strong th:text="${card.count}">0</strong>
+        </div>
+      </article>
+
+      <article class="col-12 col-lg-6">
+        <div class="deal-card h-100 d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 gap-lg-4 border rounded-3 shadow-sm bg-white px-4 px-lg-5 py-4 py-lg-0">
+          <div>
+            <h2 class="mb-2">오늘 핫딜 상품 확인하기</h2>
+            <p class="mb-0">지금 가장 알뜰하게 담을 수 있어요</p>
+          </div>
+          <a class="deal-button btn d-inline-flex align-items-center justify-content-center" th:href="@{/promotions}">보러가기</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="order-section mb-5" aria-labelledby="order-section-title">
+      <div class="section-heading d-flex align-items-center justify-content-between gap-3 mb-3">
+        <h1 class="mb-0" id="order-section-title">주문 내역</h1>
+        <a th:href="@{/orders}">주문전체보기 <i class="bi bi-chevron-right" aria-hidden="true"></i></a>
+      </div>
+
+      <article class="order-card ps-md-5">
+        <div class="order-status d-inline-flex align-items-center gap-2 mb-4">
+          <span class="rounded-pill"></span>
+          <strong th:text="${recentOrder.status}">구매 확정</strong>
+        </div>
+
+        <div class="order-product row g-3 g-md-4 align-items-center mb-4">
+          <div class="col-auto">
+            <img class="rounded" th:src="${recentOrder.imageUrl}" th:alt="${recentOrder.name}">
+          </div>
+          <div class="order-product-info col">
+            <span class="d-block mb-1" th:text="${recentOrder.brand}">오트밀</span>
+            <h2 class="mb-2" th:text="${recentOrder.name}">아침 그래놀라 오트밀 세트</h2>
+            <p class="mb-2" th:text="${recentOrder.option}">1팩 / HIEATING</p>
+            <strong class="d-block" th:text="${recentOrder.price}">119,640원</strong>
+          </div>
+        </div>
+
+        <a class="review-button btn d-flex align-items-center justify-content-center w-100" th:href="@{/reviews/new}">후기 작성</a>
+      </article>
+    </section>
+
+    <section class="recommend-section position-relative" aria-labelledby="recommend-section-title">
+      <div class="section-heading d-flex align-items-end justify-content-between gap-3 mb-3">
+        <h2 class="mb-0" id="recommend-section-title">맞춤형 상품 추천</h2>
+        <span>광고</span>
+      </div>
+
+      <div class="recommend-row row g-2 g-md-3">
+        <article class="product-card col-6 col-md-4 col-lg pb-2" th:each="product : ${recommendedProducts}">
+          <a class="product-image-link d-block overflow-hidden mb-2 rounded" th:href="@{/products}">
+            <img class="d-block w-100" th:src="${product.imageUrl}" th:alt="${product.name}">
+          </a>
+          <p class="product-subtitle mb-0" th:text="${product.subtitle}">하루를 채워주는 산뜻한 선택</p>
+          <h3 class="mb-2" th:text="${product.name}">청정 목장 무항생제 우유 900ml</h3>
+          <div class="product-price d-flex align-items-baseline gap-2 mb-2">
+            <span th:if="${product.discountRate != null}" th:text="${product.discountRate}">20%</span>
+            <strong th:text="${product.price}">3,900원</strong>
+          </div>
+          <p class="delivery-message mb-0" th:text="${product.deliveryMessage}">4만원 이상 무료배송</p>
+          <div class="product-actions d-flex gap-2 mt-3">
+            <button class="d-inline-flex align-items-center justify-content-center border rounded-circle bg-white" type="button" aria-label="장바구니 담기">
+              <i class="bi bi-cart-plus" aria-hidden="true"></i>
+            </button>
+            <button class="d-inline-flex align-items-center justify-content-center border rounded-circle bg-white" type="button" aria-label="관심 상품 담기">
+              <i class="bi bi-heart" aria-hidden="true"></i>
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <button class="recommend-next position-absolute d-inline-flex align-items-center justify-content-center border rounded-circle bg-white" type="button" aria-label="다음 추천 상품 보기">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </section>
+  </div>
+
+  <a class="scroll-top position-fixed d-inline-flex align-items-center justify-content-center border rounded-circle bg-white" href="#top" aria-label="맨 위로 이동">
+    <i class="bi bi-arrow-up" aria-hidden="true"></i>
+  </a>
+</section>
+</body>
+</html>
