@@ -8,6 +8,6 @@ public class MostPurchasedProductResponseDto {
   private int productId;
   private String productName;
   private int price;
-  private int totalQuantity;
+  private long totalQuantity;
   private String pictureLocation;
 }

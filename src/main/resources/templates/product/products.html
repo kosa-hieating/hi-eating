@@ -8,7 +8,7 @@
 <main>
   <h1>Products</h1>
 
-  <p th:if="${#lists.isEmpty(products)}">노출 중인 프로모션이 없습니다.</p>
+  <p th:if="${#lists.isEmpty(products)}">노출할 상품이 없습니다.</p>
 
   <ul th:if="${!#lists.isEmpty(products)}">
     <li th:each="product : ${products}">

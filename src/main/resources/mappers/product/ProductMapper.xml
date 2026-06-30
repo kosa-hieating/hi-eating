@@ -28,7 +28,8 @@
     p.price,
     pp.picture_saved_location
     ORDER BY
-    total_quantity DESC
+    total_quantity DESC,
+    p.id ASC
     FETCH FIRST 4 ROWS ONLY
   </select>
 </mapper>
