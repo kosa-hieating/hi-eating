@@ -12,6 +12,16 @@
   font-size: 15px;
 }
 
+.mypage-member-link {
+  color: var(--color-ink, #191716);
+  text-decoration: none;
+}
+
+.mypage-member-link:hover,
+.mypage-member-link:focus-visible {
+  color: var(--color-ink, #191716);
+}
+
 .mypage-breadcrumb i {
   color: var(--color-muted, #77716d);
   font-size: 13px;

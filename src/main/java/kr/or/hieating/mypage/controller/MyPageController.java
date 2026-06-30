@@ -10,6 +10,9 @@ public class MyPageController {
 
   @GetMapping("/mypage")
   public String myPage(Model model) {
+    model.addAttribute("contentTemplate", "mypage/index");
+    model.addAttribute("contentFragment", "content");
+    model.addAttribute("pageStylesheet", "mypage");
     model.addAttribute("memberName", "이재우");
     model.addAttribute(
         "summaryCards",
@@ -64,7 +67,7 @@ public class MyPageController {
                 null,
                 "4만원 이상 무료배송",
                 "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=320&q=80")));
-    return "mypage/index";
+    return "layout/base";
   }
 
   public record SummaryCard(String label, int count) {}
