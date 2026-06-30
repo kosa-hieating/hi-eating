@@ -88,6 +88,17 @@
                  id="product-reviews"
                  role="tabpanel"
                  tabindex="0">
+          <div class="review-tab-header d-flex align-items-center justify-content-between gap-3">
+            <h2 class="mb-0">
+              리뷰
+              <span th:text="${product.reviewSummary.formattedReviewCount()}"></span>
+            </h2>
+            <a class="review-write-link d-inline-flex align-items-center gap-2" th:href="@{/reviews/new}">
+              <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
+              리뷰 작성하기
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+          </div>
           <article class="review-item" th:each="review : ${reviews}">
             <div class="review-meta d-flex flex-wrap align-items-center justify-content-between gap-2">
               <time th:datetime="${review.createdAt}" th:text="${review.formattedCreatedAt()}"></time>
