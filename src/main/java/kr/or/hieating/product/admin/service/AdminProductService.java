@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import kr.or.hieating.product.admin.dto.ProductSearchResponseDTO;
+import kr.or.hieating.product.admin.dto.ProductPageResponseDTO;
+import kr.or.hieating.product.admin.dto.CategoryResponseDTO;
 import kr.or.hieating.product.admin.mapper.AdminProductMapper;
 import java.util.List;
 
@@ -14,7 +16,21 @@ public class AdminProductService {
 
     private final AdminProductMapper adminProductMapper;
 
-    public List<ProductSearchResponseDTO> searchProducts(String keyword, Long categoryId, String sortBy) {
-        return adminProductMapper.searchProductsForHotDeal(keyword, categoryId, sortBy);
+    public ProductPageResponseDTO searchProducts(String keyword, Long categoryId, String sortBy, int page, int size) {
+        int offset = (page - 1) * size;
+        List<ProductSearchResponseDTO> list = adminProductMapper.searchProductsForHotDeal(keyword, categoryId, sortBy, offset, size);
+        int totalCount = adminProductMapper.countProductsForHotDeal(keyword, categoryId);
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+
+        return ProductPageResponseDTO.builder()
+                .list(list)
+                .totalCount(totalCount)
+                .totalPages(totalPages)
+                .currentPage(page)
+                .build();
+    }
+
+    public List<CategoryResponseDTO> getAllCategories() {
+        return adminProductMapper.selectAllCategories();
     }
 }

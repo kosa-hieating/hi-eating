@@ -34,5 +34,26 @@
                 ORDER BY p.id DESC
             </otherwise>
         </choose>
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="countProductsForHotDeal" resultType="int">
+        SELECT COUNT(*)
+        FROM products p
+        INNER JOIN product_options o ON p.id = o.product_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND p.name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllCategories" resultType="kr.or.hieating.product.admin.dto.CategoryResponseDTO">
+        SELECT DISTINCT c.id, c.name
+        FROM categories c
+        INNER JOIN products p ON c.id = p.category_id
     </select>
 </mapper>
