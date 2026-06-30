@@ -9,7 +9,8 @@ import org.springframework.web.util.HtmlUtils;
 public final class HtmlSanitizer {
 
   private static final Pattern BLOCKED_CONTENT =
-      Pattern.compile("(?is)<\\s*(script|style|iframe|object|embed|meta|link)\\b.*?<\\s*/\\s*\\1\\s*>");
+      Pattern.compile(
+          "(?is)<\\s*(script|style|iframe|object|embed|meta|link)\\b.*?<\\s*/\\s*\\1\\s*>");
   private static final Pattern TAG = Pattern.compile("(?is)<\\s*(/)?\\s*([a-z0-9]+)([^>]*)>");
   private static final Pattern ATTRIBUTE =
       Pattern.compile("(?is)([a-z_:][-a-z0-9_:.]*)\\s*=\\s*(\"[^\"]*\"|'[^']*'|[^\\s\"'>]+)");

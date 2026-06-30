@@ -3,8 +3,8 @@ package kr.or.hieating.product.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
-import kr.or.hieating.utils.HtmlSanitizer;
 import kr.or.hieating.review.domain.ReviewSummary;
+import kr.or.hieating.utils.HtmlSanitizer;
 
 public record ProductDetail(
     Long id,
