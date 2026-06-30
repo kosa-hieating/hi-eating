@@ -34,13 +34,14 @@ public class ProductController {
         "음료/차",
         "청정 목장 무항생제 우유 900ml",
         """
-        <h2>청정 목장 무항생제 우유 900ml</h2>
-        <p><strong>매일 새벽 목장에서 받은 신선한 원유</strong>를 담백하게 살린 무항생제 우유입니다.</p>
-        <ul>
-          <li>고소한 풍미와 깔끔한 목넘김</li>
-          <li>아침 식사, 시리얼, 커피에 잘 어울리는 기본 우유</li>
-        </ul>
-        """,
+            <h2>청정 목장 무항생제 우유 900ml</h2>
+            <p><strong>매일 새벽 목장에서 받은 신선한 원유</strong>를 담백하게 살린 무항생제 우유입니다.</p>
+            <ul>
+              <li>고소한 풍미와 깔끔한 목넘김</li>
+              <li>아침 식사, 시리얼, 커피에 잘 어울리는 기본 우유</li>
+              <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=900&q=85" />
+            </ul>
+            """,
         3900,
         2239,
         "ON_SALE",
@@ -56,7 +57,7 @@ public class ProductController {
         new ReviewSummary(4.8, 2239),
         true);
   }
-
+  
   private List<ProductReview> sampleReviews(Long productId) {
     return List.of(
         new ProductReview(

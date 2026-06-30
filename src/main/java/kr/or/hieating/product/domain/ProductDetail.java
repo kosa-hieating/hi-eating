@@ -25,10 +25,6 @@ public record ProductDetail(
     return String.format(Locale.KOREA, "%,d원", price);
   }
 
-  public String formattedCreatedAt() {
-    return createdAt.toLocalDate().toString();
-  }
-
   public String safeDescriptionHtml() {
     return HtmlSanitizer.sanitize(description);
   }
