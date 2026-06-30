@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <section class="product-detail-shell py-4 py-lg-5" th:fragment="content">
+    <div class="container-xl product-detail-container">
+      <section class="product-hero row g-4 g-xl-5 align-items-start">
+        <div class="col-lg-6">
+          <div class="product-gallery">
+            <div class="product-main-image overflow-hidden bg-white">
+              <img th:src="${product.mainImageUrl()}" th:alt="${product.name}">
+            </div>
+
+            <div class="product-thumbnails d-grid mt-3">
+              <button class="product-thumbnail" type="button" th:each="imageUrl, stat : ${product.thumbnailImageUrls()}" th:classappend="${stat.first} ? 'active'">
+                <img th:src="${imageUrl}" th:alt="|${product.name} ${stat.count}|">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <article class="product-purchase-panel bg-white">
+            <h1 class="mb-3" th:text="${product.name}"></h1>
+            <time class="product-date d-block mb-4" th:datetime="${product.createdAt}" th:text="${product.formattedCreatedAt()}"></time>
+            <strong class="product-price d-block" th:text="${product.formattedPrice()}"></strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="product-description-html bg-white mt-5" th:utext="${product.safeDescriptionHtml()}"></section>
+
+      <section class="review-list bg-white mt-4" th:if="${!#lists.isEmpty(reviews)}">
+        <article class="review-item" th:each="review : ${reviews}">
+          <div class="review-meta d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <time th:datetime="${review.createdAt}" th:text="${review.formattedCreatedAt()}"></time>
+            <span class="review-stars" th:text="${review.starText()}"></span>
+          </div>
+          <p class="review-content mb-0 mt-3" th:text="${review.content}"></p>
+        </article>
+      </section>
+    </div>
+  </section>
+</body>
+</html>

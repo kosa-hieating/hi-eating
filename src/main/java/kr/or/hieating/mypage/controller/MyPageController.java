@@ -33,6 +33,7 @@ public class MyPageController {
         "recommendedProducts",
         List.of(
             new RecommendedProduct(
+                1L,
                 "하루를 채워주는 산뜻한 선택",
                 "청정 목장 무항생제 우유 900ml",
                 "3,900원",
@@ -40,6 +41,7 @@ public class MyPageController {
                 "4만원 이상 무료배송",
                 "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=320&q=80"),
             new RecommendedProduct(
+                2L,
                 "담백 깔끔한 맑은 국물",
                 "[1Table] 한우 나주곰탕 400g",
                 "5,760원",
@@ -47,6 +49,7 @@ public class MyPageController {
                 "4만원 이상 무료배송",
                 "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=320&q=80"),
             new RecommendedProduct(
+                3L,
                 "시간이 없다 싶을 때",
                 "350분만에 6일 패키지 도시락",
                 "6,000원",
@@ -54,6 +57,7 @@ public class MyPageController {
                 "4만원 이상 무료배송",
                 "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=320&q=80"),
             new RecommendedProduct(
+                4L,
                 "부드럽게 녹아드는 한우의 맛",
                 "느리게 우려낸 한우 우거지탕 800g",
                 "13,000원",
@@ -61,6 +65,7 @@ public class MyPageController {
                 "4만원 이상 무료배송",
                 "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=320&q=80"),
             new RecommendedProduct(
+                5L,
                 "단백질 챙긴 가벼운 식사",
                 "[비비드키친] 저당 닭가슴살 샐러드 3종 125g",
                 "3,900원",
@@ -76,6 +81,7 @@ public class MyPageController {
       String status, String brand, String name, String option, String price, String imageUrl) {}
 
   public record RecommendedProduct(
+      Long id,
       String subtitle,
       String name,
       String price,

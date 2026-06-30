@@ -63,7 +63,7 @@
 
       <div class="recommend-row row g-2 g-md-3">
         <article class="product-card col-6 col-md-4 col-lg pb-2" th:each="product : ${recommendedProducts}">
-          <a class="product-image-link d-block overflow-hidden mb-2 rounded" th:href="@{/products}">
+          <a class="product-image-link d-block overflow-hidden mb-2 rounded" th:href="@{/products/{id}(id=${product.id})}">
             <img class="d-block w-100" th:src="${product.imageUrl}" th:alt="${product.name}">
           </a>
           <p class="product-subtitle mb-0" th:text="${product.subtitle}">하루를 채워주는 산뜻한 선택</p>
