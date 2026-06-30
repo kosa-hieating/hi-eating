@@ -11,6 +11,7 @@ public class HomeController {
   public String home(Model model) {
     model.addAttribute("contentTemplate", "home/index");
     model.addAttribute("contentFragment", "content");
+    model.addAttribute("pageStylesheet", "home");
     return "layout/base";
   }
 }
