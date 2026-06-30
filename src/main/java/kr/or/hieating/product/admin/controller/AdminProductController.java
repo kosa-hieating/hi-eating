@@ -22,12 +22,14 @@ public class AdminProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "EXPIRE_ASC") String sortBy) {
 
-        // 정렬 조건 유효성 체크
         if (!"EXPIRE_ASC".equals(sortBy) && !"STOCK_ASC".equals(sortBy)) {
             throw new GeneralException(ErrorStatus.INVALID_SORT_BY);
         }
 
         List<ProductSearchResponseDTO> products = adminProductService.searchProducts(keyword, categoryId, sortBy);
+
         return ApiResponse.onSuccess(products);
     }
+
+
 }
