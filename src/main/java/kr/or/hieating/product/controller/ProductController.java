@@ -57,7 +57,7 @@ public class ProductController {
         new ReviewSummary(4.8, 2239),
         true);
   }
-  
+
   private List<ProductReview> sampleReviews(Long productId) {
     return List.of(
         new ProductReview(

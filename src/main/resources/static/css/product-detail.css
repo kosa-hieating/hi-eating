@@ -25,16 +25,27 @@
 }
 
 .product-main-image img {
-  transform: scale(1);
-  opacity: 1;
-  transition:
-      opacity 180ms ease,
-      transform 220ms ease;
+  display: block;
 }
 
-.product-main-image.is-changing img {
-  transform: scale(0.985);
-  opacity: 0;
+.product-main-image #mainProductImage {
+  position: relative;
+  z-index: 1;
+}
+
+.product-main-image #mainProductImage.is-entering {
+  animation: product-image-enter 360ms ease;
+}
+
+.product-main-image-ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.product-main-image-ghost.is-leaving {
+  animation: product-image-leave 360ms ease forwards;
 }
 
 .product-main-image .carousel-control-prev,
@@ -317,7 +328,28 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .product-main-image img {
-    transition: none;
+  .product-main-image #mainProductImage.is-entering,
+  .product-main-image-ghost.is-leaving {
+    animation: none;
+  }
+}
+
+@keyframes product-image-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes product-image-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
   }
 }
