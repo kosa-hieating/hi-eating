@@ -191,7 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
     reviewEmpty.classList.toggle('d-none', state !== 'empty');
     reviewError.classList.toggle('d-none', state !== 'error');
     reviewPagination.classList.toggle(
-        'd-none', state !== 'loaded' || reviewPagination.children.length === 0);
+      'd-none',
+      state !== 'loaded' || reviewPagination.children.length === 0,
+    );
   }
 
   function renderReviews(reviews) {
@@ -204,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     item.className = 'review-item';
 
     const meta = document.createElement('div');
-    meta.className = 'review-meta d-flex flex-wrap align-items-center '
-        + 'justify-content-between gap-2';
+    meta.className =
+      'review-meta d-flex flex-wrap align-items-center ' + 'justify-content-between gap-2';
 
     const writer = document.createElement('strong');
     writer.className = 'review-writer';
@@ -254,20 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const startPage = Math.max(1, Math.min(page - 2, totalPages - 4));
     const endPage = Math.min(totalPages, startPage + 4);
 
-    reviewPagination.append(
-        createPageButton('이전', page - 1, page <= 1, false));
+    reviewPagination.append(createPageButton('이전', page - 1, page <= 1, false));
 
     for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
       reviewPagination.append(
-          createPageButton(
-              String(pageNumber),
-              pageNumber,
-              false,
-              pageNumber === page));
+        createPageButton(String(pageNumber), pageNumber, false, pageNumber === page),
+      );
     }
 
-    reviewPagination.append(
-        createPageButton('다음', page + 1, page >= totalPages, false));
+    reviewPagination.append(createPageButton('다음', page + 1, page >= totalPages, false));
   }
 
   function createPageButton(label, page, disabled, active) {
@@ -304,8 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function normalizeDateTime(value) {
     if (Array.isArray(value)) {
       const [year, month, day, hour = 0, minute = 0, second = 0] = value;
-      return `${year}-${padDatePart(month)}-${padDatePart(day)}T`
-          + `${padDatePart(hour)}:${padDatePart(minute)}:${padDatePart(second)}`;
+      return (
+        `${year}-${padDatePart(month)}-${padDatePart(day)}T` +
+        `${padDatePart(hour)}:${padDatePart(minute)}:${padDatePart(second)}`
+      );
     }
 
     return value || '';
