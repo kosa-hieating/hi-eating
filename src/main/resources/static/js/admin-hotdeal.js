@@ -8,6 +8,65 @@ let currentPage = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     searchProducts();
+
+    // 핫딜 등록 폼 submit 이벤트 핸들러 등록
+    const hotDealForm = document.getElementById('hotDealForm');
+    if (hotDealForm) {
+        hotDealForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (selectedProducts.length === 0) {
+                alert('핫딜에 등록할 상품을 최소 하나 이상 선택해야 합니다.');
+                return;
+            }
+            
+            const title = document.getElementById('dealTitle').value;
+            const description = document.getElementById('dealDescription').value;
+            const startsAt = document.getElementById('startsAt').value;
+            const endsAt = document.getElementById('endsAt').value;
+            const discountRate = parseInt(document.getElementById('discountRate').value, 10);
+            
+            // 날짜 구분자 변환 (yyyy-MM-dd -> yyyy.MM.dd)
+            const formattedStartsAt = startsAt.replace(/-/g, '.');
+            const formattedEndsAt = endsAt.replace(/-/g, '.');
+            
+            // 상품 목록 DTO 매핑
+            const products = selectedProducts.map(p => ({
+                productOptionId: p.optionId,
+                originalPrice: p.price
+            }));
+            
+            const requestData = {
+                title,
+                description,
+                startsAt: formattedStartsAt,
+                endsAt: formattedEndsAt,
+                discountRate,
+                products
+            };
+            
+            fetch('/admin/hotdeals', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.isSuccess) {
+                    alert('핫딜이 성공적으로 등록되었습니다.');
+                    location.reload();
+                } else {
+                    alert('핫딜 등록에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
+                }
+            })
+            .catch(err => {
+                console.error('Error creating hotdeal:', err);
+                alert('서버와 통신하는 중 오류가 발생했습니다.');
+            });
+        });
+    }
 });
 
 function changeSort(sortType) {
