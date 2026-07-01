@@ -1,24 +1,18 @@
 package kr.or.hieating.product.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import kr.or.hieating.category.dto.CategoryResponseDto;
 import kr.or.hieating.category.service.CategoryService;
 import kr.or.hieating.product.domain.ProductDetail;
-import kr.or.hieating.product.domain.ProductOption;
 import kr.or.hieating.product.dto.ProductListPageResponseDto;
 import kr.or.hieating.product.dto.ProductListSearchCondition;
 import kr.or.hieating.product.service.ProductService;
-import kr.or.hieating.review.domain.ProductReview;
-import kr.or.hieating.review.domain.ReviewSummary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
