@@ -1,341 +1,217 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <body>
-    <div th:fragment="content" class="admin-layout">
-      <!-- 사이드바 -->
-      <aside th:replace="~{admin/fragments/sidebar :: adminSidebar('hotdeals')}"></aside>
+<body>
+<div th:fragment="content" class="admin-layout">
 
-      <!-- 메인 콘텐츠 영역 -->
-      <main class="main-container">
+    <!-- 사이드바 -->
+    <aside th:replace="~{admin/fragments/sidebar :: adminSidebar('hotdeals')}"></aside>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="main-container">
         <div class="header-panel">
-          <div class="title-area">
-            <h1>핫딜 관리</h1>
-            <p>유통기한이 임박하거나 재고가 많은 상품을 핫딜로 등록하여 판매를 촉진하세요.</p>
-          </div>
-          <!-- 통계 배지 -->
-          <div class="stat-badge">
-            <div class="stat-badge-icon"><i class="bi bi-lightning-fill"></i></div>
-            <div class="stat-badge-info">
-              <h3 th:text="${hotDeals != null ? hotDeals.size() : 0}">2</h3>
-              <p>전체 기획전</p>
+            <div class="title-area">
+                <h1>핫딜 관리</h1>
+                <p>유통기한이 임박하거나 재고가 많은 상품을 핫딜로 등록하여 판매를 촉진하세요.</p>
             </div>
-          </div>
+            <!-- 통계 배지 -->
+            <div class="stat-badge">
+                <div class="stat-badge-icon"><i class="bi bi-lightning-fill"></i></div>
+                <div class="stat-badge-info">
+                    <h3 th:text="${hotDeals != null ? hotDeals.size() : 0}">2</h3>
+                    <p>전체 기획전</p>
+                </div>
+            </div>
         </div>
 
         <!-- 대시보드 레이아웃 -->
         <div class="dashboard-grid">
-          <!-- 왼쪽 영역 : 상품 검색 및 목록 -->
-          <div>
-            <div class="dashboard-card">
-              <!-- 검색 필터 -->
-              <div class="row g-3 mb-4">
-                <div class="col-md-5">
-                  <label class="control-label">상품 검색</label>
-                  <div class="position-relative">
-                    <input
-                      type="text"
-                      class="form-control form-control-custom w-100"
-                      id="searchKeyword"
-                      placeholder="상품명 또는 상품코드 입력"
-                      onkeydown="if(event.key==='Enter') searchProducts(true)"
-                    />
-                    <i
-                      class="bi bi-search position-absolute"
-                      style="right: 12px; top: 10px; color: var(--text-muted); cursor: pointer"
-                      onclick="searchProducts(true)"
-                    ></i>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <label class="control-label">카테고리</label>
-                  <select
-                    class="form-select form-control-custom"
-                    id="searchCategory"
-                    onchange="searchProducts(true)"
-                  >
-                    <option value="">전체</option>
-                    <option
-                      th:each="cat : ${categories}"
-                      th:value="${cat.id}"
-                      th:text="${cat.name}"
-                    >
-                      카테고리
-                    </option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="control-label">정렬 기준</label>
-                  <select
-                    class="form-select form-control-custom"
-                    id="searchSort"
-                    onchange="searchProducts(true)"
-                  >
-                    <option value="EXPIRE_ASC">유통기한 임박순</option>
-                    <option value="STOCK_ASC">재고 적은순</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 정렬 버튼 및 새로고침 -->
-              <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="filter-pills">
-                  <button
-                    class="btn-pill active"
-                    id="btnSortExpire"
-                    onclick="changeSort('EXPIRE_ASC')"
-                  >
-                    <i class="bi bi-clock"></i> 유통기한 임박순
-                  </button>
-                  <button class="btn-pill" id="btnSortStock" onclick="changeSort('STOCK_ASC')">
-                    <i class="bi bi-box-seam"></i> 재고 적은순
-                  </button>
-                </div>
-                <button class="btn-pill" onclick="resetSearch()">
-                  <i class="bi bi-arrow-clockwise"></i> 새로고침
-                </button>
-              </div>
-
-              <!-- 상품 목록 영역 -->
-              <div class="card-title">상품 목록</div>
-              <div class="total-count-lbl" id="totalCountDisplay">24개</div>
-
-              <div class="product-row header">
-                <div>상품</div>
-                <div>카테고리</div>
-                <div>정상가</div>
-                <div>재고</div>
-                <div>유통기한</div>
-                <div>상태</div>
-                <div class="text-center">선택</div>
-              </div>
-
-              <!-- 검색 결과 출력 영역  -->
-              <div id="productSearchResult" style="min-height: 250px">
-                <!-- AJAX 동적으로 상품 목록 출력 -->
-              </div>
-
-              <!-- 페이지네이션 -->
-              <div class="pagination-custom" id="productPagination"></div>
-            </div>
-
-            <!-- 하단: 등록된 핫딜 목록 -->
-            <div class="dashboard-card">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="card-title m-0">등록된 핫딜</div>
-                <div
-                  class="total-count-lbl m-0"
-                  th:text="${hotDeals != null ? hotDeals.size() + '개' : '0개'}"
-                >
-                  2개
-                </div>
-              </div>
-              <p
-                style="
-                  font-size: 0.82rem;
-                  color: var(--text-muted);
-                  margin-top: -0.5rem;
-                  margin-bottom: 1.25rem;
-                "
-              >
-                수정 버튼을 누르면 우측 패널에서 내용을 바로 편집합니다.
-              </p>
-
-              <div class="table-responsive">
-                <table class="table-existing">
-                  <thead>
-                    <tr>
-                      <th style="width: 25%">핫딜명</th>
-                      <th style="width: 30%">기간</th>
-                      <th style="width: 12%">상품 수</th>
-                      <th style="width: 15%">할인가</th>
-                      <th style="width: 10%">상태</th>
-                      <th class="text-center" style="width: 8%">관리</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr th:if="${#lists.isEmpty(hotDeals)}">
-                      <td colspan="6" class="text-center py-5 text-muted">
-                        등록된 핫딜 기획전이 없습니다.
-                      </td>
-                    </tr>
-                    <tr th:each="deal : ${hotDeals}">
-                      <td><strong th:text="${deal.title}">여름맞이 특별 핫딜</strong></td>
-                      <td
-                        th:text="${#temporals.format(deal.startsAt, 'yyyy.MM.dd')} + ' ~ ' + ${#temporals.format(deal.endsAt, 'yyyy.MM.dd')}"
-                      >
-                        2026.06.26 ~ 2026.06.30
-                      </td>
-                      <td th:text="${deal.productCount} + '개'">2개</td>
-                      <td
-                        class="fw-bold"
-                        th:text="${#numbers.formatInteger(deal.discountPrice, 0, 'COMMA')} + '원'"
-                      >
-                        73,000원
-                      </td>
-                      <td>
-                        <span th:if="${deal.status == 'ACTIVE'}" class="status-pill status-active"
-                          >진행중</span
-                        >
-                        <span
-                          th:if="${deal.status == 'SCHEDULED'}"
-                          class="status-pill status-waiting"
-                          >대기중</span
-                        >
-                        <span th:if="${deal.status == 'ENDED'}" class="status-pill status-closed"
-                          >종료됨</span
-                        >
-                      </td>
-                      <td class="text-center">
-                        <button
-                          class="btn btn-sm btn-outline-custom py-1 px-3"
-                          style="font-size: 0.8rem; font-weight: 700; border-radius: 6px"
-                        >
-                          수정
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- 오른쪽 영역 : 핫딜 등록 섹션 -->
-          <aside>
-            <div class="right-sidebar-card">
-              <h2>핫딜 등록</h2>
-              <p>선택한 상품으로 새 핫딜을 등록합니다.</p>
-
-              <form id="hotDealForm" onsubmit="event.preventDefault();">
-                <!-- 선택한 상품 목록 -->
-                <div class="selected-summary-box" id="selectedProductsBox">
-                  <div class="selected-header">
-                    <span class="selected-lbl">
-                      <i class="bi bi-box-seam text-primary"></i> 선택된 상품 (0개)
-                    </span>
-                  </div>
-                  <div class="text-center py-3 text-muted" style="font-size: 0.8rem">
-                    왼쪽 목록에서 핫딜에 지정할 상품을 선택해 주세요.
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <label class="control-label" for="dealTitle">핫딜 이름</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-custom w-100"
-                    id="dealTitle"
-                    placeholder="여름맞이 특별 핫딜"
-                    required
-                  />
-                </div>
-
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="control-label m-0" for="dealDescription">핫딜 설명</label>
-                    <button type="button" class="ai-btn-badge">AI 문장 추천</button>
-                  </div>
-                  <textarea
-                    class="form-control form-control-custom w-100"
-                    id="dealDescription"
-                    rows="3"
-                    placeholder="고객에게 노출할 간단한 설명을 입력하세요."
-                    maxlength="200"
-                    oninput="updateCharCount()"
-                  ></textarea>
-                  <div class="text-end text-muted" style="font-size: 0.7rem; margin-top: 0.25rem">
-                    <span id="charCount">0</span>/200
-                  </div>
-                </div>
-
-                <div class="row g-2 mb-3">
-                  <div class="col-6">
-                    <label class="control-label">시작일</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-custom w-100"
-                      id="startsAt"
-                      required
-                    />
-                  </div>
-                  <div class="col-6">
-                    <label class="control-label">종료일</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-custom w-100"
-                      id="endsAt"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <label class="control-label">핫딜 특가</label>
-                  <div class="d-flex gap-2">
-                    <div class="position-relative flex-grow-1">
-                      <input
-                        type="number"
-                        class="form-control form-control-custom w-100 pe-4"
-                        id="hotDealPrice"
-                        placeholder="73000"
-                        required
-                      />
-                      <span
-                        class="position-absolute"
-                        style="
-                          right: 12px;
-                          top: 8px;
-                          font-size: 0.85rem;
-                          color: var(--text-muted);
-                          font-weight: 600;
-                        "
-                        >원</span
-                      >
+            <!-- 왼쪽 영역 : 상품 검색 및 목록 -->
+            <div>
+                <div class="dashboard-card">
+                    <!-- 검색 필터 -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-5">
+                            <label class="control-label">상품 검색</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control form-control-custom w-100" id="searchKeyword" placeholder="상품명 또는 상품코드 입력" onkeydown="if(event.key==='Enter') searchProducts(true)">
+                                <i class="bi bi-search position-absolute" style="right: 12px; top: 10px; color: var(--text-muted); cursor: pointer;" onclick="searchProducts(true)"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">카테고리</label>
+                            <select class="form-select form-control-custom" id="searchCategory" onchange="searchProducts(true)">
+                                <option value="">전체</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">카테고리</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">정렬 기준</label>
+                            <select class="form-select form-control-custom" id="searchSort" onchange="searchProducts(true)">
+                                <option value="EXPIRE_ASC">유통기한 임박순</option>
+                                <option value="STOCK_ASC">재고 적은순</option>
+                            </select>
+                        </div>
                     </div>
-                    <button
-                      type="button"
-                      onclick="applyRecommendedPrice()"
-                      class="btn btn-outline-custom"
-                      style="
-                        font-weight: 700;
-                        border-radius: 8px;
-                        font-size: 0.85rem;
-                        padding: 0 1rem;
-                        color: var(--orange-brand);
-                        border-color: #ffc9c9;
-                        background: #fff8f5;
-                      "
-                    >
-                      추천가
-                    </button>
-                  </div>
+
+                    <!-- 정렬 버튼 및 새로고침 -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="filter-pills">
+                            <button class="btn-pill active" id="btnSortExpire" onclick="changeSort('EXPIRE_ASC')">
+                                <i class="bi bi-clock"></i> 유통기한 임박순
+                            </button>
+                            <button class="btn-pill" id="btnSortStock" onclick="changeSort('STOCK_ASC')">
+                                <i class="bi bi-box-seam"></i> 재고 적은순
+                            </button>
+                        </div>
+                        <button class="btn-pill" onclick="resetSearch()"><i class="bi bi-arrow-clockwise"></i> 새로고침</button>
+                    </div>
+
+                    <!-- 상품 목록 영역 -->
+                    <div class="card-title">상품 목록</div>
+                    <div class="total-count-lbl" id="totalCountDisplay">24개</div>
+
+                    <div class="product-row header">
+                        <div>상품</div>
+                        <div>카테고리</div>
+                        <div>정상가</div>
+                        <div>재고</div>
+                        <div>유통기한</div>
+                        <div>상태</div>
+                        <div class="text-center">선택</div>
+                    </div>
+
+                    <!-- 검색 결과 출력 영역  -->
+                    <div id="productSearchResult" style="min-height: 250px;">
+                        <!-- AJAX 동적으로 상품 목록 출력 -->
+                    </div>
+
+                    <!-- 페이지네이션 -->
+                    <div class="pagination-custom" id="productPagination"></div>
                 </div>
 
-                <div class="form-switch-custom mb-4">
-                  <div>
-                    <strong style="font-size: 0.85rem; display: block">노출 상태</strong>
-                    <span class="text-muted" style="font-size: 0.75rem">등록 즉시 노출</span>
-                  </div>
-                  <input type="checkbox" class="switch-input" id="exposureSwitch" checked />
-                </div>
+                <!-- 하단: 등록된 핫딜 목록 -->
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="card-title m-0">등록된 핫딜</div>
+                        <div class="total-count-lbl m-0" th:text="${hotDeals != null ? hotDeals.size() + '개' : '0개'}">2개</div>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -0.5rem; margin-bottom: 1.25rem;">수정 버튼을 누르면 우측 패널에서 내용을 바로 편집합니다.</p>
 
-                <div class="d-flex gap-2 mb-2">
-                  <button type="button" class="action-btn btn-outline-custom" style="width: 40%">
-                    취소
-                  </button>
-                  <button type="submit" class="action-btn btn-orange" style="width: 60%">
-                    <i class="bi bi-check-circle-fill me-1"></i> 타임 핫딜 발행하기
-                  </button>
+                    <div class="table-responsive">
+                        <table class="table-existing">
+                            <thead>
+                            <tr>
+                                <th style="width: 25%;">핫딜명</th>
+                                <th style="width: 30%;">기간</th>
+                                <th style="width: 12%;">상품 수</th>
+                                <th style="width: 15%;">할인가</th>
+                                <th style="width: 10%;">상태</th>
+                                <th class="text-center" style="width: 8%;">관리</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(hotDeals)}">
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    등록된 핫딜 기획전이 없습니다.
+                                </td>
+                            </tr>
+                            <tr th:each="deal : ${hotDeals}">
+                                <td><strong th:text="${deal.title}">여름맞이 특별 핫딜</strong></td>
+                                <td th:text="${#temporals.format(deal.startsAt, 'yyyy.MM.dd')} + ' ~ ' + ${#temporals.format(deal.endsAt, 'yyyy.MM.dd')}">2026.06.26 ~ 2026.06.30</td>
+                                <td th:text="${deal.productCount} + '개'">2개</td>
+                                <td class="fw-bold" th:text="${#numbers.formatInteger(deal.discountPrice, 0, 'COMMA')} + '원'">73,000원</td>
+                                <td>
+                                    <span th:if="${deal.status == 'ACTIVE'}" class="status-pill status-active">진행중</span>
+                                    <span th:if="${deal.status == 'SCHEDULED'}" class="status-pill status-waiting">대기중</span>
+                                    <span th:if="${deal.status == 'ENDED'}" class="status-pill status-closed">종료됨</span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-custom py-1 px-3" style="font-size: 0.8rem; font-weight: 700; border-radius: 6px;">수정</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <button type="button" class="action-btn btn-close-hotdeal mt-2">
-                  선택 상품으로 핫딜 종료
-                </button>
-              </form>
             </div>
-          </aside>
+
+            <!-- 오른쪽 영역 : 핫딜 등록 섹션 -->
+            <aside>
+                <div class="right-sidebar-card">
+                    <h2>핫딜 등록</h2>
+                    <p>선택한 상품으로 새 핫딜을 등록합니다.</p>
+
+                    <form id="hotDealForm" onsubmit="event.preventDefault();">
+                        <!-- 선택한 상품 목록 -->
+                        <div class="selected-summary-box" id="selectedProductsBox">
+                            <div class="selected-header">
+                                <span class="selected-lbl">
+                                    <i class="bi bi-box-seam text-primary"></i> 선택된 상품 (0개)
+                                </span>
+                            </div>
+                            <div class="text-center py-3 text-muted" style="font-size: 0.8rem;">
+                                왼쪽 목록에서 핫딜에 지정할 상품을 선택해 주세요.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="control-label" for="dealTitle">핫딜 이름</label>
+                            <input type="text" class="form-control form-control-custom w-100" id="dealTitle" placeholder="여름맞이 특별 핫딜" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="control-label m-0" for="dealDescription">핫딜 설명</label>
+                                <button type="button" class="ai-btn-badge">AI 문장 추천</button>
+                            </div>
+                            <textarea class="form-control form-control-custom w-100" id="dealDescription" rows="3" placeholder="고객에게 노출할 간단한 설명을 입력하세요." maxlength="200" oninput="updateCharCount()"></textarea>
+                            <div class="text-end text-muted" style="font-size: 0.7rem; margin-top: 0.25rem;"><span id="charCount">0</span>/200</div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="control-label">시작일</label>
+                                <input type="date" class="form-control form-control-custom w-100" id="startsAt" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="control-label">종료일</label>
+                                <input type="date" class="form-control form-control-custom w-100" id="endsAt" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="control-label">핫딜 특가</label>
+                            <div class="d-flex gap-2">
+                                <div class="position-relative flex-grow-1">
+                                    <input type="number" class="form-control form-control-custom w-100 pe-4" id="hotDealPrice" placeholder="73000" required>
+                                    <span class="position-absolute" style="right: 12px; top: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">원</span>
+                                </div>
+                                <button type="button" onclick="applyRecommendedPrice()" class="btn btn-outline-custom" style="font-weight: 700; border-radius: 8px; font-size: 0.85rem; padding: 0 1rem; color: var(--orange-brand); border-color: #ffc9c9; background: #fff8f5;">추천가</button>
+                            </div>
+                        </div>
+
+                        <div class="form-switch-custom mb-4">
+                            <div>
+                                <strong style="font-size: 0.85rem; display: block;">노출 상태</strong>
+                                <span class="text-muted" style="font-size: 0.75rem;">등록 즉시 노출</span>
+                            </div>
+                            <input type="checkbox" class="switch-input" id="exposureSwitch" checked>
+                        </div>
+
+                        <div class="d-flex gap-2 mb-2">
+                            <button type="button" class="action-btn btn-outline-custom" style="width: 40%;">취소</button>
+                            <button type="submit" class="action-btn btn-orange" style="width: 60%;"><i class="bi bi-check-circle-fill me-1"></i> 타임 핫딜 발행하기</button>
+                        </div>
+
+                        <button type="button" class="action-btn btn-close-hotdeal mt-2">
+                            선택 상품으로 핫딜 종료
+                        </button>
+                    </form>
+                </div>
+            </aside>
         </div>
-      </main>
-    </div>
-  </body>
+    </main>
+
+</div>
+</body>
 </html>

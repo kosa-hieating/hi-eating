@@ -88,10 +88,7 @@ body.sidebar-collapsed .sidebar {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition:
-    left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.2s,
-    box-shadow 0.3s;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s, box-shadow 0.3s;
   color: var(--text-muted);
   outline: none;
 }
@@ -285,8 +282,7 @@ body.sidebar-collapsed .main-container {
   line-height: 1;
 }
 
-.btn-pill:hover,
-.btn-pill.active {
+.btn-pill:hover, .btn-pill.active {
   background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%);
   color: #ffffff;
   border-color: transparent;
@@ -416,8 +412,7 @@ body.sidebar-collapsed .main-container {
   transition: all 0.2s ease;
 }
 
-.page-btn:hover,
-.page-btn.active {
+.page-btn:hover, .page-btn.active {
   background-color: var(--orange-brand);
   color: #ffffff;
   border-color: var(--orange-brand);

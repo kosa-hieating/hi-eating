@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   const mainImage = document.getElementById('mainProductImage');
-  const mainImageFrame = mainImage ? mainImage.closest('.product-main-image') : null;
+  const mainImageFrame = mainImage
+      ? mainImage.closest('.product-main-image')
+      : null;
   const thumbnails = document.querySelectorAll('.product-thumbnail');
-  const allImageUrls = Array.from(thumbnails).map((thumb) => thumb.dataset.imageUrl);
+  const allImageUrls = Array.from(thumbnails).map(
+      thumb => thumb.dataset.imageUrl);
   const quantityInput = document.getElementById('productQuantity');
   const quantityButtons = document.querySelectorAll('[data-quantity-action]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -76,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mainImage.classList.remove('is-entering');
     };
 
-    outgoingImage.addEventListener('animationend', cleanup, { once: true });
+    outgoingImage.addEventListener('animationend', cleanup, {once: true});
     window.setTimeout(cleanup, 520);
   }
 
@@ -94,11 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.showNextImage = function () {
     showImage(currentImageIndex + 1);
-  };
+  }
 
   window.showPrevImage = function () {
     showImage(currentImageIndex - 1);
-  };
+  }
 
   thumbnails.forEach((thumbnail, index) => {
     thumbnail.addEventListener('click', () => {
@@ -106,15 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  quantityButtons.forEach((button) => {
+  quantityButtons.forEach(button => {
     button.addEventListener('click', () => {
       if (!quantityInput) {
         return;
       }
 
       const currentValue = Number.parseInt(quantityInput.value, 10) || 1;
-      const nextValue =
-        button.dataset.quantityAction === 'increase'
+      const nextValue = button.dataset.quantityAction === 'increase'
           ? currentValue + 1
           : Math.max(1, currentValue - 1);
 

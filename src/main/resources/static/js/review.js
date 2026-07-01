@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!file.type.startsWith('image/')) {
       clearPreview();
-      alert('이미지 파일만 삽입 가능합니다');
+      alert("이미지 파일만 삽입 가능합니다");
       return;
     }
 

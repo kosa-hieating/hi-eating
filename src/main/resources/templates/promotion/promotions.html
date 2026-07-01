@@ -1,29 +1,27 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Promotions</title>
-  </head>
-  <body>
-    <main>
-      <h1>Promotions</h1>
+<head>
+  <meta charset="UTF-8">
+  <title>Promotions</title>
+</head>
+<body>
+<main>
+  <h1>Promotions</h1>
 
-      <p th:if="${#lists.isEmpty(promotions)}">노출 중인 프로모션이 없습니다.</p>
+  <p th:if="${#lists.isEmpty(promotions)}">노출 중인 프로모션이 없습니다.</p>
 
-      <ul th:if="${!#lists.isEmpty(promotions)}">
-        <li th:each="promotion : ${promotions}">
-          <a th:href="${promotion.link != null ? promotion.link : '#'}">
-            <img
-              th:src="${#strings.isEmpty(promotion.imgSrc) ? '/images/logo-hi-eating.png' : promotion.imgSrc}"
-              th:alt="${promotion.title}"
-              data-fallback-src="/images/logo-hi-eating.png"
-              width="240"
-              onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;"
-            />
-            <span th:text="${promotion.title}">프로모션 제목</span>
-          </a>
-        </li>
-      </ul>
-    </main>
-  </body>
+  <ul th:if="${!#lists.isEmpty(promotions)}">
+    <li th:each="promotion : ${promotions}">
+      <a th:href="${promotion.link != null ? promotion.link : '#'}">
+        <img th:src="${#strings.isEmpty(promotion.imgSrc) ? '/images/logo-hi-eating.png' : promotion.imgSrc}"
+             th:alt="${promotion.title}"
+             data-fallback-src="/images/logo-hi-eating.png"
+             width="240"
+             onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
+        <span th:text="${promotion.title}">프로모션 제목</span>
+      </a>
+    </li>
+  </ul>
+</main>
+</body>
 </html>

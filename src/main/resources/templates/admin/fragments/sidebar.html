@@ -1,82 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <!--
+<!-- 
   어드민 전용 레이아웃 사이드바 프래그먼트
   - 파라미터 activeMenu: 현재 활성화된 메뉴를 강조 표시합니다 ('hotdeals', 'statistics', 'promotions')
 -->
-  <aside class="sidebar" th:fragment="adminSidebar(activeMenu)">
-    <div>
-      <!-- 브랜드 로고 및 셀렉터 -->
-      <div class="brand-section">
-        <div class="logo-container">
-          <img th:src="@{/images/logo-hi-eating.png}" class="logo-img" alt="logo" />
-          <span class="logo-text">HI.eating</span>
-        </div>
+<aside class="sidebar" th:fragment="adminSidebar(activeMenu)">
+  <div>
+    <!-- 브랜드 로고 및 셀렉터 -->
+    <div class="brand-section">
+      <div class="logo-container">
+        <img th:src="@{/images/logo-hi-eating.png}" class="logo-img" alt="logo">
+        <span class="logo-text">HI.eating</span>
       </div>
-
-      <!-- 메뉴 리스트 -->
-      <ul class="nav flex-column gap-2" style="list-style: none; padding: 0">
-        <!-- 1. 타임 핫딜 지정 -->
-        <li class="nav-item">
-          <a
-            class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3"
-            href="/admin/hotdeals"
-            th:style="${activeMenu == 'hotdeals'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'"
-          >
-            <i
-              class="bi bi-lightning-fill"
-              th:style="${activeMenu == 'hotdeals'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"
-            ></i>
-            타임 핫딜 지정
-          </a>
-        </li>
-
-        <!-- 2. 통계 자료 -->
-        <li class="nav-item">
-          <a
-            class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3"
-            href="/admin/statistics"
-            th:style="${activeMenu == 'statistics'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'"
-          >
-            <i
-              class="bi bi-bar-chart-line-fill"
-              th:style="${activeMenu == 'statistics'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"
-            ></i>
-            통계 자료
-          </a>
-        </li>
-
-        <!-- 3. 프로모션 설정 -->
-        <li class="nav-item">
-          <a
-            class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3"
-            href="/admin/promotions"
-            th:style="${activeMenu == 'promotions'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'"
-          >
-            <i
-              class="bi bi-images"
-              th:style="${activeMenu == 'promotions'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"
-            ></i>
-            프로모션 설정
-          </a>
-        </li>
-      </ul>
     </div>
 
-    <!-- 프로필 섹션 (하단 고정) -->
-    <div class="user-profile">
-      <div class="user-info">
-        <img
-          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"
-          class="user-avatar"
-          alt="profile"
-        />
-        <div class="user-details">
-          <span class="user-name">Eddy</span>
-          <span class="user-email">eddy@alphaca.kr</span>
-        </div>
+    <!-- 메뉴 리스트 -->
+    <ul class="nav flex-column gap-2" style="list-style: none; padding: 0;">
+      <!-- 1. 타임 핫딜 지정 -->
+      <li class="nav-item">
+        <a class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3" 
+           href="/admin/hotdeals" 
+           th:style="${activeMenu == 'hotdeals'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'">
+          <i class="bi bi-lightning-fill" th:style="${activeMenu == 'hotdeals'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"></i> 타임 핫딜 지정
+        </a>
+      </li>
+
+      <!-- 2. 통계 자료 -->
+      <li class="nav-item">
+        <a class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3" 
+           href="/admin/statistics" 
+           th:style="${activeMenu == 'statistics'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'">
+          <i class="bi bi-bar-chart-line-fill" th:style="${activeMenu == 'statistics'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"></i> 통계 자료
+        </a>
+      </li>
+
+      <!-- 3. 프로모션 설정 -->
+      <li class="nav-item">
+        <a class="nav-link py-2 px-3 text-dark d-flex align-items-center gap-3" 
+           href="/admin/promotions" 
+           th:style="${activeMenu == 'promotions'} ? 'background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%); color: #ffffff !important; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);' : 'font-weight: 600; border-radius: 8px;'">
+          <i class="bi bi-images" th:style="${activeMenu == 'promotions'} ? 'color: #ffffff !important;' : 'color: var(--text-muted);'"></i> 프로모션 설정
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 프로필 섹션 (하단 고정) -->
+  <div class="user-profile">
+    <div class="user-info">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" class="user-avatar" alt="profile">
+      <div class="user-details">
+        <span class="user-name">Eddy</span>
+        <span class="user-email">eddy@alphaca.kr</span>
       </div>
-      <button class="selector-btn"><i class="bi bi-chevron-expand"></i></button>
     </div>
-  </aside>
+    <button class="selector-btn"><i class="bi bi-chevron-expand"></i></button>
+  </div>
+</aside>
 </html>
