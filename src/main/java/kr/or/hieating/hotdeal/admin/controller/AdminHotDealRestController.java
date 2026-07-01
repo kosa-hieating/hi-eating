@@ -6,6 +6,7 @@ import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.hotdeal.admin.dto.HotDealCreateRequestDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealUpdateRequestDTO;
+import kr.or.hieating.hotdeal.admin.dto.HotDealDetailResponseDTO;
 import kr.or.hieating.hotdeal.admin.service.AdminHotDealService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,5 +34,11 @@ public class AdminHotDealRestController {
 
     adminHotDealService.updateHotDeal(id, request);
     return ApiResponse.onSuccess(null);
+  }
+
+  @GetMapping("/{id}")
+  public ApiResponse<HotDealDetailResponseDTO> getHotDealDetail(@PathVariable("id") int id) {
+    HotDealDetailResponseDTO detail = adminHotDealService.getHotDealDetail(id);
+    return ApiResponse.onSuccess(detail);
   }
 }

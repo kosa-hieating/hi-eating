@@ -6,6 +6,7 @@ import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.hotdeal.admin.dto.HotDealCreateRequestDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealUpdateRequestDTO;
+import kr.or.hieating.hotdeal.admin.dto.HotDealDetailResponseDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO;
 import kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper;
 import kr.or.hieating.hotdeal.domain.HotDealProducts;
@@ -121,5 +122,34 @@ public class AdminHotDealService {
 
       adminHotDealMapper.insertHotDealProduct(child);
     }
+  }
+
+  public HotDealDetailResponseDTO getHotDealDetail(int id) {
+    HotDeals hotDeal = adminHotDealMapper.selectHotDealById(id);
+    if (hotDeal == null) {
+      throw new GeneralException(ErrorStatus.HOT_DEAL_NOT_FOUND);
+    }
+
+    List<HotDealDetailResponseDTO.ProductItemDTO> products =
+        adminHotDealMapper.selectHotDealProductsDetailByHotDealId(id);
+
+    // 첫번째 상품 기준으로 할인율 계산
+    int discountRate = 0;
+    if (products != null && !products.isEmpty()) {
+      HotDealDetailResponseDTO.ProductItemDTO first = products.get(0);
+      if (first.getOriginalPrice() > 0 && first.getHotDealPrice() != null) {
+        discountRate = 100 - (first.getHotDealPrice() * 100 / first.getOriginalPrice());
+      }
+    }
+
+    return HotDealDetailResponseDTO.builder()
+        .id(hotDeal.getId())
+        .title(hotDeal.getTitle())
+        .description(hotDeal.getDescription())
+        .startsAt(hotDeal.getStartsAt())
+        .endsAt(hotDeal.getEndsAt())
+        .discountRate(discountRate)
+        .products(products)
+        .build();
   }
 }
