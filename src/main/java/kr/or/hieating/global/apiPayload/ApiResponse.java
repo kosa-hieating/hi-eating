@@ -13,7 +13,6 @@ import lombok.Getter;
  *
  * @param <T> 응답 데이터 타입
  */
-
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"}) // JSON 직렬화 시 필드 순서 지정

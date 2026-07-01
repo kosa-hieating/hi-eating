@@ -20,9 +20,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-/**
- * 예외 처리 클래스 (기본 표준 예외 가로채서 커스터마이징)
- */
+/** 예외 처리 클래스 (기본 표준 예외 가로채서 커스터마이징) */
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
@@ -30,16 +28,24 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
   // @RequestParam 이나 @PathVariable 검증 에러 처리
   @ExceptionHandler
   public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
-    String errorMessage = e.getConstraintViolations().stream()
-        .map(constraintViolation -> constraintViolation.getMessage())
-        .findFirst()
-        .orElseThrow(() -> new RuntimeException("ConstraintViolationException 추출 중 에러가 발생했습니다."));
+    String errorMessage =
+        e.getConstraintViolations().stream()
+            .map(constraintViolation -> constraintViolation.getMessage())
+            .findFirst()
+            .orElseThrow(
+                () -> new RuntimeException("ConstraintViolationException 추출 중 에러가 발생했습니다."));
 
     try {
       ErrorStatus errorStatus = ErrorStatus.valueOf(errorMessage);
-      return handleExceptionInternal(e, errorStatus.getCode(), errorStatus.getMessage(), errorStatus.getHttpStatus(), request);
+      return handleExceptionInternal(
+          e, errorStatus.getCode(), errorStatus.getMessage(), errorStatus.getHttpStatus(), request);
     } catch (IllegalArgumentException iae) {
-      return handleExceptionInternal(e, ErrorStatus._BAD_REQUEST.getCode(), errorMessage, ErrorStatus._BAD_REQUEST.getHttpStatus(), request);
+      return handleExceptionInternal(
+          e,
+          ErrorStatus._BAD_REQUEST.getCode(),
+          errorMessage,
+          ErrorStatus._BAD_REQUEST.getHttpStatus(),
+          request);
     }
   }
 
@@ -52,14 +58,18 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
       WebRequest request) {
 
     Map<String, String> errors = new LinkedHashMap<>();
-    e.getBindingResult().getFieldErrors().forEach(fieldError -> {
-      String fieldName = fieldError.getField();
-      String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
-      errors.put(fieldName, errorMessage);
-    });
+    e.getBindingResult()
+        .getFieldErrors()
+        .forEach(
+            fieldError -> {
+              String fieldName = fieldError.getField();
+              String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
+              errors.put(fieldName, errorMessage);
+            });
 
-    ApiResponse<Object> body = ApiResponse.onFailure(
-        ErrorStatus._BAD_REQUEST.getCode(), ErrorStatus._BAD_REQUEST.getMessage(), errors);
+    ApiResponse<Object> body =
+        ApiResponse.onFailure(
+            ErrorStatus._BAD_REQUEST.getCode(), ErrorStatus._BAD_REQUEST.getMessage(), errors);
 
     return super.handleExceptionInternal(e, body, headers, status, request);
   }
@@ -68,7 +78,8 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<Object> exception(Exception e, WebRequest request) {
     log.error("Unhandled Exception: ", e);
-    return handleExceptionInternal(e,
+    return handleExceptionInternal(
+        e,
         ErrorStatus._INTERNAL_SERVER_ERROR.getCode(),
         ErrorStatus._INTERNAL_SERVER_ERROR.getMessage(),
         ErrorStatus._INTERNAL_SERVER_ERROR.getHttpStatus(),
@@ -77,9 +88,11 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
   // GeneralException 예외 발생시 처리 (개발자가 의도한 비즈니스 에러)
   @ExceptionHandler(value = GeneralException.class)
-  public ResponseEntity<Object> onThrowException(GeneralException generalException, HttpServletRequest request) {
+  public ResponseEntity<Object> onThrowException(
+      GeneralException generalException, HttpServletRequest request) {
     ErrorReasonDTO errorReasonHttpStatus = generalException.getErrorReasonHttpStatus();
-    return handleExceptionInternal(generalException,
+    return handleExceptionInternal(
+        generalException,
         errorReasonHttpStatus.getCode(),
         errorReasonHttpStatus.getMessage(),
         errorReasonHttpStatus.getHttpStatus(),
