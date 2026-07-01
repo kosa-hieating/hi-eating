@@ -36,7 +36,8 @@
             description = #{description},
             starts_at = #{startsAt},
             ends_at = #{endsAt},
-            status = #{status}
+            status = #{status},
+            updated_at = SYSTIMESTAMP
         WHERE id = #{id}
     </update>
 
@@ -62,4 +63,5 @@
         INNER JOIN products p ON o.product_id = p.id
         WHERE hp.hot_deal_id = #{hotDealId}
     </select>
+
 </mapper>
