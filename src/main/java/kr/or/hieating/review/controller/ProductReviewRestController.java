@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProductReviewRestController {
 
+  private static final int MIN_PAGE_SIZE = 1;
+  private static final int MAX_PAGE_SIZE = 10;
+
   private final ReviewService reviewService;
 
   @GetMapping("/api/products/{productId}/reviews")
@@ -19,6 +22,10 @@ public class ProductReviewRestController {
       @PathVariable Long productId,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size) {
-    return reviewService.findProductReviews(productId, page, size);
+    return reviewService.findProductReviews(productId, page, normalizeSize(size));
+  }
+
+  private int normalizeSize(int size) {
+    return Math.max(MIN_PAGE_SIZE, Math.min(size, MAX_PAGE_SIZE));
   }
 }
