@@ -28,7 +28,10 @@
 
             <div class="hot-deal-card__body">
               <div class="hot-deal-card__image">
-                <span>상품 이미지</span>
+                <img th:src="${#strings.isEmpty(hotDealProduct.pictureLocation) ? '/images/logo-hi-eating.png' : hotDealProduct.pictureLocation}"
+                     th:alt="${hotDealProduct.productName}"
+                     data-fallback-src="/images/logo-hi-eating.png"
+                     onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
                 <span class="hot-deal-card__stock"
                       th:text="|남은수량 ${hotDealProduct.stock}개|">남은수량 4개</span>
               </div>
