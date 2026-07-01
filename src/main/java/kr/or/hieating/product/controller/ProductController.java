@@ -78,6 +78,7 @@ public class ProductController {
             "김하늘",
             5,
             "우유 비린 맛이 적고 고소해서 아침마다 잘 마시고 있어요. 포장도 탄탄하게 도착했습니다.",
+            "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=420&q=80",
             LocalDateTime.now().minusDays(2),
             "900ml / 기본"),
         new ProductReview(
@@ -88,6 +89,7 @@ public class ProductController {
             "박민준",
             5,
             "시리얼에 넣어 먹기 좋고 커피에 섞어도 맛이 깔끔합니다. 재구매할 것 같아요.",
+            null,
             LocalDateTime.now().minusDays(5),
             "900ml / 기본"),
         new ProductReview(
@@ -98,6 +100,7 @@ public class ProductController {
             "이서연",
             4,
             "배송이 빨랐고 유통기한도 넉넉했습니다. 아이가 잘 마셔서 만족해요.",
+            "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=420&q=80",
             LocalDateTime.now().minusDays(9),
             "900ml / 기본"));
   }

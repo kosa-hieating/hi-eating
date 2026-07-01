@@ -315,6 +315,15 @@
   letter-spacing: 0;
 }
 
+.review-image {
+  display: block;
+  width: min(180px, 100%);
+  aspect-ratio: 1;
+  border: 1px solid var(--color-line, #eee5df);
+  border-radius: 8px;
+  object-fit: cover;
+}
+
 @media (max-width: 767.98px) {
   .product-purchase-panel h1 {
     font-size: 23px;

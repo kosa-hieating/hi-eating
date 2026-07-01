@@ -11,6 +11,7 @@ public record ProductReview(
     String reviewerName,
     int rating,
     String content,
+    String imgSrc,
     LocalDateTime createdAt,
     String purchasedOption) {
 

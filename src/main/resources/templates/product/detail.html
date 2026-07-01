@@ -105,6 +105,7 @@
               <span class="review-stars" th:text="${review.starText()}"></span>
             </div>
             <p class="review-content mb-0 mt-3" th:text="${review.content}"></p>
+            <img class="review-image mt-3" th:if="${review.imgSrc != null}" th:src="${review.imgSrc}" th:alt="${review.content}">
           </article>
         </section>
       </div>
