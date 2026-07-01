@@ -16,7 +16,10 @@ public enum ErrorStatus implements BaseErrorCode {
   // 프로모션(배너) 관련 에러
   PROMOTION_NOT_FOUND(HttpStatus.NOT_FOUND, "PROMOTION4001", "해당 배너 프로모션이 존재하지 않습니다."),
   PROMOTION_REORDER_LIMIT(
-      HttpStatus.BAD_REQUEST, "PROMOTION4002", "더 이상 순서를 쪼갤 수 없습니다. 재배치가 필요합니다.");
+      HttpStatus.BAD_REQUEST, "PROMOTION4002", "더 이상 순서를 쪼갤 수 없습니다. 재배치가 필요합니다."),
+
+  // 상품/핫딜 관련 에러
+  INVALID_SORT_BY(HttpStatus.BAD_REQUEST, "PRD4001", "유효하지 않은 정렬 기준입니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
