@@ -52,7 +52,8 @@ public class ProductController {
       @RequestParam(defaultValue = "popular") String sort,
       @RequestParam(defaultValue = "1") Integer page,
       Model model) {
-    ProductListSearchCondition condition = new ProductListSearchCondition(categoryId, minPrice, maxPrice, minDiscountRate, sort, page);
+    ProductListSearchCondition condition =
+        new ProductListSearchCondition(categoryId, minPrice, maxPrice, minDiscountRate, sort, page);
     ProductListPageResponseDto productPage = productService.findProductsByCategory(condition);
     CategoryResponseDto selectedCategory = categoryService.findCategoryById(categoryId);
     List<CategoryResponseDto> categories = categoryService.findCategories();

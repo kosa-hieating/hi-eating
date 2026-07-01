@@ -25,10 +25,6 @@ public class ProductService {
     List<ProductListItemResponseDto> products = productMapper.findProductsByCategory(condition);
 
     return new ProductListPageResponseDto(
-        products,
-        condition.getPage(),
-        condition.getSize(),
-        totalCount,
-        totalPages);
+        products, condition.getPage(), condition.getSize(), totalCount, totalPages);
   }
 }
