@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const reviewPageSize = 5;
   let imageChangeToken = 0;
   let currentReviewPage = 1;
+  let reviewRequestToken = 0;
 
   let currentImageIndex = mainImage ? allImageUrls.indexOf(mainImage.src) : 0;
   if (mainImage && currentImageIndex === -1 && allImageUrls.length > 0) {
@@ -151,6 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const requestToken = reviewRequestToken + 1;
+    reviewRequestToken = requestToken;
     setReviewState('loading');
 
     try {
@@ -164,12 +167,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const reviewPage = await response.json();
+      if (requestToken !== reviewRequestToken) {
+        return;
+      }
+
       currentReviewPage = reviewPage.page || 1;
       renderReviews(reviewPage.items || []);
       renderReviewPagination(reviewPage);
       updateReviewCount(reviewPage.totalCount || 0);
       setReviewState((reviewPage.items || []).length > 0 ? 'loaded' : 'empty');
     } catch (error) {
+      if (requestToken !== reviewRequestToken) {
+        return;
+      }
+
       console.error(error);
       reviewList.replaceChildren();
       reviewPagination.replaceChildren();
