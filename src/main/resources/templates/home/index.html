@@ -101,15 +101,12 @@
             <img th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
                  th:alt="${product.productName}"
                  data-fallback-src="/images/logo-hi-eating.png">
-            <button class="product-card__cart" type="button" aria-label="장바구니 담기">
-              <i class="bi bi-bag" aria-hidden="true"></i>
-            </button>
           </div>
           <p class="product-card__name" th:text="${product.productName}">상품명</p>
           <p class="product-card__price">
             <strong th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">3,280원</strong>
           </p>
-          <p class="product-card__quantity" th:text="|누적 ${product.totalQuantity}개 담김|">누적 0개 담김</p>
+          <p class="product-card__quantity" th:text="|누적 ${product.totalQuantity}개 판매|">누적 0개 판매</p>
         </article>
       </div>
     </section>
