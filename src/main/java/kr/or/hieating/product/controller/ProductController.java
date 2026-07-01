@@ -13,7 +13,7 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping("/product")
-  public String mostPurchasedProducts(Model model){
+  public String mostPurchasedProducts(Model model) {
 
     model.addAttribute("products", productService.findMostPurchasedProducts());
     return "product/products";
