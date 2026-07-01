@@ -37,15 +37,15 @@ public class AdminHotDealService {
       throw new GeneralException(ErrorStatus.INVALID_END_DATE);
     }
 
+    String status = request.getStartsAt().isAfter(today) ? "SCHEDULED" : "ACTIVE";
+
     HotDeals hotDeal =
         HotDeals.builder()
             .title(request.getTitle())
             .description(request.getDescription())
             .startsAt(request.getStartsAt().atStartOfDay())
             .endsAt(request.getEndsAt().atTime(23, 59, 59))
-            .status(
-                "SCHEDULED") // TODO: 날짜에 따라 자동으로 상태 결정하는 로직 필요 (예: 현재 날짜가 시작일 이전이면 SCHEDULED, 시작일
-            // 이후면 ACTIVE, 종료일 이후면 EXPIRED)
+            .status(status) // TODO: 날짜에 따라 자동으로 상태 결정하는 로직 필요 (시작일이 되면 ACTIVE로 변경, 종료일이 지나면 EXPIRED로 변경)
             .createdBy(1) // TODO: 실제 로그인한 관리자 ID로 변경 필요
             .build();
 
