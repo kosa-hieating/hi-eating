@@ -2,14 +2,13 @@ package kr.or.hieating.hotdeal.admin.service;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.hotdeal.admin.dto.HotDealCreateRequestDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO;
 import kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper;
-import kr.or.hieating.hotdeal.domain.HotDeals;
 import kr.or.hieating.hotdeal.domain.HotDealProducts;
+import kr.or.hieating.hotdeal.domain.HotDeals;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,24 +27,27 @@ public class AdminHotDealService {
   @Transactional
   public int createHotDeal(HotDealCreateRequestDTO request) {
 
-      LocalDate today = LocalDate.now();
+    LocalDate today = LocalDate.now();
 
-      if(request.getStartsAt().isBefore(today)) {
-          throw new GeneralException(ErrorStatus.INVALID_START_DATE);
-      }
+    if (request.getStartsAt().isBefore(today)) {
+      throw new GeneralException(ErrorStatus.INVALID_START_DATE);
+    }
 
-      if(request.getEndsAt().isBefore(request.getStartsAt())) {
-          throw new GeneralException(ErrorStatus.INVALID_END_DATE);
-      }
+    if (request.getEndsAt().isBefore(request.getStartsAt())) {
+      throw new GeneralException(ErrorStatus.INVALID_END_DATE);
+    }
 
-    HotDeals hotDeal = HotDeals.builder()
-        .title(request.getTitle())
-        .description(request.getDescription())
-        .startsAt(request.getStartsAt().atStartOfDay())
-        .endsAt(request.getEndsAt().atTime(23, 59, 59))
-        .status("SCHEDULED") // TODO: 날짜에 따라 자동으로 상태 결정하는 로직 필요 (예: 현재 날짜가 시작일 이전이면 SCHEDULED, 시작일 이후면 ACTIVE, 종료일 이후면 EXPIRED)
-        .createdBy(1) // TODO: 실제 로그인한 관리자 ID로 변경 필요
-        .build();
+    HotDeals hotDeal =
+        HotDeals.builder()
+            .title(request.getTitle())
+            .description(request.getDescription())
+            .startsAt(request.getStartsAt().atStartOfDay())
+            .endsAt(request.getEndsAt().atTime(23, 59, 59))
+            .status(
+                "SCHEDULED") // TODO: 날짜에 따라 자동으로 상태 결정하는 로직 필요 (예: 현재 날짜가 시작일 이전이면 SCHEDULED, 시작일
+            // 이후면 ACTIVE, 종료일 이후면 EXPIRED)
+            .createdBy(1) // TODO: 실제 로그인한 관리자 ID로 변경 필요
+            .build();
 
     adminHotDealMapper.insertHotDeal(hotDeal);
     int hotDealId = hotDeal.getId();
@@ -57,12 +59,13 @@ public class AdminHotDealService {
       int calculatedPrice = (int) (item.getOriginalPrice() * discountMultiplier);
       int finalHotDealPrice = (int) (Math.round(calculatedPrice / 10.0) * 10); // 10원 단위 반올림
 
-      HotDealProducts child = HotDealProducts.builder()
-          .hotDealId(hotDealId)
-          .productOptionId(item.getProductOptionId())
-          .originalPrice(item.getOriginalPrice())
-          .hotDealPrice(finalHotDealPrice)
-          .build();
+      HotDealProducts child =
+          HotDealProducts.builder()
+              .hotDealId(hotDealId)
+              .productOptionId(item.getProductOptionId())
+              .originalPrice(item.getOriginalPrice())
+              .hotDealPrice(finalHotDealPrice)
+              .build();
 
       adminHotDealMapper.insertHotDealProduct(child);
     }
