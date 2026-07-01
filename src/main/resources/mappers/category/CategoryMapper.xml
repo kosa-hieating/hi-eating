@@ -4,7 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.or.hieating.category.mapper.CategoryMapper">
-  <select id="findCategories" resultType="CategoryResponseDto">
+  <select id="findCategories" resultType="CategoryMenuResponseDto">
     SELECT
       c.id AS id,
       c.name AS name,
@@ -15,7 +15,7 @@
     ORDER BY c.id
   </select>
 
-  <select id="findCategoryById" resultType="CategoryResponseDto">
+  <select id="findCategoryById" resultType="CategoryMenuResponseDto">
     SELECT
       c.id AS id,
       c.name AS name,

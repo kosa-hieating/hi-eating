@@ -3,7 +3,7 @@ package kr.or.hieating.category.dto;
 import lombok.Data;
 
 @Data
-public class CategoryResponseDto {
+public class CategoryMenuResponseDto {
 
   private Long id;
   private String name;

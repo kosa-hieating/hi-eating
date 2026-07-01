@@ -1,7 +1,7 @@
 package kr.or.hieating.product.controller;
 
 import java.util.List;
-import kr.or.hieating.category.dto.CategoryResponseDto;
+import kr.or.hieating.category.dto.CategoryMenuResponseDto;
 import kr.or.hieating.category.service.CategoryService;
 import kr.or.hieating.product.domain.ProductDetail;
 import kr.or.hieating.product.dto.ProductListPageResponseDto;
@@ -55,8 +55,8 @@ public class ProductController {
     ProductListSearchCondition condition =
         new ProductListSearchCondition(categoryId, minPrice, maxPrice, minDiscountRate, sort, page);
     ProductListPageResponseDto productPage = productService.findProductsByCategory(condition);
-    CategoryResponseDto selectedCategory = categoryService.findCategoryById(categoryId);
-    List<CategoryResponseDto> categories = categoryService.findCategories();
+    CategoryMenuResponseDto selectedCategory = categoryService.findCategoryById(categoryId);
+    List<CategoryMenuResponseDto> categories = categoryService.findCategories();
 
     model.addAttribute("contentTemplate", "product/list");
     model.addAttribute("contentFragment", "content");
