@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import kr.or.hieating.product.domain.ProductDetail;
 import kr.or.hieating.product.domain.ProductOption;
-import kr.or.hieating.product.dto.ProductDetailRowDto;
 import kr.or.hieating.product.dto.MostPurchasedProductResponseDto;
+import kr.or.hieating.product.dto.ProductDetailRowDto;
 import kr.or.hieating.product.mapper.ProductMapper;
 import kr.or.hieating.review.domain.ReviewSummary;
 import kr.or.hieating.utils.ImageUrlResolver;
@@ -25,8 +25,7 @@ public class ProductService {
     List<MostPurchasedProductResponseDto> products = productMapper.findMostPurchasedProducts();
     products.forEach(
         product ->
-            product.setPictureLocation(
-                imageUrlResolver.resolve(product.getPictureLocation())));
+            product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation())));
     return products;
   }
 

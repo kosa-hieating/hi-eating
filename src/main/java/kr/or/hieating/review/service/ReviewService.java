@@ -22,13 +22,10 @@ public class ReviewService {
     int offset = (normalizedPage - 1) * size;
 
     List<ProductReviewResponseDto> reviews =
-        totalCount == 0
-            ? List.of()
-            : reviewMapper.findProductReviews(productId, offset, size);
+        totalCount == 0 ? List.of() : reviewMapper.findProductReviews(productId, offset, size);
     reviews.forEach(review -> review.setImgSrc(imageUrlResolver.resolve(review.getImgSrc())));
 
-    return new ProductReviewPageResponseDto(
-        reviews, normalizedPage, size, totalCount, totalPages);
+    return new ProductReviewPageResponseDto(reviews, normalizedPage, size, totalCount, totalPages);
   }
 
   private int normalizePage(int page, int totalPages) {

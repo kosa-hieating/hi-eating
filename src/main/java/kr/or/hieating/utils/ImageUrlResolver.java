@@ -35,8 +35,7 @@ public class ImageUrlResolver {
     }
 
     String trimmedServerIp = serverIp.trim();
-    String baseUrl =
-        isAbsoluteUrl(trimmedServerIp) ? trimmedServerIp : "http://" + trimmedServerIp;
+    String baseUrl = isAbsoluteUrl(trimmedServerIp) ? trimmedServerIp : "http://" + trimmedServerIp;
 
     while (baseUrl.endsWith("/")) {
       baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
