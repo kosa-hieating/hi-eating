@@ -30,8 +30,7 @@ public class HotDealService {
     List<ActiveHotDealResponseDto> hotDeals = hotDealMapper.findActiveHotDeals();
     hotDeals.forEach(
         hotDeal ->
-            hotDeal.setHeroImageLocation(
-                imageUrlResolver.resolve(hotDeal.getHeroImageLocation())));
+            hotDeal.setHeroImageLocation(imageUrlResolver.resolve(hotDeal.getHeroImageLocation())));
     return hotDeals;
   }
 
