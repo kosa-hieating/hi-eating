@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
-
   private final ProductService productService;
 
   @GetMapping("/product/{id}")
