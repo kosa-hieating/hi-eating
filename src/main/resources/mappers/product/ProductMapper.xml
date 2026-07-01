@@ -100,11 +100,7 @@
       p.name AS product_name,
       p.price AS price,
     SUM(pc.quantity) AS total_quantity,
-    CASE
-      WHEN pp.picture_saved_location LIKE '/uploads/%'
-        THEN 'http://100.87.22.127' || pp.picture_saved_location
-      ELSE pp.picture_saved_location
-    END AS pictureLocation
+    pp.picture_saved_location AS pictureLocation
     FROM purchases pc
     JOIN product_options po
     ON pc.product_option_id = po.id
@@ -136,11 +132,7 @@
       NVL(deal_stat.discount_rate, 0) AS discountRate,
       p.view_count AS viewCount,
       NVL(purchase_stat.total_quantity, 0) AS totalQuantity,
-      CASE
-        WHEN pp.picture_saved_location LIKE '/uploads/%'
-          THEN 'http://100.87.22.127' || pp.picture_saved_location
-        ELSE pp.picture_saved_location
-      END AS pictureLocation
+      pp.picture_saved_location AS pictureLocation
     <include refid="productListBase" />
     <choose>
       <when test="sort == 'latest'">

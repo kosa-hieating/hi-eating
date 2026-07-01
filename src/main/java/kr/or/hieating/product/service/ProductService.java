@@ -69,6 +69,9 @@ public class ProductService {
     int totalCount = productMapper.countProductsByCategory(condition);
     int totalPages = Math.max((int) Math.ceil((double) totalCount / condition.getSize()), 1);
     List<ProductListItemResponseDto> products = productMapper.findProductsByCategory(condition);
+    products.forEach(
+        product ->
+            product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation())));
 
     return new ProductListPageResponseDto(
         products, condition.getPage(), condition.getSize(), totalCount, totalPages);

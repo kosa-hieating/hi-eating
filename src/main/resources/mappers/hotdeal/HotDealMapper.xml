@@ -11,11 +11,7 @@
       hp.product_option_id AS productOptionId,
       h.title AS hotDealTitle,
       p.name AS productName,
-      CASE
-        WHEN pp.picture_saved_location LIKE '/uploads/%'
-          THEN 'http://100.87.22.127' || pp.picture_saved_location
-        ELSE pp.picture_saved_location
-      END AS pictureLocation,
+      pp.picture_saved_location AS pictureLocation,
       hp.original_price AS originalPrice,
       hp.hot_deal_price AS hotDealPrice,
       FLOOR((hp.original_price - hp.hot_deal_price) / hp.original_price * 100) AS discountRate,
