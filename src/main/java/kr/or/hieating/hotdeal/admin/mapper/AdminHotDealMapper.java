@@ -14,4 +14,9 @@ public interface AdminHotDealMapper {
   void insertHotDeal(HotDeals hotDeal);
 
   void insertHotDealProduct(HotDealProducts hotDealProduct);
+
+  void updateHotDeal(HotDeals hotDeal);
+
+  // 특정 핫딜에 연동된 상품들 삭제 (초기화)
+  void deleteHotDealProductsByHotDealId(int hotDealId);
 }

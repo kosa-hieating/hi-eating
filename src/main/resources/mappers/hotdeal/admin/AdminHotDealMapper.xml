@@ -29,4 +29,19 @@
         INSERT INTO hot_deal_products (hot_deal_id, product_option_id, original_price, hot_deal_price)
         VALUES (#{hotDealId}, #{productOptionId}, #{originalPrice}, #{hotDealPrice})
     </insert>
+
+    <update id="updateHotDeal">
+        UPDATE hot_deals
+        SET title = #{title},
+            description = #{description},
+            starts_at = #{startsAt},
+            ends_at = #{endsAt},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteHotDealProductsByHotDealId">
+        DELETE FROM hot_deal_products
+        WHERE hot_deal_id = #{hotDealId}
+    </delete>
 </mapper>
