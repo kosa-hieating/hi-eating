@@ -90,13 +90,14 @@
 
         <section aria-labelledby = "product-reviews-tab"
                  class = "tab-pane fade review-list"
+                 th:data-review-api-url = "@{/api/products/{productId}/reviews(productId=${product.id})}"
                  id = "product-reviews"
                  role = "tabpanel"
                  tabindex = "0">
           <div class = "review-tab-header d-flex align-items-center justify-content-between gap-3">
             <h2 class = "mb-0">
               리뷰
-              <span th:text = "${product.reviewSummary.formattedReviewCount()}"></span>
+              <span id = "reviewCount" th:text = "${product.reviewSummary.formattedReviewCount()}"></span>
             </h2>
             <a class = "review-write-link d-inline-flex align-items-center gap-2"
                th:href = "@{/review/new}">
@@ -105,22 +106,15 @@
               <i aria-hidden = "true" class = "bi bi-chevron-right"></i>
             </a>
           </div>
-          <article class = "review-item" th:each = "review : ${reviews}">
-            <div
-              class = "review-meta d-flex flex-wrap align-items-center justify-content-between gap-2">
-              <time th:datetime = "${review.createdAt}"
-                    th:text = "${review.formattedCreatedAt()}"></time>
-              <span class = "review-stars" th:text = "${review.starText()}"></span>
-            </div>
-            <p class = "review-content mb-0 mt-3" th:text = "${review.content}"></p>
-            <img class = "review-image mt-3" th:alt = "${review.content}"
-                 th:if = "${review.imgSrc != null}" th:src = "${review.imgSrc}">
-          </article>
+          <div class = "review-loading" id = "reviewLoading">리뷰를 불러오는 중입니다.</div>
+          <div id = "reviewList"></div>
+          <p class = "review-empty mb-0 d-none" id = "reviewEmpty">아직 작성된 리뷰가 없습니다.</p>
+          <p class = "review-error mb-0 d-none" id = "reviewError">리뷰를 불러오지 못했습니다.</p>
+          <nav aria-label = "리뷰 페이지" class = "review-pagination d-none" id = "reviewPagination"></nav>
         </section>
       </div>
     </section>
   </div>
-  <script th:src = "@{/js/product-detail.js}"></script>
 </section>
 </body>
 </html>
