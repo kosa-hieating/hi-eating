@@ -1,7 +1,11 @@
 package kr.or.hieating.global.apiPayload.code;
 
-public interface BaseCode {
-  ReasonDTO getReason();
+/**
+ * 공통 코드 인터페이스
+ */
 
-  ReasonDTO getReasonHttpStatus();
+public interface BaseCode {
+    ReasonDTO getReason();
+
+    ReasonDTO getReasonHttpStatus();
 }

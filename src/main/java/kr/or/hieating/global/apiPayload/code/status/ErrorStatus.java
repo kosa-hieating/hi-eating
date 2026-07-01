@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 공통 에러 코드
+ */
+
 @Getter
 @AllArgsConstructor
 public enum ErrorStatus implements BaseErrorCode {

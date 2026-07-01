@@ -4,6 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 에러 응답 DTO
+ */
+
 @Getter
 @Builder
 public class ErrorReasonDTO {
