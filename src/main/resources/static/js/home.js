@@ -17,16 +17,6 @@
     revealSections.forEach((section) => section.classList.add("is-visible"));
   }
 
-  document.querySelectorAll("img[data-fallback-src]").forEach((image) => {
-    image.addEventListener("error", () => {
-      if (image.src.endsWith(image.dataset.fallbackSrc)) {
-        return;
-      }
-
-      image.src = image.dataset.fallbackSrc;
-    }, { once: true });
-  });
-
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
     const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");

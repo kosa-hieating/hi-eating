@@ -14,8 +14,7 @@
               th:each="promotion : ${promotions}"
                th:href="${promotion.link != null ? promotion.link : '#'}">
               <img th:src="${#strings.isEmpty(promotion.imgSrc) ? '/images/logo-hi-eating.png' : promotion.imgSrc}"
-                   th:alt="${promotion.title}"
-                   data-fallback-src="/images/logo-hi-eating.png">
+                   th:alt="${promotion.title}">
             </a>
           </div>
         </div>
