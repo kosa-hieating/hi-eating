@@ -26,6 +26,10 @@ public class AdminHotDealController {
         
         model.addAttribute("hotDeals", hotDeals);
         model.addAttribute("categories", categories);
-        return "admin/hotdeals/manage";
+        model.addAttribute("contentTemplate", "admin/hotdeals/manage");
+        model.addAttribute("contentFragment", "content");
+        model.addAttribute("pageStylesheet", "admin-hotdeal");
+        model.addAttribute("pageScript", "admin-hotdeal");
+        return "layout/admin-base";
     }
 }
