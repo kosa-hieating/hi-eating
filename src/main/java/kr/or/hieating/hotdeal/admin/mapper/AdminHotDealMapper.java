@@ -1,11 +1,13 @@
 package kr.or.hieating.hotdeal.admin.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kr.or.hieating.hotdeal.admin.dto.HotDealDetailResponseDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO;
 import kr.or.hieating.hotdeal.domain.HotDealProducts;
 import kr.or.hieating.hotdeal.domain.HotDeals;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface AdminHotDealMapper {
@@ -24,4 +26,6 @@ public interface AdminHotDealMapper {
   HotDeals selectHotDealById(int id);
 
   List<HotDealDetailResponseDTO.ProductItemDTO> selectHotDealProductsDetailByHotDealId(int hotDealId);
+
+  void softDeleteHotDeal(@Param("id") int id);
 }

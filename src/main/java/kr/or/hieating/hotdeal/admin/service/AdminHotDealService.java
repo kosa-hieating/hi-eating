@@ -152,4 +152,13 @@ public class AdminHotDealService {
         .products(products)
         .build();
   }
+
+  @Transactional
+  public void deleteHotDeal(int id) {
+    HotDeals hotDeal = adminHotDealMapper.selectHotDealById(id);
+    if (hotDeal == null) {
+      throw new GeneralException(ErrorStatus.HOT_DEAL_NOT_FOUND);
+    }
+    adminHotDealMapper.softDeleteHotDeal(id);
+  }
 }

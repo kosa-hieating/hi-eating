@@ -41,4 +41,10 @@ public class AdminHotDealRestController {
     HotDealDetailResponseDTO detail = adminHotDealService.getHotDealDetail(id);
     return ApiResponse.onSuccess(detail);
   }
+
+  @DeleteMapping("/{id}")
+  public ApiResponse<Void> deleteHotDeal(@PathVariable("id") int id) {
+    adminHotDealService.deleteHotDeal(id);
+    return ApiResponse.onSuccess(null);
+  }
 }

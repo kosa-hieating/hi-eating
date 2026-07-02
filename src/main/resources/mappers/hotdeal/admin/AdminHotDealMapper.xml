@@ -64,4 +64,10 @@
         WHERE hp.hot_deal_id = #{hotDealId}
     </select>
 
+    <update id="softDeleteHotDeal">
+        UPDATE hot_deals
+        SET status = 'DELETED',
+        deleted_at = SYSTIMESTAMP
+        WHERE id = #{id}
+    </update>
 </mapper>
