@@ -50,7 +50,13 @@ public class ProductController {
       Model model) {
     ProductListSearchCondition condition =
         new ProductListSearchCondition(
-            categoryId, userResolver.currentUserId(), minPrice, maxPrice, minDiscountRate, sort, page);
+            categoryId,
+            userResolver.currentUserId(),
+            minPrice,
+            maxPrice,
+            minDiscountRate,
+            sort,
+            page);
     ProductListPageResponseDto productPage = productService.findProductsByCategory(condition);
     CategoryMenuResponseDto selectedCategory = categoryService.findCategoryById(categoryId);
     List<CategoryMenuResponseDto> categories = categoryService.findCategories();
