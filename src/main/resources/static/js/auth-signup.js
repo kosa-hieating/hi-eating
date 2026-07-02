@@ -1,13 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const signupForm = document.querySelector(".signup-form");
-  const emailLocalInput = document.getElementById("signup-email-local");
-  const emailDomainSelect = document.getElementById("signup-email-domain");
-  const emailCheckButton = document.getElementById("signup-email-check-button");
-  const passwordInput = document.getElementById("signup-password");
-  const passwordConfirmInput = document.getElementById("signup-password-confirm");
-  const modalElement = document.getElementById("signup-email-check-modal");
-  const modalTitle = document.getElementById("signup-email-check-modal-title");
-  const modalMessage = document.getElementById("signup-email-check-modal-message");
+document.addEventListener('DOMContentLoaded', () => {
+  const signupForm = document.querySelector('.signup-form');
+  const emailLocalInput = document.getElementById('signup-email-local');
+  const emailDomainSelect = document.getElementById('signup-email-domain');
+  const emailCheckButton = document.getElementById('signup-email-check-button');
+  const passwordInput = document.getElementById('signup-password');
+  const passwordConfirmInput = document.getElementById('signup-password-confirm');
+  const modalElement = document.getElementById('signup-email-check-modal');
+  const modalTitle = document.getElementById('signup-email-check-modal-title');
+  const modalMessage = document.getElementById('signup-email-check-modal-message');
 
   if (!signupForm || !modalElement || !modalMessage) {
     return;
@@ -48,12 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${emailLocal}@${emailDomain}`;
   };
 
-  emailCheckButton?.addEventListener("click", async () => {
+  emailCheckButton?.addEventListener('click', async () => {
     const email = buildEmail();
     const checkUrl = emailCheckButton.dataset.checkUrl;
 
     if (!email) {
-      showModal("이메일 중복확인", "이메일을 입력해 주세요.", "is-danger");
+      showModal('이메일 중복확인', '이메일을 입력해 주세요.', 'is-danger');
       emailLocalInput.focus();
       return;
     }
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (passwordInput.value !== passwordConfirmInput.value) {
       event.preventDefault();
-      showModal("비밀번호 확인", "비밀번호가 일치하지 않습니다.", "is-danger");
+      showModal('비밀번호 확인', '비밀번호가 일치하지 않습니다.', 'is-danger');
       passwordConfirmInput.focus();
     }
   });
