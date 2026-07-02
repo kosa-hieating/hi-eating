@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper">
+
+    <select id="selectManageableHotDeals" resultType="kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO">
+        SELECT 
+            h.id AS id,
+            h.title AS title,
+            h.starts_at AS startsAt,
+            h.ends_at AS endsAt,
+            h.status AS status,
+            COUNT(hp.product_option_id) AS productCount,
+            COALESCE(SUM(hp.hot_deal_price), 0) AS discountPrice
+        FROM hot_deals h
+        LEFT JOIN hot_deal_products hp ON h.id = hp.hot_deal_id
+        WHERE h.deleted_at IS NULL
+          AND h.status IN ('ACTIVE', 'SCHEDULED')
+        GROUP BY h.id, h.title, h.starts_at, h.ends_at, h.status
+        ORDER BY h.starts_at DESC
+    </select>
+
+    <insert id="insertHotDeal" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO hot_deals (created_by, title, description, starts_at, ends_at, status)
+        VALUES (#{createdBy}, #{title}, #{description}, #{startsAt}, #{endsAt}, #{status})
+    </insert>
+
+    <insert id="insertHotDealProduct">
+        INSERT INTO hot_deal_products (hot_deal_id, product_option_id, original_price, hot_deal_price)
+        VALUES (#{hotDealId}, #{productOptionId}, #{originalPrice}, #{hotDealPrice})
+    </insert>
+</mapper>

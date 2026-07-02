@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.hieating.product.admin.mapper.AdminProductMapper">
+
+    <select id="searchProductsForHotDeal" resultType="kr.or.hieating.product.admin.dto.ProductSearchResponseDTO">
+        SELECT 
+            p.id AS productId,
+            o.id AS productOptionId,
+            p.name AS name,
+            c.name AS categoryName,
+            p.price AS price,
+            o.stock AS stock,
+            o.expire_date AS expireDate
+        FROM products p
+        INNER JOIN product_options o ON p.id = o.product_id
+        LEFT JOIN categories c ON p.category_id = c.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND p.name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+        </where>
+        <choose>
+            <when test="sortBy == 'EXPIRE_ASC'">
+                ORDER BY o.expire_date ASC
+            </when>
+            <when test="sortBy == 'STOCK_ASC'">
+                ORDER BY o.stock ASC, o.expire_date ASC
+            </when>
+            <otherwise>
+                ORDER BY p.id DESC
+            </otherwise>
+        </choose>
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="countProductsForHotDeal" resultType="int">
+        SELECT COUNT(*)
+        FROM products p
+        INNER JOIN product_options o ON p.id = o.product_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND p.name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllCategories" resultType="kr.or.hieating.product.admin.dto.CategoryResponseDTO">
+        SELECT DISTINCT c.id, c.name
+        FROM categories c
+        INNER JOIN products p ON c.id = p.category_id
+    </select>
+</mapper>
