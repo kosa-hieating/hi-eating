@@ -116,7 +116,8 @@ public class AdminHotDealService {
         adminHotDealMapper.selectHotDealProductsDetailByHotDealId(id);
 
     // 상품 리스트에 변경사항이 있는지 확인
-    boolean productsUnchanged = isProductListUnchanged(existingProducts, request.getProducts(), request.getDiscountRate());
+    boolean productsUnchanged =
+        isProductListUnchanged(existingProducts, request.getProducts(), request.getDiscountRate());
 
     // 핫딜에 포함된 상품들에 대한 변경사항이 있을 때, 삭제 후 재생성 진행
     if (!productsUnchanged) {
@@ -161,7 +162,8 @@ public class AdminHotDealService {
                     Function.identity()));
 
     for (HotDealUpdateRequestDTO.ProductItemDTO reqItem : requested) {
-      HotDealDetailResponseDTO.ProductItemDTO extItem = existingMap.get(reqItem.getProductOptionId());
+      HotDealDetailResponseDTO.ProductItemDTO extItem =
+          existingMap.get(reqItem.getProductOptionId());
 
       // 기존 DB에 없는 상품이 요청에 포함되어 있는 경우
       if (extItem == null) {
