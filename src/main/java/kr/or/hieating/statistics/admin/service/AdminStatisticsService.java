@@ -1,13 +1,22 @@
 package kr.or.hieating.statistics.admin.service;
 
+import static kr.or.hieating.statistics.admin.utils.StatisticsChartUtils.ageSalesChart;
+import static kr.or.hieating.statistics.admin.utils.StatisticsChartUtils.categorySalesChart;
+import static kr.or.hieating.statistics.admin.utils.StatisticsChartUtils.genderSalesChart;
+import static kr.or.hieating.statistics.admin.utils.StatisticsChartUtils.priceSalesChart;
 import static kr.or.hieating.statistics.admin.utils.StatisticsComparisonFormatter.formatDifferenceComparison;
 import static kr.or.hieating.statistics.admin.utils.StatisticsComparisonFormatter.formatPercentComparison;
+import static kr.or.hieating.statistics.admin.utils.StatisticsDateRangeUtils.defaultChartStartDate;
 import static kr.or.hieating.statistics.admin.utils.StatisticsDateRangeUtils.previousMonthComparableEndDate;
 import static kr.or.hieating.statistics.admin.utils.StatisticsNumberUtils.defaultZero;
 
 import java.time.LocalDate;
 import java.util.List;
+import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
+import kr.or.hieating.global.apiPayload.exception.GeneralException;
+import kr.or.hieating.statistics.admin.dto.AdminStatisticsChartResponseDTO;
 import kr.or.hieating.statistics.admin.dto.AdminStatisticsMetricDTO;
+import kr.or.hieating.statistics.admin.dto.AdminStatisticsPurchaseRowDTO;
 import kr.or.hieating.statistics.admin.dto.AdminStatisticsSummaryDTO;
 import kr.or.hieating.statistics.admin.mapper.AdminStatisticsMapper;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +76,27 @@ public class AdminStatisticsService {
                 "bi-wallet2")),
         currentMonthStart,
         today);
+  }
+
+  public AdminStatisticsChartResponseDTO getChartStatistics(
+      LocalDate startDate, LocalDate endDate) {
+    LocalDate today = LocalDate.now();
+    LocalDate resolvedStartDate = startDate == null ? defaultChartStartDate(today) : startDate;
+    LocalDate resolvedEndDate = endDate == null ? today : endDate;
+    if (resolvedStartDate.isAfter(resolvedEndDate)) {
+      throw new GeneralException(ErrorStatus.INVALID_STATISTICS_DATE_RANGE);
+    }
+
+    List<AdminStatisticsPurchaseRowDTO> purchases =
+        adminStatisticsMapper.findPurchasesForStatistics(resolvedStartDate, resolvedEndDate);
+
+    return new AdminStatisticsChartResponseDTO(
+        resolvedStartDate,
+        resolvedEndDate,
+        ageSalesChart(purchases, resolvedEndDate),
+        categorySalesChart(purchases),
+        genderSalesChart(purchases),
+        priceSalesChart(purchases));
   }
 
   private long sumPurchaseAmount(LocalDate startDate, LocalDate endDate) {
