@@ -6,8 +6,7 @@
 }
 
 body {
-  background: var(--statistics-bg);
-  color: var(--statistics-text);
+  font-family: var(--font-family-base, 'Inter', 'Noto Sans KR', sans-serif);
 }
 
 .statistics-main {
