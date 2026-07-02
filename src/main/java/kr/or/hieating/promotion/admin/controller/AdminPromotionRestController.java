@@ -36,8 +36,12 @@ public class AdminPromotionRestController {
       @RequestParam("file") MultipartFile file,
       @RequestParam("title") @NotBlank(message = "프로모션 제목은 필수 입력값입니다.") String title,
       @RequestParam("link") String link,
-      @RequestParam("startsAt") @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startsAt,
-      @RequestParam("endsAt") @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endsAt) {
+      @RequestParam("startsAt")
+          @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd")
+          LocalDate startsAt,
+      @RequestParam("endsAt")
+          @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd")
+          LocalDate endsAt) {
     if (startsAt.isAfter(endsAt)) {
       throw new GeneralException(ErrorStatus.INVALID_PROMOTION_DATE);
     }
@@ -65,8 +69,12 @@ public class AdminPromotionRestController {
       @RequestParam(value = "file", required = false) MultipartFile file,
       @RequestParam("title") @NotBlank(message = "프로모션 제목은 필수 입력값입니다.") String title,
       @RequestParam("link") String link,
-      @RequestParam("startsAt") @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startsAt,
-      @RequestParam("endsAt") @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endsAt) {
+      @RequestParam("startsAt")
+          @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd")
+          LocalDate startsAt,
+      @RequestParam("endsAt")
+          @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @DateTimeFormat(pattern = "yyyy.MM.dd")
+          LocalDate endsAt) {
     if (startsAt.isAfter(endsAt)) {
       throw new GeneralException(ErrorStatus.INVALID_PROMOTION_DATE);
     }

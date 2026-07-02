@@ -38,7 +38,8 @@ public class AdminPromotionService {
             .title(title)
             .imgSrc(imgSrc)
             .link(link)
-            // display_order는 insert SQL 내 서브쿼리 SELECT COALESCE(MAX(display_order), 0) + 1000 를 통해 원자적으로 계산
+            // display_order는 insert SQL 내 서브쿼리 SELECT COALESCE(MAX(display_order), 0) + 1000 를 통해
+            // 원자적으로 계산
             .startsAt(startsAt.atStartOfDay())
             .endsAt(endsAt.atTime(23, 59, 59))
             .build();
@@ -95,8 +96,8 @@ public class AdminPromotionService {
   }
 
   /**
-   * 이미지 업로드를 공통 처리하고, 확장자 및 Content-Type을 화이트리스트로 검증합니다.
-   * 경로 조작(Path Traversal) 방지를 위해 고유 UUID 파일명만 사용합니다.
+   * 이미지 업로드를 공통 처리하고, 확장자 및 Content-Type을 화이트리스트로 검증합니다. 경로 조작(Path Traversal) 방지를 위해 고유 UUID 파일명만
+   * 사용합니다.
    */
   private String uploadImage(MultipartFile file) {
     if (file == null || file.isEmpty()) {
@@ -149,9 +150,7 @@ public class AdminPromotionService {
     }
   }
 
-  /**
-   * 로컬 및 빌드 디렉토리의 물리 이미지 파일을 삭제하는 공통 헬퍼 메서드입니다.
-   */
+  /** 로컬 및 빌드 디렉토리의 물리 이미지 파일을 삭제하는 공통 헬퍼 메서드입니다. */
   private void deletePhysicalFile(String imgSrc) {
     if (imgSrc == null || imgSrc.isBlank()) {
       return;

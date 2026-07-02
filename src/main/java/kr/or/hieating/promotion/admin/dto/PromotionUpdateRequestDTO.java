@@ -19,21 +19,17 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 public class PromotionUpdateRequestDTO {
 
-  @NotBlank(message = "프로모션 제목은 필수 입력값입니다.")
-  private String title;
-  
+  @NotBlank(message = "프로모션 제목은 필수 입력값입니다.") private String title;
+
   private String link;
 
-  @NotNull(message = "프로모션 시작일은 필수 입력값입니다.")
-  @JsonFormat(pattern = "yyyy.MM.dd")
+  @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @JsonFormat(pattern = "yyyy.MM.dd")
   private LocalDate startsAt;
 
-  @NotNull(message = "프로모션 종료일은 필수 입력값입니다.")
-  @JsonFormat(pattern = "yyyy.MM.dd")
+  @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @JsonFormat(pattern = "yyyy.MM.dd")
   private LocalDate endsAt;
 
-  @AssertTrue(message = "프로모션 시작일은 종료일보다 이전이거나 같아야 합니다.")
-  public boolean isPeriodValid() {
+  @AssertTrue(message = "프로모션 시작일은 종료일보다 이전이거나 같아야 합니다.") public boolean isPeriodValid() {
     if (startsAt == null || endsAt == null) {
       return true;
     }
