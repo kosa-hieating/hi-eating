@@ -114,8 +114,10 @@ function resetSearch() {
     document.getElementById('dealDescription').value = '';
     document.getElementById('startsAt').value = '';
     document.getElementById('endsAt').value = '';
-    document.getElementById('hotDealPrice').value = '';
-    document.getElementById('exposureSwitch').checked = true;
+    const discountInput = document.getElementById('discountRate');
+    if (discountInput) {
+        discountInput.value = '';
+    }
     if (document.getElementById('charCount')) {
         document.getElementById('charCount').innerText = '0';
     }
@@ -320,8 +322,6 @@ function updateSelectedBox() {
             왼쪽 목록에서 핫딜에 지정할 상품을 선택해 주세요.
           </div>
         `;
-        const priceInput = document.getElementById('hotDealPrice');
-        if (priceInput) priceInput.value = '';
         return;
     }
 
@@ -332,12 +332,6 @@ function updateSelectedBox() {
         return item.name;
     }).join('<br>');
 
-    // 입력 필드가 비어있거나 0인 경우에만 자동으로 권장가(70%)를 초기 셋팅
-    const priceInput = document.getElementById('hotDealPrice');
-    if (priceInput && (!priceInput.value || priceInput.value === '0')) {
-        const defaultHotDealPrice = Math.floor(totalOriginalPrice * 0.7);
-        priceInput.value = defaultHotDealPrice;
-    }
 
     box.innerHTML = `
       <div class="selected-header">
