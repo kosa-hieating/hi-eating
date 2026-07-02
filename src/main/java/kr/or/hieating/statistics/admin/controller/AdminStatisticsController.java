@@ -4,24 +4,32 @@ import java.time.LocalDate;
 import java.util.List;
 import kr.or.hieating.statistics.admin.dto.AdminSalesChartDTO;
 import kr.or.hieating.statistics.admin.dto.AdminSalesChartPointDTO;
-import kr.or.hieating.statistics.admin.dto.AdminStatisticsMetricDTO;
+import kr.or.hieating.statistics.admin.dto.AdminStatisticsSummaryDTO;
+import kr.or.hieating.statistics.admin.service.AdminStatisticsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/admin/statistics")
 public class AdminStatisticsController {
 
   private static final String CHART_JS_CDN =
       "https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js";
 
+  private final AdminStatisticsService adminStatisticsService;
+
   @GetMapping
   public String getStatisticsPage(Model model) {
-    model.addAttribute("metrics", metrics());
-    model.addAttribute("periodStart", LocalDate.of(2026, 6, 1));
-    model.addAttribute("periodEnd", LocalDate.of(2026, 7, 1));
+    AdminStatisticsSummaryDTO summary =
+        adminStatisticsService.getStatisticsSummary(LocalDate.now());
+
+    model.addAttribute("metrics", summary.metrics());
+    model.addAttribute("periodStart", summary.periodStart());
+    model.addAttribute("periodEnd", summary.periodEnd());
     model.addAttribute("ageSalesChart", ageSalesChart());
     model.addAttribute("categorySalesChart", categorySalesChart());
     model.addAttribute("genderSalesChart", genderSalesChart());
@@ -32,15 +40,6 @@ public class AdminStatisticsController {
     model.addAttribute("pageVendorScript", CHART_JS_CDN);
     model.addAttribute("pageScript", "admin-statistics");
     return "layout/admin-base";
-  }
-
-  private List<AdminStatisticsMetricDTO> metrics() {
-    return List.of(
-        new AdminStatisticsMetricDTO("일일 매출", 128000L, "원", "전일 대비 ▲ 12.5%", "bi-stack"),
-        new AdminStatisticsMetricDTO("오늘 총 주문", 42L, "건", "전일 대비 ▲ 8건", "bi-bag"),
-        new AdminStatisticsMetricDTO(
-            "한달 매출", 1500000L, "원", "전월 대비 ▲ 120,000원", "bi-bar-chart-line"),
-        new AdminStatisticsMetricDTO("평균 주문 금액", 35714L, "원", "전일 대비 ▲ 2,345원", "bi-wallet2"));
   }
 
   private AdminSalesChartDTO ageSalesChart() {

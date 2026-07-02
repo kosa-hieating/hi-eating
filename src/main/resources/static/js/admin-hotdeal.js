@@ -3,184 +3,183 @@ let currentSort = 'EXPIRE_ASC';
 // 등록 폼 전송을 위한 선택한 상품 정보 추적
 let selectedProducts = [];
 
-
 let currentPage = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
-    searchProducts();
+  searchProducts();
 
-    // 핫딜 등록 폼 submit 이벤트 핸들러 등록
-    const hotDealForm = document.getElementById('hotDealForm');
-    if (hotDealForm) {
-        hotDealForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            if (selectedProducts.length === 0) {
-                alert('핫딜에 등록할 상품을 최소 하나 이상 선택해야 합니다.');
-                return;
-            }
-            
-            const title = document.getElementById('dealTitle').value;
-            const description = document.getElementById('dealDescription').value;
-            const startsAt = document.getElementById('startsAt').value;
-            const endsAt = document.getElementById('endsAt').value;
-            const discountRate = parseInt(document.getElementById('discountRate').value, 10);
-            
-            // 날짜 구분자 변환 (yyyy-MM-dd -> yyyy.MM.dd)
-            const formattedStartsAt = startsAt.replace(/-/g, '.');
-            const formattedEndsAt = endsAt.replace(/-/g, '.');
-            
-            // 상품 목록 DTO 매핑
-            const products = selectedProducts.map(p => ({
-                productOptionId: p.optionId,
-                originalPrice: p.price
-            }));
-            
-            const requestData = {
-                title,
-                description,
-                startsAt: formattedStartsAt,
-                endsAt: formattedEndsAt,
-                discountRate,
-                products
-            };
-            
-            fetch('/admin/hotdeals', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(res => res.json())
-            .then(response => {
-                if (response.isSuccess) {
-                    alert('핫딜이 성공적으로 등록되었습니다.');
-                    location.reload();
-                } else {
-                    alert('핫딜 등록에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
-                }
-            })
-            .catch(err => {
-                console.error('Error creating hotdeal:', err);
-                alert('서버와 통신하는 중 오류가 발생했습니다.');
-            });
+  // 핫딜 등록 폼 submit 이벤트 핸들러 등록
+  const hotDealForm = document.getElementById('hotDealForm');
+  if (hotDealForm) {
+    hotDealForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (selectedProducts.length === 0) {
+        alert('핫딜에 등록할 상품을 최소 하나 이상 선택해야 합니다.');
+        return;
+      }
+
+      const title = document.getElementById('dealTitle').value;
+      const description = document.getElementById('dealDescription').value;
+      const startsAt = document.getElementById('startsAt').value;
+      const endsAt = document.getElementById('endsAt').value;
+      const discountRate = parseInt(document.getElementById('discountRate').value, 10);
+
+      // 날짜 구분자 변환 (yyyy-MM-dd -> yyyy.MM.dd)
+      const formattedStartsAt = startsAt.replace(/-/g, '.');
+      const formattedEndsAt = endsAt.replace(/-/g, '.');
+
+      // 상품 목록 DTO 매핑
+      const products = selectedProducts.map((p) => ({
+        productOptionId: p.optionId,
+        originalPrice: p.price,
+      }));
+
+      const requestData = {
+        title,
+        description,
+        startsAt: formattedStartsAt,
+        endsAt: formattedEndsAt,
+        discountRate,
+        products,
+      };
+
+      fetch('/admin/hotdeals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.isSuccess) {
+            alert('핫딜이 성공적으로 등록되었습니다.');
+            location.reload();
+          } else {
+            alert('핫딜 등록에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
+          }
+        })
+        .catch((err) => {
+          console.error('Error creating hotdeal:', err);
+          alert('서버와 통신하는 중 오류가 발생했습니다.');
         });
-    }
+    });
+  }
 });
 
 function changeSort(sortType) {
-    currentSort = sortType;
-    document.getElementById('searchSort').value = sortType;
-    document.getElementById('btnSortExpire').classList.toggle('active', sortType === 'EXPIRE_ASC');
-    document.getElementById('btnSortStock').classList.toggle('active', sortType === 'STOCK_ASC');
-    searchProducts(true);
+  currentSort = sortType;
+  document.getElementById('searchSort').value = sortType;
+  document.getElementById('btnSortExpire').classList.toggle('active', sortType === 'EXPIRE_ASC');
+  document.getElementById('btnSortStock').classList.toggle('active', sortType === 'STOCK_ASC');
+  searchProducts(true);
 }
 
 // 셀렉트 박스 정렬 옵션 변경 시 조회 처리
 if (document.getElementById('searchSort')) {
-    document.getElementById('searchSort').addEventListener('change', (e) => {
-        changeSort(e.target.value);
-    });
+  document.getElementById('searchSort').addEventListener('change', (e) => {
+    changeSort(e.target.value);
+  });
 }
 
 function goToPage(pageNum) {
-    currentPage = pageNum;
-    searchProducts();
+  currentPage = pageNum;
+  searchProducts();
 }
 
 function resetSearch() {
-    // 왼쪽 검색 필터 초기화
-    document.getElementById('searchKeyword').value = '';
-    document.getElementById('searchCategory').value = '';
+  // 왼쪽 검색 필터 초기화
+  document.getElementById('searchKeyword').value = '';
+  document.getElementById('searchCategory').value = '';
 
-    // 오른쪽 등록 폼 입력 값 전체 초기화
-    document.getElementById('dealTitle').value = '';
-    document.getElementById('dealDescription').value = '';
-    document.getElementById('startsAt').value = '';
-    document.getElementById('endsAt').value = '';
-    document.getElementById('hotDealPrice').value = '';
-    document.getElementById('exposureSwitch').checked = true;
-    if (document.getElementById('charCount')) {
-        document.getElementById('charCount').innerText = '0';
-    }
+  // 오른쪽 등록 폼 입력 값 전체 초기화
+  document.getElementById('dealTitle').value = '';
+  document.getElementById('dealDescription').value = '';
+  document.getElementById('startsAt').value = '';
+  document.getElementById('endsAt').value = '';
+  document.getElementById('hotDealPrice').value = '';
+  document.getElementById('exposureSwitch').checked = true;
+  if (document.getElementById('charCount')) {
+    document.getElementById('charCount').innerText = '0';
+  }
 
-    // 선택 상품 배열 및 요약 영역 초기화
-    selectedProducts = [];
-    updateSelectedBox();
+  // 선택 상품 배열 및 요약 영역 초기화
+  selectedProducts = [];
+  updateSelectedBox();
 
-    // 화면에 체크되어 있는 체크박스 물리적으로 전부 해제
-    const checkboxes = document.querySelectorAll('.checkbox-custom');
-    checkboxes.forEach(cb => cb.checked = false);
+  // 화면에 체크되어 있는 체크박스 물리적으로 전부 해제
+  const checkboxes = document.querySelectorAll('.checkbox-custom');
+  checkboxes.forEach((cb) => (cb.checked = false));
 
-    changeSort('EXPIRE_ASC');
+  changeSort('EXPIRE_ASC');
 }
 
 function searchProducts(resetPage = false) {
-    if (resetPage) {
-        currentPage = 1;
-    }
+  if (resetPage) {
+    currentPage = 1;
+  }
 
-    const keyword = document.getElementById('searchKeyword').value;
-    const categoryId = document.getElementById('searchCategory').value;
-    const resultContainer = document.getElementById('productSearchResult');
-    const paginationContainer = document.getElementById('productPagination');
+  const keyword = document.getElementById('searchKeyword').value;
+  const categoryId = document.getElementById('searchCategory').value;
+  const resultContainer = document.getElementById('productSearchResult');
+  const paginationContainer = document.getElementById('productPagination');
 
-    if (!resultContainer) return;
+  if (!resultContainer) return;
 
-    resultContainer.innerHTML = `
+  resultContainer.innerHTML = `
       <div class="text-center py-5 text-muted">
         <div class="spinner-border text-danger spinner-border-sm mb-2" role="status"></div>
         <p style="font-size: 0.8rem;">상품 목록을 불러오는 중...</p>
       </div>
     `;
 
-    let url = `/admin/api/products?sortBy=${currentSort}&page=${currentPage}`;
-    if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
-    if (categoryId) url += `&categoryId=${categoryId}`;
+  let url = `/admin/api/products?sortBy=${currentSort}&page=${currentPage}`;
+  if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+  if (categoryId) url += `&categoryId=${categoryId}`;
 
-    fetch(url)
-        .then(res => res.json())
-        .then(response => {
-            if (response.isSuccess) {
-                const pageData = response.result;
-                const products = pageData.list;
-                const totalCount = pageData.totalCount;
-                const totalPages = pageData.totalPages;
+  fetch(url)
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.isSuccess) {
+        const pageData = response.result;
+        const products = pageData.list;
+        const totalCount = pageData.totalCount;
+        const totalPages = pageData.totalPages;
 
-                document.getElementById('totalCountDisplay').innerText = `${totalCount}개`;
+        document.getElementById('totalCountDisplay').innerText = `${totalCount}개`;
 
-                if (!products || products.length === 0) {
-                    resultContainer.innerHTML = `
+        if (!products || products.length === 0) {
+          resultContainer.innerHTML = `
                       <div class="text-center py-5 text-muted" style="font-size: 0.85rem;">
                         <i class="bi bi-database-exclamation fs-3 d-block mb-2"></i>
                         <p>검색 조건에 맞는 상품이 없습니다.</p>
                       </div>
                     `;
-                    paginationContainer.innerHTML = '';
-                    return;
-                }
+          paginationContainer.innerHTML = '';
+          return;
+        }
 
-                let html = '';
-                products.forEach(p => {
-                    // 유통기한 디데이(D-Day) 잔여 일수 계산
-                    let dDayStr = 'N/A';
-                    let isUrgent = false;
-                    if (p.expireDate) {
-                        const today = new Date();
-                        today.setHours(0,0,0,0);
-                        const exp = new Date(p.expireDate);
-                        exp.setHours(0,0,0,0);
-                        const diffTime = exp - today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        dDayStr = diffDays >= 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
-                        if (diffDays <= 7) isUrgent = true;
-                    }
+        let html = '';
+        products.forEach((p) => {
+          // 유통기한 디데이(D-Day) 잔여 일수 계산
+          let dDayStr = 'N/A';
+          let isUrgent = false;
+          if (p.expireDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const exp = new Date(p.expireDate);
+            exp.setHours(0, 0, 0, 0);
+            const diffTime = exp - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            dDayStr = diffDays >= 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
+            if (diffDays <= 7) isUrgent = true;
+          }
 
-                    const statusBadgeClass = p.status === '유통임박' ? 'badge-orange' : 'badge-gray';
-                    const isChecked = selectedProducts.some(item => item.optionId === p.productOptionId);
+          const statusBadgeClass = p.status === '유통임박' ? 'badge-orange' : 'badge-gray';
+          const isChecked = selectedProducts.some((item) => item.optionId === p.productOptionId);
 
-                    html += `
+          html += `
                       <div class="product-row">
                         <div class="product-info-cell">
                           <div class="product-icon-box" style="background-color: #f2f2f2; color: #888888;">
@@ -208,94 +207,94 @@ function searchProducts(resetPage = false) {
                         </div>
                       </div>
                     `;
-                });
-                resultContainer.innerHTML = html;
-                renderPagination(totalPages, pageData.currentPage);
-            } else {
-                resultContainer.innerHTML = `
+        });
+        resultContainer.innerHTML = html;
+        renderPagination(totalPages, pageData.currentPage);
+      } else {
+        resultContainer.innerHTML = `
                   <div class="alert alert-danger m-3" role="alert" style="font-size: 0.85rem;">
                     오류 발생: ${response.message}
                   </div>
                 `;
-                paginationContainer.innerHTML = '';
-            }
-        })
-        .catch(err => {
-            resultContainer.innerHTML = `
+        paginationContainer.innerHTML = '';
+      }
+    })
+    .catch((err) => {
+      resultContainer.innerHTML = `
               <div class="alert alert-danger m-3" role="alert" style="font-size: 0.85rem;">
                 서버 통신 실패: ${err.message}
               </div>
             `;
-            paginationContainer.innerHTML = '';
-        });
+      paginationContainer.innerHTML = '';
+    });
 }
 
 function renderPagination(totalPages, activePage) {
-    const container = document.getElementById('productPagination');
-    if (!container) return;
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
+  const container = document.getElementById('productPagination');
+  if (!container) return;
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
 
-    let html = '';
+  let html = '';
 
-    // 이전 페이지 이동
-    const isFirst = activePage === 1;
-    html += `
+  // 이전 페이지 이동
+  const isFirst = activePage === 1;
+  html += `
       <button class="page-btn" onclick="goToPage(${activePage - 1})" ${isFirst ? 'disabled style="opacity: 0.4; cursor: not-allowed;"' : ''}>
         <i class="bi bi-chevron-left"></i>
       </button>
     `;
 
-    // 페이지 번호 리스트 출력 (최대 5개)
-    let startPage = Math.max(1, activePage - 2);
-    let endPage = Math.min(totalPages, startPage + 4);
-    if (endPage - startPage < 4) {
-        startPage = Math.max(1, endPage - 4);
-    }
+  // 페이지 번호 리스트 출력 (최대 5개)
+  let startPage = Math.max(1, activePage - 2);
+  let endPage = Math.min(totalPages, startPage + 4);
+  if (endPage - startPage < 4) {
+    startPage = Math.max(1, endPage - 4);
+  }
 
-    for (let i = startPage; i <= endPage; i++) {
-        const isActive = i === activePage;
-        html += `
+  for (let i = startPage; i <= endPage; i++) {
+    const isActive = i === activePage;
+    html += `
           <button class="page-btn ${isActive ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>
         `;
-    }
+  }
 
-    // 총 페이지 수가 더 많을 경우 생략 기호(...) 표시
-    if (endPage < totalPages) {
-        html += `<button class="page-btn text-btn" disabled>...</button>`;
-    }
+  // 총 페이지 수가 더 많을 경우 생략 기호(...) 표시
+  if (endPage < totalPages) {
+    html += `<button class="page-btn text-btn" disabled>...</button>`;
+  }
 
-    // 다음 페이지 이동 (오른쪽 화살표)
-    const isLast = activePage === totalPages;
-    html += `
+  // 다음 페이지 이동 (오른쪽 화살표)
+  const isLast = activePage === totalPages;
+  html += `
       <button class="page-btn text-btn" onclick="goToPage(${activePage + 1})" ${isLast ? 'disabled style="opacity: 0.4; cursor: not-allowed;"' : ''}>
         다음 <i class="bi bi-chevron-right ms-1"></i>
       </button>
     `;
 
-    container.innerHTML = html;
+  container.innerHTML = html;
 }
 
 // 목록에서 체크박스 토글 시 선택 배열 가감 처리
 function toggleProductSelect(optionId, name, price, isChecked) {
-    if (isChecked) {
-        // Avoid duplicate
-        if (!selectedProducts.some(item => item.optionId === optionId)) {
-            selectedProducts.push({ optionId, name, price });
-        }
-    } else {
-        selectedProducts = selectedProducts.filter(item => item.optionId !== optionId);
+  if (isChecked) {
+    // Avoid duplicate
+    if (!selectedProducts.some((item) => item.optionId === optionId)) {
+      selectedProducts.push({ optionId, name, price });
     }
-    updateSelectedBox();
+  } else {
+    selectedProducts = selectedProducts.filter((item) => item.optionId !== optionId);
+  }
+  updateSelectedBox();
 }
 
 function updateSelectedBox() {
-    const box = document.getElementById('selectedProductsBox');
-    if (!box) return;
-    if (selectedProducts.length === 0) {
-        box.innerHTML = `
+  const box = document.getElementById('selectedProductsBox');
+  if (!box) return;
+  if (selectedProducts.length === 0) {
+    box.innerHTML = `
           <div class="selected-header">
             <span class="selected-lbl">
               <i class="bi bi-box-seam text-primary"></i> 선택된 상품 (0개)
@@ -305,26 +304,28 @@ function updateSelectedBox() {
             왼쪽 목록에서 핫딜에 지정할 상품을 선택해 주세요.
           </div>
         `;
-        const priceInput = document.getElementById('hotDealPrice');
-        if (priceInput) priceInput.value = '';
-        return;
-    }
-
-    // 선택된 상품들의 총 가격 계산 및 30% 권장 할인가 추천 적용
-    let totalOriginalPrice = 0;
-    let namesText = selectedProducts.map(item => {
-        totalOriginalPrice += item.price;
-        return item.name;
-    }).join('<br>');
-
-    // 입력 필드가 비어있거나 0인 경우에만 자동으로 권장가(70%)를 초기 셋팅
     const priceInput = document.getElementById('hotDealPrice');
-    if (priceInput && (!priceInput.value || priceInput.value === '0')) {
-        const defaultHotDealPrice = Math.floor(totalOriginalPrice * 0.7);
-        priceInput.value = defaultHotDealPrice;
-    }
+    if (priceInput) priceInput.value = '';
+    return;
+  }
 
-    box.innerHTML = `
+  // 선택된 상품들의 총 가격 계산 및 30% 권장 할인가 추천 적용
+  let totalOriginalPrice = 0;
+  let namesText = selectedProducts
+    .map((item) => {
+      totalOriginalPrice += item.price;
+      return item.name;
+    })
+    .join('<br>');
+
+  // 입력 필드가 비어있거나 0인 경우에만 자동으로 권장가(70%)를 초기 셋팅
+  const priceInput = document.getElementById('hotDealPrice');
+  if (priceInput && (!priceInput.value || priceInput.value === '0')) {
+    const defaultHotDealPrice = Math.floor(totalOriginalPrice * 0.7);
+    priceInput.value = defaultHotDealPrice;
+  }
+
+  box.innerHTML = `
       <div class="selected-header">
         <div class="d-flex align-items-center gap-2">
           <div class="selected-icon-badge">
@@ -345,35 +346,35 @@ function updateSelectedBox() {
 
 // 글자 수 제한 카운터 감지 및 업데이트
 function updateCharCount() {
-    const textarea = document.getElementById('dealDescription');
-    const counter = document.getElementById('charCount');
-    if (textarea && counter) {
-        counter.innerText = textarea.value.length;
-    }
+  const textarea = document.getElementById('dealDescription');
+  const counter = document.getElementById('charCount');
+  if (textarea && counter) {
+    counter.innerText = textarea.value.length;
+  }
 }
 
 // 추천 할인율 버튼 클릭 시 30%를 강제로 세팅하는 함수
 function applyRecommendedDiscount() {
-    const discountInput = document.getElementById('discountRate');
-    if (discountInput) {
-        discountInput.value = 30;
-    }
+  const discountInput = document.getElementById('discountRate');
+  if (discountInput) {
+    discountInput.value = 30;
+  }
 }
 
 // 취소 버튼 클릭 시 전체 입력 및 선택 값 초기화
 function resetHotDealForm() {
-    const form = document.getElementById('hotDealForm');
-    if (form) {
-        form.reset();
-    }
-    const counter = document.getElementById('charCount');
-    if (counter) {
-        counter.innerText = '0';
-    }
-    selectedProducts = [];
-    updateSelectedBox();
-    const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
-    checkboxes.forEach(cb => cb.checked = false);
+  const form = document.getElementById('hotDealForm');
+  if (form) {
+    form.reset();
+  }
+  const counter = document.getElementById('charCount');
+  if (counter) {
+    counter.innerText = '0';
+  }
+  selectedProducts = [];
+  updateSelectedBox();
+  const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
+  checkboxes.forEach((cb) => (cb.checked = false));
 }
 
 // === 등록된 핫딜 페이징 및 정렬 기능 ===
@@ -384,103 +385,103 @@ const dealPageSize = 3;
 
 // 정렬 상태 변경 및 active 클래스 토글
 function changeDealSort(sortOrder) {
-    currentDealSort = sortOrder;
-    
-    const btnDesc = document.getElementById('btnDealSortDesc');
-    const btnAsc = document.getElementById('btnDealSortAsc');
-    if (btnDesc && btnAsc) {
-        if (sortOrder === 'DESC') {
-            btnDesc.classList.add('active');
-            btnAsc.classList.remove('active');
-        } else {
-            btnDesc.classList.remove('active');
-            btnAsc.classList.add('active');
-        }
+  currentDealSort = sortOrder;
+
+  const btnDesc = document.getElementById('btnDealSortDesc');
+  const btnAsc = document.getElementById('btnDealSortAsc');
+  if (btnDesc && btnAsc) {
+    if (sortOrder === 'DESC') {
+      btnDesc.classList.add('active');
+      btnAsc.classList.remove('active');
+    } else {
+      btnDesc.classList.remove('active');
+      btnAsc.classList.add('active');
     }
-    
-    currentDealPage = 1; // 정렬 변경 시 1페이지로 리셋
-    renderRegisteredDeals();
+  }
+
+  currentDealPage = 1; // 정렬 변경 시 1페이지로 리셋
+  renderRegisteredDeals();
 }
 
 // 초기화 진입점
 function initRegisteredDeals(dataList) {
-    registeredDeals = dataList || [];
-    renderRegisteredDeals();
+  registeredDeals = dataList || [];
+  renderRegisteredDeals();
 }
 
 // 날짜 형식 변환기 (yyyy.MM.dd)
 function formatDate(dateStr) {
-    if (!dateStr) return 'N/A';
-    if (Array.isArray(dateStr)) {
-        const y = dateStr[0];
-        const m = String(dateStr[1]).padStart(2, '0');
-        const d = String(dateStr[2]).padStart(2, '0');
-        return `${y}.${m}.${d}`;
-    }
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
-        return dateStr.substring(0, 10).replace(/-/g, '.');
-    }
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
+  if (!dateStr) return 'N/A';
+  if (Array.isArray(dateStr)) {
+    const y = dateStr[0];
+    const m = String(dateStr[1]).padStart(2, '0');
+    const d = String(dateStr[2]).padStart(2, '0');
     return `${y}.${m}.${d}`;
+  }
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return dateStr.substring(0, 10).replace(/-/g, '.');
+  }
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
 }
 
 // 핫딜 목록 렌더링 (3개씩 정렬)
 function renderRegisteredDeals() {
-    const tbody = document.getElementById('registeredDealsBody');
-    const totalCountLbl = document.getElementById('dealTotalCount');
-    const paginationContainer = document.getElementById('registeredDealsPagination');
-    if (!tbody) return;
+  const tbody = document.getElementById('registeredDealsBody');
+  const totalCountLbl = document.getElementById('dealTotalCount');
+  const paginationContainer = document.getElementById('registeredDealsPagination');
+  if (!tbody) return;
 
-    totalCountLbl.innerText = `${registeredDeals.length}개`;
+  totalCountLbl.innerText = `${registeredDeals.length}개`;
 
-    if (registeredDeals.length === 0) {
-        tbody.innerHTML = `
+  if (registeredDeals.length === 0) {
+    tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center py-5 text-muted">
                     등록된 핫딜 기획전이 없습니다.
                 </td>
             </tr>
         `;
-        paginationContainer.innerHTML = '';
-        return;
+    paginationContainer.innerHTML = '';
+    return;
+  }
+
+  // 1. 기간 정렬
+  const sortedList = [...registeredDeals].sort((a, b) => {
+    const dateA = new Date(a.startsAt);
+    const dateB = new Date(b.startsAt);
+    return currentDealSort === 'ASC' ? dateA - dateB : dateB - dateA;
+  });
+
+  // 2. 페이징 인덱스 계산
+  const totalPages = Math.ceil(sortedList.length / dealPageSize);
+  if (currentDealPage > totalPages) currentDealPage = totalPages;
+  if (currentDealPage < 1) currentDealPage = 1;
+
+  const startIndex = (currentDealPage - 1) * dealPageSize;
+  const pagedList = sortedList.slice(startIndex, startIndex + dealPageSize);
+
+  // 3. 테이블 그리기
+  let html = '';
+  pagedList.forEach((deal) => {
+    const startStr = formatDate(deal.startsAt);
+    const endStr = formatDate(deal.endsAt);
+
+    let statusBadge = '';
+    if (deal.status === 'ACTIVE') {
+      statusBadge = '<span class="status-pill status-active">진행중</span>';
+    } else if (deal.status === 'SCHEDULED') {
+      statusBadge = '<span class="status-pill status-waiting">대기중</span>';
+    } else if (deal.status === 'ENDED') {
+      statusBadge = '<span class="status-pill status-closed">종료됨</span>';
+    } else {
+      statusBadge = `<span class="status-pill status-closed">${deal.status}</span>`;
     }
 
-    // 1. 기간 정렬
-    const sortedList = [...registeredDeals].sort((a, b) => {
-        const dateA = new Date(a.startsAt);
-        const dateB = new Date(b.startsAt);
-        return currentDealSort === 'ASC' ? dateA - dateB : dateB - dateA;
-    });
-
-    // 2. 페이징 인덱스 계산
-    const totalPages = Math.ceil(sortedList.length / dealPageSize);
-    if (currentDealPage > totalPages) currentDealPage = totalPages;
-    if (currentDealPage < 1) currentDealPage = 1;
-
-    const startIndex = (currentDealPage - 1) * dealPageSize;
-    const pagedList = sortedList.slice(startIndex, startIndex + dealPageSize);
-
-    // 3. 테이블 그리기
-    let html = '';
-    pagedList.forEach(deal => {
-        const startStr = formatDate(deal.startsAt);
-        const endStr = formatDate(deal.endsAt);
-        
-        let statusBadge = '';
-        if (deal.status === 'ACTIVE') {
-            statusBadge = '<span class="status-pill status-active">진행중</span>';
-        } else if (deal.status === 'SCHEDULED') {
-            statusBadge = '<span class="status-pill status-waiting">대기중</span>';
-        } else if (deal.status === 'ENDED') {
-            statusBadge = '<span class="status-pill status-closed">종료됨</span>';
-        } else {
-            statusBadge = `<span class="status-pill status-closed">${deal.status}</span>`;
-        }
-
-        html += `
+    html += `
             <tr>
                 <td><strong>${deal.title}</strong></td>
                 <td>${startStr} ~ ${endStr}</td>
@@ -492,43 +493,42 @@ function renderRegisteredDeals() {
                 </td>
             </tr>
         `;
-    });
-    tbody.innerHTML = html;
+  });
+  tbody.innerHTML = html;
 
-    // 4. 페이지네이션 렌더링
-    renderDealPagination(totalPages);
+  // 4. 페이지네이션 렌더링
+  renderDealPagination(totalPages);
 }
 
 // 핫딜 목록 페이지네이션 그리기
 function renderDealPagination(totalPages) {
-    const container = document.getElementById('registeredDealsPagination');
-    if (!container) return;
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
+  const container = document.getElementById('registeredDealsPagination');
+  if (!container) return;
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
 
-    let html = '';
-    html += `
+  let html = '';
+  html += `
         <button type="button" class="page-btn" ${currentDealPage === 1 ? 'disabled' : ''} onclick="changeDealPage(${currentDealPage - 1})">
             <i class="bi bi-chevron-left"></i>
         </button>
     `;
-    for (let i = 1; i <= totalPages; i++) {
-        html += `
+  for (let i = 1; i <= totalPages; i++) {
+    html += `
             <button type="button" class="page-btn ${currentDealPage === i ? 'active' : ''}" onclick="changeDealPage(${i})">${i}</button>
         `;
-    }
-    html += `
+  }
+  html += `
         <button type="button" class="page-btn" ${currentDealPage === totalPages ? 'disabled' : ''} onclick="changeDealPage(${currentDealPage + 1})">
             <i class="bi bi-chevron-right"></i>
         </button>
     `;
-    container.innerHTML = html;
+  container.innerHTML = html;
 }
 
 function changeDealPage(page) {
-    currentDealPage = page;
-    renderRegisteredDeals();
+  currentDealPage = page;
+  renderRegisteredDeals();
 }
-

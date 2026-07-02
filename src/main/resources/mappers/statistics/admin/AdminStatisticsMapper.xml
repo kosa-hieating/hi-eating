@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.hieating.statistics.admin.mapper.AdminStatisticsMapper">
+
+    <select id="sumPurchaseAmount" resultType="long">
+        SELECT COALESCE(SUM(total_price), 0)
+        FROM purchases
+        WHERE TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="countPurchases" resultType="long">
+        SELECT COUNT(*)
+        FROM purchases
+        WHERE TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="averagePurchaseAmount" resultType="long">
+        SELECT COALESCE(ROUND(AVG(total_price)), 0)
+        FROM purchases
+        WHERE TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
+</mapper>
