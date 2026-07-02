@@ -1,6 +1,7 @@
 package kr.or.hieating.hotdeal.admin.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ public class HotDealCreateRequestDTO {
 
   @NotNull(message = "핫딜 할인율은 필수 입력값입니다.") private Integer discountRate;
 
-  @NotNull(message = "핫딜 상품 선택은 필수입니다.") private List<ProductItemDTO> products;
+  @NotEmpty(message = "수정할 핫딜 상품은 최소 1개 이상 선택해야 합니다.") private List<ProductItemDTO> products;
 
   @Getter
   @Builder
