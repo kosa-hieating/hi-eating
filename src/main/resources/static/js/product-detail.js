@@ -164,7 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`Review request failed: ${response.status}`);
       }
 
-      const reviewPage = await response.json();
+      const apiResponse = await response.json();
+      if (!apiResponse.isSuccess) {
+        throw new Error(apiResponse.message || 'Review request failed');
+      }
+
+      const reviewPage = apiResponse.result;
       if (requestToken !== reviewRequestToken) {
         return;
       }
