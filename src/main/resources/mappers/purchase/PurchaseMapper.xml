@@ -7,11 +7,23 @@
 
   <select id="findProductForPurchase" resultType="kr.or.hieating.purchase.dto.ProductPurchaseTargetDto">
     SELECT
-      id AS productId,
-      price,
-      status
-    FROM products
-    WHERE id = #{productId}
+      p.id AS productId,
+      NVL(deal_stat.sale_price, p.price) AS price,
+      p.status
+    FROM products p
+    LEFT JOIN (
+      SELECT
+        po.product_id,
+        MIN(hp.hot_deal_price) AS sale_price
+      FROM hot_deals h
+      JOIN hot_deal_products hp ON hp.hot_deal_id = h.id
+      JOIN product_options po ON po.id = hp.product_option_id
+      WHERE h.status = 'ACTIVE'
+        AND h.deleted_at IS NULL
+        AND SYSTIMESTAMP BETWEEN h.starts_at AND h.ends_at
+      GROUP BY po.product_id
+    ) deal_stat ON deal_stat.product_id = p.id
+    WHERE p.id = #{productId}
   </select>
 
   <select id="countPurchasesByUserId" resultType="int">

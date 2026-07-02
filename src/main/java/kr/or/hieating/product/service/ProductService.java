@@ -64,6 +64,8 @@ public class ProductService {
         product.getName(),
         product.getDescription(),
         product.getPrice(),
+        product.getSalePrice(),
+        product.getDiscountRate(),
         product.getViewCount(),
         product.getStatus(),
         product.getCreatedAt(),

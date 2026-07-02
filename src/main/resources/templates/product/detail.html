@@ -42,10 +42,18 @@
                 th:replace="~{fragments/favorite-button :: button(${product.id}, ${product.favorite})}"
               ></button>
               <h1 class="mb-3" th:text="${product.name}"></h1>
-              <strong
-                class="product-price d-block mb-4"
-                th:text="${product.formattedPrice()}"
-              ></strong>
+              <div class="d-flex align-items-baseline flex-wrap gap-3 mb-4">
+                <del
+                  class="product-price-original"
+                  th:if="${product.hasHotDeal()}"
+                  th:text="${product.formattedPrice()}"
+                ></del>
+                <strong
+                  class="product-price"
+                  th:classappend="${product.hasHotDeal()} ? ' product-price-hotdeal'"
+                  th:text="${product.formattedSalePrice()}"
+                ></strong>
+              </div>
 
               <p class="product-stock mb-3" th:text="|남은 수량 ${product.totalStock()}개|"></p>
 

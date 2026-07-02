@@ -133,6 +133,17 @@
   line-height: 1;
 }
 
+.product-price-original {
+  color: var(--color-muted, #77716d);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.product-price-hotdeal {
+  color: var(--color-brand, #ff4d1f);
+}
+
 .product-stock {
   color: var(--color-muted, #77716d);
   font-size: 14px;
