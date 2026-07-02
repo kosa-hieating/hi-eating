@@ -7,110 +7,117 @@ let editingHotDealId = null; // 수정중인 핫딜 ID를 저장하는 전역변
 let currentPage = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
-    searchProducts();
+  searchProducts();
 
-    // 핫딜 등록 폼 submit 이벤트 핸들러 등록
-    const hotDealForm = document.getElementById('hotDealForm');
-    if (hotDealForm) {
-        let isHotDealSubmitting = false;
-        hotDealForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (isHotDealSubmitting) return;
-            
-            if (selectedProducts.length === 0) {
-                alert('핫딜에 등록할 상품을 최소 하나 이상 선택해야 합니다.');
-                return;
-            }
-            
-            const title = document.getElementById('dealTitle').value;
-            const description = document.getElementById('dealDescription').value;
-            const startsAt = document.getElementById('startsAt').value;
-            const endsAt = document.getElementById('endsAt').value;
-            const discountRate = parseInt(document.getElementById('discountRate').value, 10);
-            
-            // 날짜 구분자 변환 (yyyy-MM-dd -> yyyy.MM.dd)
-            const formattedStartsAt = startsAt.replace(/-/g, '.');
-            const formattedEndsAt = endsAt.replace(/-/g, '.');
-            
-            // 상품 목록 DTO 매핑
-            const products = selectedProducts.map(p => ({
-                productOptionId: p.optionId,
-                originalPrice: p.price
-            }));
-            
-            const requestData = {
-                title,
-                description,
-                startsAt: formattedStartsAt,
-                endsAt: formattedEndsAt,
-                discountRate,
-                products
-            };
-            
-            isHotDealSubmitting = true;
-            const submitButton = hotDealForm.querySelector('button[type="submit"]');
-            if (submitButton) submitButton.disabled = true;
-            
-            const isEdit = (editingHotDealId !== null);
-            const url = isEdit ? `/admin/hotdeals/${editingHotDealId}` : '/admin/hotdeals';
-            const method = isEdit ? 'PUT' : 'POST';
-            
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(res => res.json())
-            .then(response => {
-                if (response.isSuccess) {
-                    alert(isEdit ? '핫딜이 성공적으로 수정되었습니다.' : '핫딜이 성공적으로 등록되었습니다.');
-                    location.reload();
-                } else {
-                    alert((isEdit ? '핫딜 수정에 실패했습니다: ' : '핫딜 등록에 실패했습니다: ') + (response.message || '알 수 없는 오류'));
-                }
-            })
-            .catch(err => {
-                console.error(isEdit ? 'Error updating hotdeal:' : 'Error creating hotdeal:', err);
-                alert('서버와 통신하는 중 오류가 발생했습니다.');
-            })
-            .finally(() => {
-                isHotDealSubmitting = false;
-                if (submitButton) submitButton.disabled = false;
-            });
-        });
-    }
+  // 핫딜 등록 폼 submit 이벤트 핸들러 등록
+  const hotDealForm = document.getElementById('hotDealForm');
+  if (hotDealForm) {
+    let isHotDealSubmitting = false;
+    hotDealForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (isHotDealSubmitting) return;
 
-    // 핫딜 종료 버튼 이벤트 핸들러 등록
-    const btnEndHotDeal = document.getElementById('btnEndHotDeal');
-    if (btnEndHotDeal) {
-        btnEndHotDeal.addEventListener('click', () => {
-            if (!editingHotDealId) {
-                alert('종료할 핫딜을 하단 목록에서 선택(수정 버튼 클릭)한 뒤 진행해 주세요.');
-                return;
-            }
-            
-            if (confirm('정말로 이 핫딜을 종료하시겠습니까?\n종료 시 더 이상 고객에게 노출되지 않습니다.')) {
-                fetch(`/admin/hotdeals/${editingHotDealId}`, {
-                    method: 'DELETE'
-                })
-                .then(res => res.json())
-                .then(response => {
-                    if (response.isSuccess) {
-                        alert('핫딜이 성공적으로 종료되었습니다.');
-                        location.reload();
-                    } else {
-                        alert('핫딜 종료에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
-                    }
-                })
-                .catch(err => {
-                    console.error('Error deleting hotdeal:', err);
-                    alert('서버와 통신하는 중 오류가 발생했습니다.');
-                });
-            }
+      if (selectedProducts.length === 0) {
+        alert('핫딜에 등록할 상품을 최소 하나 이상 선택해야 합니다.');
+        return;
+      }
+
+      const title = document.getElementById('dealTitle').value;
+      const description = document.getElementById('dealDescription').value;
+      const startsAt = document.getElementById('startsAt').value;
+      const endsAt = document.getElementById('endsAt').value;
+      const discountRate = parseInt(document.getElementById('discountRate').value, 10);
+
+      // 날짜 구분자 변환 (yyyy-MM-dd -> yyyy.MM.dd)
+      const formattedStartsAt = startsAt.replace(/-/g, '.');
+      const formattedEndsAt = endsAt.replace(/-/g, '.');
+
+      // 상품 목록 DTO 매핑
+      const products = selectedProducts.map((p) => ({
+        productOptionId: p.optionId,
+        originalPrice: p.price,
+      }));
+
+      const requestData = {
+        title,
+        description,
+        startsAt: formattedStartsAt,
+        endsAt: formattedEndsAt,
+        discountRate,
+        products,
+      };
+
+      isHotDealSubmitting = true;
+      const submitButton = hotDealForm.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+
+      const isEdit = editingHotDealId !== null;
+      const url = isEdit ? `/admin/hotdeals/${editingHotDealId}` : '/admin/hotdeals';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.isSuccess) {
+            alert(
+              isEdit ? '핫딜이 성공적으로 수정되었습니다.' : '핫딜이 성공적으로 등록되었습니다.',
+            );
+            location.reload();
+          } else {
+            alert(
+              (isEdit ? '핫딜 수정에 실패했습니다: ' : '핫딜 등록에 실패했습니다: ') +
+                (response.message || '알 수 없는 오류'),
+            );
+          }
+        })
+        .catch((err) => {
+          console.error(isEdit ? 'Error updating hotdeal:' : 'Error creating hotdeal:', err);
+          alert('서버와 통신하는 중 오류가 발생했습니다.');
+        })
+        .finally(() => {
+          isHotDealSubmitting = false;
+          if (submitButton) submitButton.disabled = false;
         });
-    }
+    });
+  }
+
+  // 핫딜 종료 버튼 이벤트 핸들러 등록
+  const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+  if (btnEndHotDeal) {
+    btnEndHotDeal.addEventListener('click', () => {
+      if (!editingHotDealId) {
+        alert('종료할 핫딜을 하단 목록에서 선택(수정 버튼 클릭)한 뒤 진행해 주세요.');
+        return;
+      }
+
+      if (
+        confirm('정말로 이 핫딜을 종료하시겠습니까?\n종료 시 더 이상 고객에게 노출되지 않습니다.')
+      ) {
+        fetch(`/admin/hotdeals/${editingHotDealId}`, {
+          method: 'DELETE',
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response.isSuccess) {
+              alert('핫딜이 성공적으로 종료되었습니다.');
+              location.reload();
+            } else {
+              alert('핫딜 종료에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
+            }
+          })
+          .catch((err) => {
+            console.error('Error deleting hotdeal:', err);
+            alert('서버와 통신하는 중 오류가 발생했습니다.');
+          });
+      }
+    });
+  }
 });
 
 function changeSort(sortType) {
@@ -349,18 +356,19 @@ function updateSelectedBox() {
             왼쪽 목록에서 핫딜에 지정할 상품을 선택해 주세요.
           </div>
         `;
-        return;
-    }
+    return;
+  }
 
-    // 선택된 상품들의 총 가격 계산 및 30% 권장 할인가 추천 적용
-    let totalOriginalPrice = 0;
-    let namesText = selectedProducts.map(item => {
-        totalOriginalPrice += item.price;
-        return item.name;
-    }).join('<br>');
+  // 선택된 상품들의 총 가격 계산 및 30% 권장 할인가 추천 적용
+  let totalOriginalPrice = 0;
+  let namesText = selectedProducts
+    .map((item) => {
+      totalOriginalPrice += item.price;
+      return item.name;
+    })
+    .join('<br>');
 
-
-    box.innerHTML = `
+  box.innerHTML = `
       <div class="selected-header">
         <div class="d-flex align-items-center gap-2">
           <div class="selected-icon-badge">
@@ -398,36 +406,36 @@ function applyRecommendedDiscount() {
 
 // 취소 버튼 클릭 시 전체 입력 및 선택 값 초기화
 function resetHotDealForm() {
-    const form = document.getElementById('hotDealForm');
-    if (form) {
-        form.reset();
-    }
-    const counter = document.getElementById('charCount');
-    if (counter) {
-        counter.innerText = '0';
-    }
-    selectedProducts = [];
-    updateSelectedBox();
-    const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
-    checkboxes.forEach(cb => cb.checked = false);
+  const form = document.getElementById('hotDealForm');
+  if (form) {
+    form.reset();
+  }
+  const counter = document.getElementById('charCount');
+  if (counter) {
+    counter.innerText = '0';
+  }
+  selectedProducts = [];
+  updateSelectedBox();
+  const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
+  checkboxes.forEach((cb) => (cb.checked = false));
 
-    // 수정 모드 상태 초기화
-    editingHotDealId = null;
-    const sidebarTitle = document.querySelector('.right-sidebar-card h2');
-    if (sidebarTitle) sidebarTitle.innerText = '핫딜 등록';
+  // 수정 모드 상태 초기화
+  editingHotDealId = null;
+  const sidebarTitle = document.querySelector('.right-sidebar-card h2');
+  if (sidebarTitle) sidebarTitle.innerText = '핫딜 등록';
 
-    const sidebarDesc = document.querySelector('.right-sidebar-card > p');
-    if (sidebarDesc) sidebarDesc.innerText = '선택한 상품으로 새 핫딜을 등록합니다.';
+  const sidebarDesc = document.querySelector('.right-sidebar-card > p');
+  if (sidebarDesc) sidebarDesc.innerText = '선택한 상품으로 새 핫딜을 등록합니다.';
 
-    const submitButton = document.querySelector('#hotDealForm button[type="submit"]');
-    if (submitButton) {
-        submitButton.innerText = '핫딜 등록';
-    }
+  const submitButton = document.querySelector('#hotDealForm button[type="submit"]');
+  if (submitButton) {
+    submitButton.innerText = '핫딜 등록';
+  }
 
-    const btnEndHotDeal = document.getElementById('btnEndHotDeal');
-    if (btnEndHotDeal) {
-        btnEndHotDeal.style.display = 'none';
-    }
+  const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+  if (btnEndHotDeal) {
+    btnEndHotDeal.style.display = 'none';
+  }
 }
 
 // === 등록된 핫딜 페이징 및 정렬 기능 ===
@@ -519,28 +527,28 @@ function renderRegisteredDeals() {
 
   // 3. 테이블 그리기
   let html = '';
-  pagedList.forEach(deal => {
+  pagedList.forEach((deal) => {
     const startStr = formatDate(deal.startsAt);
     const endStr = formatDate(deal.endsAt);
     const safeTitle = escapeHtml(deal.title);
-    
+
     let statusBadge = '';
     if (deal.status === 'ACTIVE') {
-        statusBadge = '<span class="status-pill status-active">진행중</span>';
+      statusBadge = '<span class="status-pill status-active">진행중</span>';
     } else if (deal.status === 'SCHEDULED') {
-        statusBadge = '<span class="status-pill status-waiting">대기중</span>';
+      statusBadge = '<span class="status-pill status-waiting">대기중</span>';
     } else if (deal.status === 'ENDED') {
-        statusBadge = '<span class="status-pill status-closed">종료됨</span>';
+      statusBadge = '<span class="status-pill status-closed">종료됨</span>';
     } else {
-        statusBadge = `<span class="status-pill status-closed">${escapeHtml(deal.status)}</span>`;
+      statusBadge = `<span class="status-pill status-closed">${escapeHtml(deal.status)}</span>`;
     }
 
     html += `
         <tr>
             <td><strong>${safeTitle}</strong></td>
             <td>${startStr} ~ ${endStr}</td>
-            <td>${(deal.productCount ?? 0)}개</td>
-            <td class="fw-bold text-danger">${(deal.discountRate ?? 0)}%</td>
+            <td>${deal.productCount ?? 0}개</td>
+            <td class="fw-bold text-danger">${deal.discountRate ?? 0}%</td>
             <td>${statusBadge}</td>
             <td class="text-center">
                 <button type="button" class="btn btn-sm btn-outline-custom py-1 px-3" style="font-size: 0.8rem; font-weight: 700; border-radius: 6px;" onclick="loadHotDealForEdit(${deal.id})">수정</button>
@@ -589,86 +597,85 @@ function changeDealPage(page) {
 
 // 이스케이프 함수 (XSS 방지)
 function escapeHtml(value) {
-    return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 // 수정 대상 데이터를 서버에서 가져와 폼에 채워넣는 함수
 function loadHotDealForEdit(id) {
-    fetch(`/admin/hotdeals/${id}`)
-        .then(res => res.json())
-        .then(response => {
-            if (response.isSuccess) {
-                const deal = response.result;
-                
-                // 수정 모드 활성화
-                editingHotDealId = deal.id;
-                
-                // 우측 사이드바 제목 및 서브 타이틀 변경
-                const sidebarTitle = document.querySelector('.right-sidebar-card h2');
-                if (sidebarTitle) sidebarTitle.innerText = '핫딜 수정';
-                
-                const sidebarDesc = document.querySelector('.right-sidebar-card p');
-                if (sidebarDesc) sidebarDesc.innerText = '선택한 상품으로 핫딜 정보를 수정합니다.';
-                
-                // 등록 버튼의 글자만 핫딜 수정으로 변경 (CSS는 동일하게 유지)
-                const submitButton = document.querySelector('#hotDealForm button[type="submit"]');
-                if (submitButton) {
-                    submitButton.innerText = '핫딜 수정';
-                }
-                
-                // 핫딜 종료 버튼 노출
-                const btnEndHotDeal = document.getElementById('btnEndHotDeal');
-                if (btnEndHotDeal) {
-                    btnEndHotDeal.style.display = 'block';
-                }
-                
-                // 입력 필드 바인딩
-                document.getElementById('dealTitle').value = deal.title;
-                document.getElementById('dealDescription').value = deal.description || '';
-                updateCharCount();
-                
-                if (deal.startsAt) {
-                    document.getElementById('startsAt').value = deal.startsAt.substring(0, 10);
-                }
-                if (deal.endsAt) {
-                    document.getElementById('endsAt').value = deal.endsAt.substring(0, 10);
-                }
-                
-                document.getElementById('discountRate').value = deal.discountRate || 30;
-                
-                // 선택된 상품 정보 복원
-                selectedProducts = deal.products.map(p => ({
-                    optionId: p.productOptionId,
-                    name: p.productName,
-                    price: p.originalPrice
-                }));
-                
-                updateSelectedBox();
-                syncCheckboxes();
-                
-                // 스크롤 포커싱
-                document.querySelector('.right-sidebar-card').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                alert('핫딜 정보를 불러오지 못했습니다: ' + (response.message || '알 수 없는 오류'));
-            }
-        })
-        .catch(err => {
-            console.error('Error loading hotdeal detail:', err);
-            alert('서버와 통신하는 중 오류가 발생했습니다.');
-        });
+  fetch(`/admin/hotdeals/${id}`)
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.isSuccess) {
+        const deal = response.result;
+
+        // 수정 모드 활성화
+        editingHotDealId = deal.id;
+
+        // 우측 사이드바 제목 및 서브 타이틀 변경
+        const sidebarTitle = document.querySelector('.right-sidebar-card h2');
+        if (sidebarTitle) sidebarTitle.innerText = '핫딜 수정';
+
+        const sidebarDesc = document.querySelector('.right-sidebar-card p');
+        if (sidebarDesc) sidebarDesc.innerText = '선택한 상품으로 핫딜 정보를 수정합니다.';
+
+        // 등록 버튼의 글자만 핫딜 수정으로 변경 (CSS는 동일하게 유지)
+        const submitButton = document.querySelector('#hotDealForm button[type="submit"]');
+        if (submitButton) {
+          submitButton.innerText = '핫딜 수정';
+        }
+
+        // 핫딜 종료 버튼 노출
+        const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+        if (btnEndHotDeal) {
+          btnEndHotDeal.style.display = 'block';
+        }
+
+        // 입력 필드 바인딩
+        document.getElementById('dealTitle').value = deal.title;
+        document.getElementById('dealDescription').value = deal.description || '';
+        updateCharCount();
+
+        if (deal.startsAt) {
+          document.getElementById('startsAt').value = deal.startsAt.substring(0, 10);
+        }
+        if (deal.endsAt) {
+          document.getElementById('endsAt').value = deal.endsAt.substring(0, 10);
+        }
+
+        document.getElementById('discountRate').value = deal.discountRate || 30;
+
+        // 선택된 상품 정보 복원
+        selectedProducts = deal.products.map((p) => ({
+          optionId: p.productOptionId,
+          name: p.productName,
+          price: p.originalPrice,
+        }));
+
+        updateSelectedBox();
+        syncCheckboxes();
+
+        // 스크롤 포커싱
+        document.querySelector('.right-sidebar-card').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        alert('핫딜 정보를 불러오지 못했습니다: ' + (response.message || '알 수 없는 오류'));
+      }
+    })
+    .catch((err) => {
+      console.error('Error loading hotdeal detail:', err);
+      alert('서버와 통신하는 중 오류가 발생했습니다.');
+    });
 }
 
 // 왼쪽 검색 테이블 체크박스 상태 동기화
 function syncCheckboxes() {
-    const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
-    checkboxes.forEach(cb => {
-        const optionId = parseInt(cb.getAttribute('data-option-id'), 10);
-        cb.checked = selectedProducts.some(item => item.optionId === optionId);
-    });
+  const checkboxes = document.querySelectorAll('#productSearchResult .checkbox-custom');
+  checkboxes.forEach((cb) => {
+    const optionId = parseInt(cb.getAttribute('data-option-id'), 10);
+    cb.checked = selectedProducts.some((item) => item.optionId === optionId);
+  });
 }
-

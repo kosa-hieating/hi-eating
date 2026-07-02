@@ -1,6 +1,5 @@
 package kr.or.hieating.hotdeal.admin.mapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kr.or.hieating.hotdeal.admin.dto.HotDealDetailResponseDTO;
 import kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO;
@@ -25,7 +24,8 @@ public interface AdminHotDealMapper {
 
   HotDeals selectHotDealById(int id);
 
-  List<HotDealDetailResponseDTO.ProductItemDTO> selectHotDealProductsDetailByHotDealId(int hotDealId);
+  List<HotDealDetailResponseDTO.ProductItemDTO> selectHotDealProductsDetailByHotDealId(
+      int hotDealId);
 
   void softDeleteHotDeal(@Param("id") int id);
 }
