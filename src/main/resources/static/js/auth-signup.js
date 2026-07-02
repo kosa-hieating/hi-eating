@@ -1,15 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const signupForm = document.querySelector(".signup-form");
   const emailLocalInput = document.getElementById("signup-email-local");
   const emailDomainSelect = document.getElementById("signup-email-domain");
   const emailCheckButton = document.getElementById("signup-email-check-button");
+  const passwordInput = document.getElementById("signup-password");
+  const passwordConfirmInput = document.getElementById("signup-password-confirm");
   const modalElement = document.getElementById("signup-email-check-modal");
+  const modalTitle = document.getElementById("signup-email-check-modal-title");
   const modalMessage = document.getElementById("signup-email-check-modal-message");
 
-  if (!emailLocalInput || !emailDomainSelect || !emailCheckButton || !modalElement || !modalMessage) {
+  if (!signupForm || !modalElement || !modalMessage) {
     return;
   }
 
-  const showModal = (message, state) => {
+  const showModal = (title, message, state) => {
+    if (modalTitle) {
+      modalTitle.textContent = title;
+    }
+
     modalMessage.textContent = message;
     modalMessage.classList.remove("is-success", "is-danger");
 
@@ -40,12 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${emailLocal}@${emailDomain}`;
   };
 
-  emailCheckButton.addEventListener("click", async () => {
+  emailCheckButton?.addEventListener("click", async () => {
     const email = buildEmail();
     const checkUrl = emailCheckButton.dataset.checkUrl;
 
     if (!email) {
-      showModal("이메일을 입력해 주세요.", "is-danger");
+      showModal("이메일 중복확인", "이메일을 입력해 주세요.", "is-danger");
       emailLocalInput.focus();
       return;
     }
@@ -62,9 +70,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const result = await response.json();
-      showModal(result.message, result.available ? "is-success" : "is-danger");
+      showModal("이메일 중복확인", result.message, result.available ? "is-success" : "is-danger");
     } catch (error) {
-      showModal("중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", "is-danger");
+      showModal("이메일 중복확인", "중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", "is-danger");
+    }
+  });
+
+  signupForm.addEventListener("submit", (event) => {
+    if (!passwordInput || !passwordConfirmInput) {
+      return;
+    }
+
+    if (passwordInput.value !== passwordConfirmInput.value) {
+      event.preventDefault();
+      showModal("비밀번호 확인", "비밀번호가 일치하지 않습니다.", "is-danger");
+      passwordConfirmInput.focus();
     }
   });
 });

@@ -16,7 +16,6 @@ public class RequiredSignupValidator implements SignupValidator {
 
     requireText(request.getName(), "이름을 입력해 주세요.");
     requireText(request.getPassword(), "비밀번호를 입력해 주세요.");
-    requireText(request.getPasswordConfirm(), "비밀번호 확인을 입력해 주세요.");
     requireText(request.getEmail(), "이메일을 입력해 주세요.");
     requireText(request.getBirth(), "생년월일을 입력해 주세요.");
     requireText(request.getGender(), "성별을 선택해 주세요.");

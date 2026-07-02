@@ -15,7 +15,6 @@ public class SignupRequestDto {
   private String name;
   private String gender;
   private String birth;
-  private String passwordConfirm;
   
   public String getEmail() {
     if (isBlank(emailLocal)) {
