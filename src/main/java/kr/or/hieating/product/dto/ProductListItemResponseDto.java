@@ -13,4 +13,5 @@ public class ProductListItemResponseDto {
   private int viewCount;
   private int totalQuantity;
   private String pictureLocation;
+  private boolean favorite;
 }

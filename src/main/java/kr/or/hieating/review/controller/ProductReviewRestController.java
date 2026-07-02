@@ -1,5 +1,6 @@
 package kr.or.hieating.review.controller;
 
+import kr.or.hieating.global.apiPayload.ApiResponse;
 import kr.or.hieating.review.dto.ProductReviewPageResponseDto;
 import kr.or.hieating.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,13 @@ public class ProductReviewRestController {
   private final ReviewService reviewService;
 
   @GetMapping("/api/products/{productId}/reviews")
-  public ProductReviewPageResponseDto productReviews(
+  public ApiResponse<ProductReviewPageResponseDto> productReviews(
       @PathVariable Long productId,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size) {
-    return reviewService.findProductReviews(productId, page, normalizeSize(size));
+    ProductReviewPageResponseDto result =
+        reviewService.findProductReviews(productId, page, normalizeSize(size));
+    return ApiResponse.onSuccess(result);
   }
 
   private int normalizeSize(int size) {
