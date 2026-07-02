@@ -250,6 +250,8 @@ function updateBarChart(canvasId, titleId, chartData) {
 function updateDoughnutChart(canvasId, titleId, legendId, chartData) {
   updateChartTitle(titleId, chartData.title);
   const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
   canvas.dataset.centerValue = formatCurrency(totalSalesAmount(chartData.points));
   setChartData(statisticsCharts[canvasId], chartData);
   renderLegend(legendId, chartData.points);
@@ -355,9 +357,13 @@ function addDays(date, days) {
 }
 
 function addMonths(date, months) {
-  const nextDate = new Date(date);
-  nextDate.setMonth(nextDate.getMonth() + months);
-  return nextDate;
+  const targetMonthIndex = date.getMonth() + months;
+  const targetYear = date.getFullYear() + Math.floor(targetMonthIndex / 12);
+  const targetMonth = ((targetMonthIndex % 12) + 12) % 12;
+  const lastDayOfTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+  const targetDay = Math.min(date.getDate(), lastDayOfTargetMonth);
+
+  return new Date(targetYear, targetMonth, targetDay);
 }
 
 function toDateInputValue(date) {
