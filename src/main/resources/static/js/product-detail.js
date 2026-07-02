@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const mainImage = document.getElementById('mainProductImage');
-  const mainImageFrame = mainImage
-      ? mainImage.closest('.product-main-image')
-      : null;
+  const mainImageFrame = mainImage ? mainImage.closest('.product-main-image') : null;
   const thumbnails = document.querySelectorAll('.product-thumbnail');
-  const allImageUrls = Array.from(thumbnails).map(
-      thumb => thumb.dataset.imageUrl);
+  const allImageUrls = Array.from(thumbnails).map((thumb) => thumb.dataset.imageUrl);
   const quantityInput = document.getElementById('productQuantity');
   const quantityButtons = document.querySelectorAll('[data-quantity-action]');
   const reviewPanel = document.getElementById('product-reviews');
@@ -89,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mainImage.classList.remove('is-entering');
     };
 
-    outgoingImage.addEventListener('animationend', cleanup, {once: true});
+    outgoingImage.addEventListener('animationend', cleanup, { once: true });
     window.setTimeout(cleanup, 520);
   }
 
@@ -107,11 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.showNextImage = function () {
     showImage(currentImageIndex + 1);
-  }
+  };
 
   window.showPrevImage = function () {
     showImage(currentImageIndex - 1);
-  }
+  };
 
   thumbnails.forEach((thumbnail, index) => {
     thumbnail.addEventListener('click', () => {
@@ -119,14 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  quantityButtons.forEach(button => {
+  quantityButtons.forEach((button) => {
     button.addEventListener('click', () => {
       if (!quantityInput) {
         return;
       }
 
       const currentValue = Number.parseInt(quantityInput.value, 10) || 1;
-      const nextValue = button.dataset.quantityAction === 'increase'
+      const nextValue =
+        button.dataset.quantityAction === 'increase'
           ? currentValue + 1
           : Math.max(1, currentValue - 1);
 
@@ -193,7 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
     reviewEmpty.classList.toggle('d-none', state !== 'empty');
     reviewError.classList.toggle('d-none', state !== 'error');
     reviewPagination.classList.toggle(
-        'd-none', state !== 'loaded' || reviewPagination.children.length === 0);
+      'd-none',
+      state !== 'loaded' || reviewPagination.children.length === 0,
+    );
   }
 
   function renderReviews(reviews) {
@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     item.className = 'review-item';
 
     const meta = document.createElement('div');
-    meta.className = 'review-meta d-flex flex-wrap align-items-center '
-        + 'justify-content-between gap-2';
+    meta.className =
+      'review-meta d-flex flex-wrap align-items-center ' + 'justify-content-between gap-2';
 
     const writer = document.createElement('strong');
     writer.className = 'review-writer';
@@ -256,20 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const startPage = Math.max(1, Math.min(page - 2, totalPages - 4));
     const endPage = Math.min(totalPages, startPage + 4);
 
-    reviewPagination.append(
-        createPageButton('이전', page - 1, page <= 1, false));
+    reviewPagination.append(createPageButton('이전', page - 1, page <= 1, false));
 
     for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
       reviewPagination.append(
-          createPageButton(
-              String(pageNumber),
-              pageNumber,
-              false,
-              pageNumber === page));
+        createPageButton(String(pageNumber), pageNumber, false, pageNumber === page),
+      );
     }
 
-    reviewPagination.append(
-        createPageButton('다음', page + 1, page >= totalPages, false));
+    reviewPagination.append(createPageButton('다음', page + 1, page >= totalPages, false));
   }
 
   function createPageButton(label, page, disabled, active) {
@@ -306,8 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function normalizeDateTime(value) {
     if (Array.isArray(value)) {
       const [year, month, day, hour = 0, minute = 0, second = 0] = value;
-      return `${year}-${padDatePart(month)}-${padDatePart(day)}T`
-          + `${padDatePart(hour)}:${padDatePart(minute)}:${padDatePart(second)}`;
+      return (
+        `${year}-${padDatePart(month)}-${padDatePart(day)}T` +
+        `${padDatePart(hour)}:${padDatePart(minute)}:${padDatePart(second)}`
+      );
     }
 
     return value || '';
