@@ -64,11 +64,11 @@
             <span class="hotdeal-product-card__stock">\uC7AC\uACE0 ${product.stock}</span>
           </a>
           <button aria-label="\uAD00\uC2EC \uC0C1\uD488 \uC990\uACA8\uCC3E\uAE30"
-                  class="product-favorite-button position-absolute d-inline-flex align-items-center justify-content-center rounded-circle${favorite ? " is-active" : ""}"
+                  class="product-favorite-button position-absolute d-inline-flex align-items-center justify-content-center rounded-circle${favorite ? ' is-active' : ''}"
                   data-product-id="${product.productId}"
                   aria-pressed="${favorite}"
                   type="button">
-            <i aria-hidden="true" class="bi ${favorite ? "bi-star-fill" : "bi-star"}"></i>
+            <i aria-hidden="true" class="bi ${favorite ? 'bi-star-fill' : 'bi-star'}"></i>
           </button>
         </div>
         <p class="hotdeal-product-card__deal">${escapeHtml(product.hotDealTitle)}</p>

@@ -14,19 +14,12 @@ public interface FavoriteMapper {
 
   int countFavoriteProducts(FavoriteProductSearchCondition condition);
 
-  int countFavorite(
-      @Param("userId") Long userId,
-      @Param("productId") Long productId);
+  int countFavorite(@Param("userId") Long userId, @Param("productId") Long productId);
 
-  int insertFavorite(
-      @Param("userId") Long userId,
-      @Param("productId") Long productId);
+  int insertFavorite(@Param("userId") Long userId, @Param("productId") Long productId);
 
-  int deleteFavorite(
-      @Param("userId") Long userId,
-      @Param("productId") Long productId);
+  int deleteFavorite(@Param("userId") Long userId, @Param("productId") Long productId);
 
   List<Long> findFavoriteProductIds(
-      @Param("userId") Long userId,
-      @Param("productIds") List<Long> productIds);
+      @Param("userId") Long userId, @Param("productIds") List<Long> productIds);
 }

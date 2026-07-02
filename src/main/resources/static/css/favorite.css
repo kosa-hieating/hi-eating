@@ -23,7 +23,7 @@
   color: var(--color-brand-strong, #e83d12);
   font-size: 12px;
   font-weight: 900;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -103,7 +103,7 @@
   transform: scale(1.035);
 }
 
-.favorite-product-card__image img[src$="logo-hi-eating.png"] {
+.favorite-product-card__image img[src$='logo-hi-eating.png'] {
   object-fit: contain;
   padding: 34px;
   background: #fff7f1;
@@ -195,7 +195,7 @@
 
 .favorite-pagination a.is-disabled {
   pointer-events: none;
-  opacity: .35;
+  opacity: 0.35;
 }
 
 @media (max-width: 991.98px) {
