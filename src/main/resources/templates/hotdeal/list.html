@@ -103,7 +103,7 @@
               <span class="hotdeal-product-card__badge" th:text="|${product.discountRate}%|">20%</span>
               <span class="hotdeal-product-card__stock" th:text="|재고 ${product.stock}|">재고 10</span>
             </a>
-            <th:block th:replace="~{fragments/favorite-button :: button(${product.productId})}"></th:block>
+            <th:block th:replace="~{fragments/favorite-button :: button(${product.productId}, false)}"></th:block>
           </div>
 
           <p class="hotdeal-product-card__deal" th:text="${product.hotDealTitle}">핫딜 제목</p>

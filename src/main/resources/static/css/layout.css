@@ -74,6 +74,16 @@ body {
   color: #ffffff;
 }
 
+.product-favorite-button.is-active {
+  background: var(--color-brand, #ff4d1f);
+  color: #ffffff;
+}
+
+.product-favorite-button.is-loading {
+  opacity: .72;
+  pointer-events: none;
+}
+
 .admin-layout {
   display: flex;
   min-height: 100vh;

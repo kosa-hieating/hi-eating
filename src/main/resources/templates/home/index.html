@@ -115,7 +115,7 @@
             data-fallback-src = "/images/logo-hi-eating.png"
             th:alt = "${product.productName}"
             th:src = "${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}">
-          <th:block th:replace = "~{fragments/favorite-button :: button(${product.productId})}"></th:block>
+          <th:block th:replace = "~{fragments/favorite-button :: button(${product.productId}, false)}"></th:block>
         </div>
         <p class = "product-card__name" th:text = "${product.productName}">상품명</p>
         <p class = "product-card__price">
