@@ -157,15 +157,6 @@
   font-size: 13px;
 }
 
-.favorite-product-card__meta {
-  display: flex;
-  gap: 10px;
-  margin: 8px 0 0;
-  color: #9a9189;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 .favorite-pagination {
   display: flex;
   justify-content: center;
