@@ -8,9 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-/**
- * 관리자용 프로모션 설정 화면을 관리하는 MVC 컨트롤러 클래스입니다.
- */
+/** 관리자용 프로모션 설정 화면을 관리하는 MVC 컨트롤러 클래스입니다. */
 @Controller
 @RequiredArgsConstructor
 public class AdminPromotionController {
@@ -31,16 +29,16 @@ public class AdminPromotionController {
 
     // 조회한 프로모션 목록을 뷰 템플릿에 주입
     model.addAttribute("promotions", promotions);
-    
+
     // 현재 날짜 및 시간을 주입하여 템플릿 내에서 배너 종료 여부(endsAt과 비교)를 판단할 수 있게 함
     model.addAttribute("now", java.time.LocalDateTime.now());
-    
+
     // Thymeleaf 레이아웃 설정 (어떤 조각 템플릿과 CSS, JS를 적용할지 전달)
     model.addAttribute("contentTemplate", "admin/promotions/settings");
     model.addAttribute("contentFragment", "content");
     model.addAttribute("pageStylesheet", "admin-promotion");
     model.addAttribute("pageScript", "admin-promotion");
-    
+
     // 공통 관리자 레이아웃 페이지로 렌더링을 위임
     return "layout/admin-base";
   }

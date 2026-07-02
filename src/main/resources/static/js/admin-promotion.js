@@ -97,7 +97,7 @@ function updateRightPanelState(bannerData) {
     if (previewImg) previewImg.style.display = 'none';
     if (previewPlaceholder) previewPlaceholder.style.display = 'flex';
     if (deletePreviewBtn) deletePreviewBtn.style.display = 'none';
-    
+
     // 입력 인풋 필드들 전부 비활성화(disabled) 및 값 초기화
     if (titleInput) {
       titleInput.value = '';
@@ -293,7 +293,7 @@ function clearPreviewImage(event) {
   if (event) event.stopPropagation();
 
   selectedFile = null; // 대기 중인 새 파일 정보 비움
-  
+
   if (selectedBannerId) {
     // 기존 배너 수정 상황이라면 이미지가 삭제된 상태임을 기억
     isImageDeleted = true;
@@ -480,7 +480,7 @@ function saveBannerLink() {
       title: titleValue,
       link: linkValue,
       startsAt: startsAtValue.replace(/-/g, '.'),
-      endsAt: endsAtValue.replace(/-/g, '.')
+      endsAt: endsAtValue.replace(/-/g, '.'),
     }),
   })
     .then((res) => res.json())
@@ -509,14 +509,14 @@ function saveBannerLink() {
             const formattedEnd = endsAtValue.replace(/-/g, '.');
             dateSpan.innerText = `${formattedStart} ~ ${formattedEnd}`;
           }
-          
+
           // 실시간 종료 상태 체크하여 뱃지 동적 관리
           let statusBadge = activeItem.querySelector('.status-badge.expired');
           const todayDate = new Date();
-          todayDate.setHours(0,0,0,0);
+          todayDate.setHours(0, 0, 0, 0);
           const endDateTime = new Date(endsAtValue);
-          endDateTime.setHours(23,59,59,999);
-          
+          endDateTime.setHours(23, 59, 59, 999);
+
           if (endDateTime < todayDate) {
             // 날짜가 만료되었는데 화면에 뱃지가 없으면 생성
             if (!statusBadge) {

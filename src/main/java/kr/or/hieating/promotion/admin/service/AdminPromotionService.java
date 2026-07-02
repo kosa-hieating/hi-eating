@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import kr.or.hieating.promotion.admin.mapper.AdminPromotionMapper;
@@ -27,7 +26,8 @@ public class AdminPromotionService {
   }
 
   @Transactional
-  public Promotions registerPromotion(MultipartFile file, String title, String link, LocalDate startsAt, LocalDate endsAt) {
+  public Promotions registerPromotion(
+      MultipartFile file, String title, String link, LocalDate startsAt, LocalDate endsAt) {
     try {
       // 고유 파일명 생성 (중복 파일명 방지를 위해 UUID 활용)
       String originalName = file.getOriginalFilename();
@@ -50,22 +50,22 @@ public class AdminPromotionService {
       File uploadDirBuild = new File(projectPath, "build/resources/main/static/images/promotions");
       if (uploadDirBuild.exists()) {
         File destFileBuild = new File(uploadDirBuild, fileName);
-        Files.copy(destFileSrc.toPath(), destFileBuild.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+            destFileSrc.toPath(), destFileBuild.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
-
 
       int maxOrder = adminPromotionMapper.selectMaxDisplayOrder();
       int nextOrder = maxOrder + 1000;
 
-
-      Promotions promotion = Promotions.builder()
-          .title(title)
-          .imgSrc("/images/promotions/" + fileName)
-          .link(link)
-          .displayOrder(nextOrder)
-          .startsAt(startsAt.atStartOfDay())
-          .endsAt(endsAt.atTime(23, 59, 59))
-          .build();
+      Promotions promotion =
+          Promotions.builder()
+              .title(title)
+              .imgSrc("/images/promotions/" + fileName)
+              .link(link)
+              .displayOrder(nextOrder)
+              .startsAt(startsAt.atStartOfDay())
+              .endsAt(endsAt.atTime(23, 59, 59))
+              .build();
 
       adminPromotionMapper.insertPromotion(promotion);
       return promotion;
@@ -75,7 +75,8 @@ public class AdminPromotionService {
   }
 
   @Transactional
-  public void updatePromotionDetails(int id, MultipartFile file, String title, String link, LocalDate startsAt, LocalDate endsAt) {
+  public void updatePromotionDetails(
+      int id, MultipartFile file, String title, String link, LocalDate startsAt, LocalDate endsAt) {
     String newImgSrc = null;
 
     // 새로운 이미지 파일이 전달된 경우 업로드 처리 및 기존 이미지 삭제
@@ -86,12 +87,14 @@ public class AdminPromotionService {
         try {
           String projectPath = System.getProperty("user.dir");
           // 정적 리소스 파일 삭제
-          File srcFile = new File(projectPath, "src/main/resources/static" + oldPromotion.getImgSrc());
+          File srcFile =
+              new File(projectPath, "src/main/resources/static" + oldPromotion.getImgSrc());
           if (srcFile.exists()) {
             srcFile.delete();
           }
           // 빌드 결과 파일 삭제
-          File buildFile = new File(projectPath, "build/resources/main/static" + oldPromotion.getImgSrc());
+          File buildFile =
+              new File(projectPath, "build/resources/main/static" + oldPromotion.getImgSrc());
           if (buildFile.exists()) {
             buildFile.delete();
           }
@@ -117,10 +120,12 @@ public class AdminPromotionService {
         File destFileSrc = new File(uploadDirSrc, fileName);
         file.transferTo(destFileSrc);
 
-        File uploadDirBuild = new File(projectPath, "build/resources/main/static/images/promotions");
+        File uploadDirBuild =
+            new File(projectPath, "build/resources/main/static/images/promotions");
         if (uploadDirBuild.exists()) {
           File destFileBuild = new File(uploadDirBuild, fileName);
-          Files.copy(destFileSrc.toPath(), destFileBuild.toPath(), StandardCopyOption.REPLACE_EXISTING);
+          Files.copy(
+              destFileSrc.toPath(), destFileBuild.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
 
         // 새로운 이미지 상대 경로 설정
@@ -130,18 +135,18 @@ public class AdminPromotionService {
       }
     }
 
-    Promotions promotion = Promotions.builder()
-        .id(id)
-        .title(title)
-        .link(link)
-        .imgSrc(newImgSrc)
-        .startsAt(startsAt.atStartOfDay())
-        .endsAt(endsAt.atTime(23, 59, 59))
-        .build();
+    Promotions promotion =
+        Promotions.builder()
+            .id(id)
+            .title(title)
+            .link(link)
+            .imgSrc(newImgSrc)
+            .startsAt(startsAt.atStartOfDay())
+            .endsAt(endsAt.atTime(23, 59, 59))
+            .build();
 
     adminPromotionMapper.updatePromotion(promotion);
   }
-
 
   @Transactional
   public void deletePromotion(int id) {
@@ -149,16 +154,16 @@ public class AdminPromotionService {
     Promotions promotion = adminPromotionMapper.selectPromotionById(id);
     if (promotion != null && promotion.getImgSrc() != null) {
       String imgSrc = promotion.getImgSrc(); // DB에 저장된 이미지 웹 상대경로 (예: /images/promotions/uuid.png)
-      
+
       try {
         String projectPath = System.getProperty("user.dir");
-        
+
         // 프로젝트 static 소스 디렉토리 내 실제 파일 삭제
         File srcFile = new File(projectPath, "src/main/resources/static" + imgSrc);
         if (srcFile.exists()) {
           srcFile.delete();
         }
-        
+
         // 빌드 출력(build) 디렉토리 내 복제된 파일도 삭제
         File buildFile = new File(projectPath, "build/resources/main/static" + imgSrc);
         if (buildFile.exists()) {
@@ -169,7 +174,7 @@ public class AdminPromotionService {
         System.err.println("실제 이미지 파일 물리적 삭제 실패: " + e.getMessage());
       }
     }
-    
+
     // 데이터베이스에서 최종 배너 레코드 삭제
     adminPromotionMapper.deletePromotion(id);
   }

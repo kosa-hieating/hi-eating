@@ -64,9 +64,15 @@
                   <div class="d-flex align-items-center flex-wrap gap-1">
                     <span class="banner-title" th:text="${banner.title}">프로모션IMG</span>
                     <!-- 종료일과 현재 날짜/시간을 비교하여 만료된 배너인 경우 '종료' 뱃지 노출 -->
-                    <span class="status-badge expired" th:if="${banner.endsAt.isBefore(now)}">종료</span>
+                    <span class="status-badge expired" th:if="${banner.endsAt.isBefore(now)}"
+                      >종료</span
+                    >
                   </div>
-                  <span class="banner-date" th:text="|${#temporals.format(banner.startsAt, 'yyyy.MM.dd')} ~ ${#temporals.format(banner.endsAt, 'yyyy.MM.dd')}|">2026.07.02 ~ 2026.08.01</span>
+                  <span
+                    class="banner-date"
+                    th:text="|${#temporals.format(banner.startsAt, 'yyyy.MM.dd')} ~ ${#temporals.format(banner.endsAt, 'yyyy.MM.dd')}|"
+                    >2026.07.02 ~ 2026.08.01</span
+                  >
                 </div>
                 <span class="order-badge" th:text="${iter.count}">1</span>
                 <button
@@ -134,7 +140,11 @@
                 class="banner-preview-img"
                 style="display: none"
               />
-              <div id="bannerPreviewPlaceholder" class="preview-placeholder" onclick="triggerFileUpload()">
+              <div
+                id="bannerPreviewPlaceholder"
+                class="preview-placeholder"
+                onclick="triggerFileUpload()"
+              >
                 <i class="bi bi-plus-lg fs-1 text-muted mb-2"></i>
                 <p class="m-0 text-muted" style="font-size: 0.85rem">
                   클릭하여 배너 이미지를 등록해 주세요.
@@ -142,10 +152,11 @@
               </div>
             </div>
 
-
             <!-- 배너 제목 입력 -->
             <div class="form-group mb-4">
-              <label for="bannerTitleInput" class="form-label fw-bold" style="font-size: 0.9rem">배너 제목 <span class="text-danger">*</span></label>
+              <label for="bannerTitleInput" class="form-label fw-bold" style="font-size: 0.9rem"
+                >배너 제목 <span class="text-danger">*</span></label
+              >
               <div class="input-icon-group">
                 <i class="bi bi-card-text input-icon"></i>
                 <input
@@ -181,7 +192,12 @@
             <div class="row mb-4">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="bannerStartsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">시작 일자 <span class="text-danger">*</span></label>
+                  <label
+                    for="bannerStartsAtInput"
+                    class="form-label fw-bold"
+                    style="font-size: 0.9rem"
+                    >시작 일자 <span class="text-danger">*</span></label
+                  >
                   <input
                     type="date"
                     id="bannerStartsAtInput"
@@ -191,7 +207,12 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="bannerEndsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">종료 일자 <span class="text-danger">*</span></label>
+                  <label
+                    for="bannerEndsAtInput"
+                    class="form-label fw-bold"
+                    style="font-size: 0.9rem"
+                    >종료 일자 <span class="text-danger">*</span></label
+                  >
                   <input
                     type="date"
                     id="bannerEndsAtInput"

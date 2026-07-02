@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdminPromotionRestController {
 
   private final AdminPromotionService adminPromotionService;
-  
+
   @PostMapping
   public ApiResponse<Promotions> uploadBanner(
       @RequestParam("file") MultipartFile file,
@@ -32,7 +32,8 @@ public class AdminPromotionRestController {
       @RequestParam("link") String link,
       @RequestParam("startsAt") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startsAt,
       @RequestParam("endsAt") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endsAt) {
-    Promotions promotion = adminPromotionService.registerPromotion(file, title, link, startsAt, endsAt);
+    Promotions promotion =
+        adminPromotionService.registerPromotion(file, title, link, startsAt, endsAt);
     return ApiResponse.onSuccess(promotion);
   }
 
@@ -40,7 +41,12 @@ public class AdminPromotionRestController {
   public ApiResponse<Void> updatePromotion(
       @PathVariable("id") int id, @Valid @RequestBody PromotionUpdateRequestDTO request) {
     adminPromotionService.updatePromotionDetails(
-        id, null, request.getTitle(), request.getLink(), request.getStartsAt(), request.getEndsAt());
+        id,
+        null,
+        request.getTitle(),
+        request.getLink(),
+        request.getStartsAt(),
+        request.getEndsAt());
     return ApiResponse.onSuccess(null);
   }
 
@@ -55,7 +61,6 @@ public class AdminPromotionRestController {
     adminPromotionService.updatePromotionDetails(id, file, title, link, startsAt, endsAt);
     return ApiResponse.onSuccess(null);
   }
-
 
   @DeleteMapping("/{id}")
   public ApiResponse<Void> deletePromotion(@PathVariable("id") int id) {

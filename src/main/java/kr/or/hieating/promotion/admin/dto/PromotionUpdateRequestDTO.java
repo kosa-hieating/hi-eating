@@ -17,11 +17,9 @@ public class PromotionUpdateRequestDTO {
   private String title;
   private String link;
 
-  @NotNull(message = "프로모션 시작일은 필수 입력값입니다.")
-  @JsonFormat(pattern = "yyyy.MM.dd")
+  @NotNull(message = "프로모션 시작일은 필수 입력값입니다.") @JsonFormat(pattern = "yyyy.MM.dd")
   private LocalDate startsAt;
 
-  @NotNull(message = "프로모션 종료일은 필수 입력값입니다.")
-  @JsonFormat(pattern = "yyyy.MM.dd")
+  @NotNull(message = "프로모션 종료일은 필수 입력값입니다.") @JsonFormat(pattern = "yyyy.MM.dd")
   private LocalDate endsAt;
 }
