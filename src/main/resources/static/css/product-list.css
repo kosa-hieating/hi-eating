@@ -43,7 +43,9 @@
   color: #4a4642;
   padding: 10px 12px;
   text-decoration: none;
-  transition: background 160ms ease, color 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
 }
 
 .category-filter a:hover,
@@ -190,7 +192,7 @@
   transition: transform 220ms ease;
 }
 
-.catalog-product-card__image img[src$="logo-hi-eating.png"] {
+.catalog-product-card__image img[src$='logo-hi-eating.png'] {
   object-fit: contain;
   padding: 34px;
   background: #fff7f1;
