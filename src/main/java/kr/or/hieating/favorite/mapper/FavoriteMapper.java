@@ -25,4 +25,8 @@ public interface FavoriteMapper {
   int deleteFavorite(
       @Param("userId") Long userId,
       @Param("productId") Long productId);
+
+  List<Long> findFavoriteProductIds(
+      @Param("userId") Long userId,
+      @Param("productIds") List<Long> productIds);
 }

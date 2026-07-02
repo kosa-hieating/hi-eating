@@ -98,4 +98,14 @@
     WHERE user_id = #{userId}
       AND product_id = #{productId}
   </delete>
+
+  <select id="findFavoriteProductIds" resultType="long">
+    SELECT product_id
+    FROM favorites
+    WHERE user_id = #{userId}
+      AND product_id IN
+      <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+        #{productId}
+      </foreach>
+  </select>
 </mapper>

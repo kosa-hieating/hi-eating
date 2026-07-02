@@ -7,6 +7,7 @@ import kr.or.hieating.product.domain.ProductDetail;
 import kr.or.hieating.product.dto.ProductListPageResponseDto;
 import kr.or.hieating.product.dto.ProductListSearchCondition;
 import kr.or.hieating.product.service.ProductService;
+import kr.or.hieating.utils.UserResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ProductController {
   private final ProductService productService;
   private final CategoryService categoryService;
+  private final UserResolver userResolver;
 
   @GetMapping("/product/{id}")
   public String detail(@PathVariable Long id, Model model) {
@@ -47,7 +49,8 @@ public class ProductController {
       @RequestParam(defaultValue = "1") Integer page,
       Model model) {
     ProductListSearchCondition condition =
-        new ProductListSearchCondition(categoryId, minPrice, maxPrice, minDiscountRate, sort, page);
+        new ProductListSearchCondition(
+            categoryId, userResolver.currentUserId(), minPrice, maxPrice, minDiscountRate, sort, page);
     ProductListPageResponseDto productPage = productService.findProductsByCategory(condition);
     CategoryMenuResponseDto selectedCategory = categoryService.findCategoryById(categoryId);
     List<CategoryMenuResponseDto> categories = categoryService.findCategories();

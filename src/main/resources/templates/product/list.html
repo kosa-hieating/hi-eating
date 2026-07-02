@@ -84,7 +84,7 @@
                       th:if="${product.discountRate > 0}"
                       th:text="|${product.discountRate}%|">20%</span>
               </a>
-              <th:block th:replace="~{fragments/favorite-button :: button(${product.productId}, false)}"></th:block>
+              <th:block th:replace="~{fragments/favorite-button :: button(${product.productId}, ${product.favorite})}"></th:block>
             </div>
 
             <a class="catalog-product-card__name"

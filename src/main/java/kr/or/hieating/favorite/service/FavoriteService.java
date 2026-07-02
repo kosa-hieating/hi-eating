@@ -1,6 +1,8 @@
 package kr.or.hieating.favorite.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import kr.or.hieating.favorite.dto.FavoriteProductListItemResponseDto;
 import kr.or.hieating.favorite.dto.FavoriteProductListPageResponseDto;
 import kr.or.hieating.favorite.dto.FavoriteProductSearchCondition;
@@ -43,5 +45,14 @@ public class FavoriteService {
 
     favoriteMapper.insertFavorite(userId, productId);
     return true;
+  }
+
+  public Set<Long> findFavoriteProductIds(Long userId, List<Long> productIds) {
+    if (productIds == null || productIds.isEmpty()) {
+      return Set.of();
+    }
+
+    return favoriteMapper.findFavoriteProductIds(userId, productIds).stream()
+        .collect(Collectors.toSet());
   }
 }
