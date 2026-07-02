@@ -38,7 +38,7 @@
             ends_at = #{endsAt},
             status = #{status},
             updated_at = SYSTIMESTAMP
-        WHERE id = #{id}
+        WHERE id = #{id} AND deleted_at IS NULL
     </update>
 
     <delete id="deleteHotDealProductsByHotDealId">

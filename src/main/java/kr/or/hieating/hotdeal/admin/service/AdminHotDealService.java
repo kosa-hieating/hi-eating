@@ -79,6 +79,11 @@ public class AdminHotDealService {
 
   @Transactional
   public void updateHotDeal(int id, HotDealUpdateRequestDTO request) {
+    HotDeals existing = adminHotDealMapper.selectHotDealById(id);
+    if (existing == null) {
+      throw new GeneralException(ErrorStatus.HOT_DEAL_NOT_FOUND);
+    }
+
     LocalDate today = LocalDate.now();
 
     if (request.getStartsAt().isBefore(today)) {
