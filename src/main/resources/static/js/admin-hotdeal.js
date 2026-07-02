@@ -81,6 +81,36 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // 핫딜 종료 버튼 이벤트 핸들러 등록
+    const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+    if (btnEndHotDeal) {
+        btnEndHotDeal.addEventListener('click', () => {
+            if (!editingHotDealId) {
+                alert('종료할 핫딜을 하단 목록에서 선택(수정 버튼 클릭)한 뒤 진행해 주세요.');
+                return;
+            }
+            
+            if (confirm('정말로 이 핫딜을 종료하시겠습니까?\n종료 시 더 이상 고객에게 노출되지 않습니다.')) {
+                fetch(`/admin/hotdeals/${editingHotDealId}`, {
+                    method: 'DELETE'
+                })
+                .then(res => res.json())
+                .then(response => {
+                    if (response.isSuccess) {
+                        alert('핫딜이 성공적으로 종료되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('핫딜 종료에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error deleting hotdeal:', err);
+                    alert('서버와 통신하는 중 오류가 발생했습니다.');
+                });
+            }
+        });
+    }
 });
 
 function changeSort(sortType) {
@@ -393,6 +423,11 @@ function resetHotDealForm() {
     if (submitButton) {
         submitButton.innerText = '핫딜 등록';
     }
+
+    const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+    if (btnEndHotDeal) {
+        btnEndHotDeal.style.display = 'none';
+    }
 }
 
 // === 등록된 핫딜 페이징 및 정렬 기능 ===
@@ -584,6 +619,12 @@ function loadHotDealForEdit(id) {
                 const submitButton = document.querySelector('#hotDealForm button[type="submit"]');
                 if (submitButton) {
                     submitButton.innerText = '핫딜 수정';
+                }
+                
+                // 핫딜 종료 버튼 노출
+                const btnEndHotDeal = document.getElementById('btnEndHotDeal');
+                if (btnEndHotDeal) {
+                    btnEndHotDeal.style.display = 'block';
                 }
                 
                 // 입력 필드 바인딩
