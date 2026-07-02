@@ -5,6 +5,7 @@ import java.util.Optional;
 import kr.or.hieating.purchase.dto.ProductPurchaseTargetDto;
 import kr.or.hieating.purchase.dto.PurchaseCreateCommand;
 import kr.or.hieating.purchase.dto.PurchaseProductOptionStockDto;
+import kr.or.hieating.purchase.dto.RecentPurchaseProductDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,6 +15,9 @@ public interface PurchaseMapper {
   Optional<ProductPurchaseTargetDto> findProductForPurchase(@Param("productId") Long productId);
 
   int countPurchasesByUserId(@Param("userId") Long userId);
+
+  Optional<RecentPurchaseProductDto> findLatestPurchaseProductByUserId(
+      @Param("userId") Long userId);
 
   List<PurchaseProductOptionStockDto> findProductOptionsForPurchase(
       @Param("productId") Long productId);

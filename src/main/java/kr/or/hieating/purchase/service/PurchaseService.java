@@ -2,12 +2,15 @@ package kr.or.hieating.purchase.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import kr.or.hieating.purchase.dto.ProductPurchaseTargetDto;
 import kr.or.hieating.purchase.dto.PurchaseCreateCommand;
 import kr.or.hieating.purchase.dto.PurchaseOptionAllocationDto;
 import kr.or.hieating.purchase.dto.PurchaseProductOptionStockDto;
+import kr.or.hieating.purchase.dto.RecentPurchaseProductDto;
 import kr.or.hieating.purchase.exception.PurchaseException;
 import kr.or.hieating.purchase.mapper.PurchaseMapper;
+import kr.or.hieating.utils.ImageUrlResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +20,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class PurchaseService {
 
   private final PurchaseMapper purchaseMapper;
+  private final ImageUrlResolver imageUrlResolver;
 
   public int countPurchases(Long userId) {
     return purchaseMapper.countPurchasesByUserId(userId);
+  }
+
+  public Optional<RecentPurchaseProductDto> findLatestPurchaseProduct(Long userId) {
+    return purchaseMapper
+        .findLatestPurchaseProductByUserId(userId)
+        .map(this::resolveProductImageUrl);
+  }
+
+  private RecentPurchaseProductDto resolveProductImageUrl(RecentPurchaseProductDto product) {
+    product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation()));
+    return product;
   }
 
   @Transactional

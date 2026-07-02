@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import kr.or.hieating.favorite.service.FavoriteService;
 import kr.or.hieating.product.domain.Product;
-import kr.or.hieating.purchase.domain.Purchase;
+import kr.or.hieating.purchase.dto.RecentPurchaseProductDto;
 import kr.or.hieating.purchase.service.PurchaseService;
 import kr.or.hieating.user.domain.User;
 import kr.or.hieating.utils.UserResolver;
@@ -39,26 +39,6 @@ public class MyPageController {
             LocalDate.of(1995, 5, 20),
             LocalDateTime.now().minusMonths(6),
             null,
-            null);
-    Product recentOrderProduct =
-        new Product(
-            11L,
-            6L,
-            "아침 그래놀라 오트밀 세트",
-            "든든한 아침 식사를 위한 오트밀 세트",
-            119640,
-            128,
-            "ON_SALE",
-            LocalDateTime.now().minusDays(30),
-            null);
-    Purchase recentPurchase =
-        new Purchase(
-            401L,
-            member.id(),
-            101L,
-            1,
-            recentOrderProduct.price(),
-            LocalDateTime.now().minusDays(3),
             null);
     List<Product> recommendedProducts =
         List.of(
@@ -118,10 +98,10 @@ public class MyPageController {
     int purchaseCount = purchaseService.countPurchases(userId);
     int favoriteCount = favoriteService.countFavorites(userId);
     int visitCount = visitService.countVisits(userId);
+    RecentPurchaseProductDto recentPurchaseProduct =
+        purchaseService.findLatestPurchaseProduct(userId).orElse(null);
     Map<Long, String> productImageUrls =
         Map.of(
-            recentOrderProduct.id(),
-            "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=320&q=80",
             1L,
             "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=320&q=80",
             2L,
@@ -143,8 +123,7 @@ public class MyPageController {
             Map.of("label", "주문 상품", "count", purchaseCount),
             Map.of("label", "관심 상품", "count", favoriteCount),
             Map.of("label", "최근 본 상품", "count", visitCount)));
-    model.addAttribute("recentPurchase", recentPurchase);
-    model.addAttribute("recentOrderProduct", recentOrderProduct);
+    model.addAttribute("recentPurchaseProduct", recentPurchaseProduct);
     model.addAttribute("productImageUrls", productImageUrls);
     model.addAttribute("recommendedProducts", recommendedProducts);
     model.addAttribute("favoriteProductIds", favoriteProductIds);
