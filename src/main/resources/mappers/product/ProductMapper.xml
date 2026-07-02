@@ -104,6 +104,8 @@
       p.id AS product_id,
       p.name AS product_name,
       p.price AS price,
+      deal_stat.sale_price AS sale_price,
+      NVL(deal_stat.discount_rate, 0) AS discount_rate,
       purchase_stat.total_quantity AS total_quantity,
       pp.picture_saved_location AS pictureLocation,
       CASE WHEN favorite_stat.product_id IS NULL THEN 0 ELSE 1 END AS favorite
@@ -116,6 +118,19 @@
       JOIN product_options po ON po.id = ppo.product_option_id
       GROUP BY po.product_id
     ) purchase_stat ON purchase_stat.product_id = p.id
+    LEFT JOIN (
+      SELECT
+        po.product_id,
+        MIN(hp.hot_deal_price) AS sale_price,
+        MAX(FLOOR((hp.original_price - hp.hot_deal_price) / hp.original_price * 100)) AS discount_rate
+      FROM hot_deals h
+      JOIN hot_deal_products hp ON hp.hot_deal_id = h.id
+      JOIN product_options po ON po.id = hp.product_option_id
+      WHERE h.status = 'ACTIVE'
+        AND h.deleted_at IS NULL
+        AND SYSTIMESTAMP BETWEEN h.starts_at AND h.ends_at
+      GROUP BY po.product_id
+    ) deal_stat ON deal_stat.product_id = p.id
     LEFT JOIN (
       SELECT DISTINCT product_id
       FROM favorites
@@ -131,6 +146,8 @@
     p.id,
     p.name,
     p.price,
+    deal_stat.sale_price,
+    deal_stat.discount_rate,
     purchase_stat.total_quantity,
     pp.picture_saved_location,
     favorite_stat.product_id
