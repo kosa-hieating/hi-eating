@@ -1,13 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-<header class="site-header sticky-top bg-white" th:fragment="siteHeader">
-  <div class="header-brand-row bg-white border-bottom">
-    <div class="container-xxl brand-layout d-flex flex-wrap flex-lg-nowrap align-items-center gap-3 gap-lg-4 py-3 py-lg-0">
-      <a aria-label="Hi Eating 홈" class="brand-link flex-shrink-0 order-1" th:href="@{/}">
-        <img alt="Hi Eating" class="brand-logo" th:src="@{/images/logo-hi-eating.png}" />
-      </a>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <body>
+    <header class="site-header sticky-top bg-white" th:fragment="siteHeader">
+      <div class="header-brand-row bg-white border-bottom">
+        <div
+          class="container-xxl brand-layout d-flex flex-wrap flex-lg-nowrap align-items-center gap-3 gap-lg-4 py-3 py-lg-0"
+        >
+          <a aria-label="Hi Eating 홈" class="brand-link flex-shrink-0 order-1" th:href="@{/}">
+            <img alt="Hi Eating" class="brand-logo" th:src="@{/images/logo-hi-eating.png}" />
+          </a>
           <form
             class="header-search input-group order-3 order-lg-2 w-100 mx-lg-auto"
             method="get"
@@ -26,20 +32,23 @@
               <i aria-hidden="true" class="bi bi-search"></i>
             </button>
           </form>
-      <nav class="auth-links small order-2 order-lg-3 ms-auto d-flex align-items-center justify-content-end gap-2 gap-lg-3 text-nowrap" aria-label="회원 메뉴">
-        <span sec:authorize="isAnonymous()">
-            <a th:href="@{/login}">로그인</a>
-        	<a th:href="@{/signup}">회원가입</a>
-        </span>
-		<span sec:authorize="isAuthenticated()">
-		  	<b><span sec:authentication="name"></span></b>계정으로 로그인 되었습니다
-        	<a th:href="@{/mypage}">마이페이지</a>
-        	<a th:href="@{/logout}">로그아웃</a>
-        	<a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">관리자 페이지</a>
-		</span>
-      </nav>
-    </div>
-  </div>	
+          <nav
+            class="auth-links small order-2 order-lg-3 ms-auto d-flex align-items-center justify-content-end gap-2 gap-lg-3 text-nowrap"
+            aria-label="회원 메뉴"
+          >
+            <span sec:authorize="isAnonymous()">
+              <a th:href="@{/login}">로그인</a>
+              <a th:href="@{/signup}">회원가입</a>
+            </span>
+            <span sec:authorize="isAuthenticated()">
+              <b><span sec:authentication="name"></span></b>계정으로 로그인 되었습니다
+              <a th:href="@{/mypage}">마이페이지</a>
+              <a th:href="@{/logout}">로그아웃</a>
+              <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">관리자 페이지</a>
+            </span>
+          </nav>
+        </div>
+      </div>
 
       <div class="header-nav-row bg-white border-bottom">
         <div

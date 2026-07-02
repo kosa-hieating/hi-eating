@@ -9,14 +9,14 @@ public class SignupRequestDto {
 
   private static final DateTimeFormatter BASIC_DATE_FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
 
-  private String emailLocal; //@앞 식별자
-  private String emailDomain; //gmail.com
+  private String emailLocal; // @앞 식별자
+  private String emailDomain; // gmail.com
   private String password;
   private String name;
   private String gender;
   private String birth;
   private String passwordConfirm;
-  
+
   public String getEmail() {
     if (isBlank(emailLocal)) {
       return null;
