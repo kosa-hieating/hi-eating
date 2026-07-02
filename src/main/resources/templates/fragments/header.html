@@ -22,6 +22,7 @@
               id="global-search"
               name="keyword"
               placeholder="건강을 쉽게, HI-Eating"
+              th:value="${keyword}"
               type="search"
             />
             <button aria-label="검색" class="btn btn-hi-search" type="submit">
@@ -64,8 +65,9 @@
                   class="dropdown-item"
                   th:href="@{/categories/{categoryId}(categoryId=${category.id})}"
                   th:text="${category.name}"
-                  >카테고리</a
                 >
+                  카테고리
+                </a>
               </li>
             </ul>
           </div>
@@ -73,8 +75,9 @@
           <a
             class="nav-hotdeal d-inline-flex align-items-center justify-content-center px-2 px-sm-3"
             th:href="@{/hot-deals}"
-            >핫딜</a
           >
+            핫딜
+          </a>
 
           <nav
             aria-label="개인 메뉴"
