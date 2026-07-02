@@ -98,13 +98,28 @@
 }
 
 .product-purchase-panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 10px 0 0;
   background: #ffffff;
 }
 
+.product-purchase-panel .product-favorite-button {
+  top: 10px;
+  right: 0;
+  bottom: auto;
+  background: rgba(99, 92, 70, 0.72);
+}
+
+.product-purchase-panel .product-favorite-button:hover,
+.product-purchase-panel .product-favorite-button:focus-visible,
+.product-purchase-panel .product-favorite-button.is-active {
+  background: var(--color-brand, #ff4d1f);
+}
+
 .product-purchase-panel h1 {
+  padding-right: 52px;
   color: var(--color-ink, #191716);
   font-size: 30px;
   font-weight: 900;
