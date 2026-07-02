@@ -1,10 +1,15 @@
 package kr.or.hieating.mypage.controller;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import kr.or.hieating.auth.domain.Users;
+import kr.or.hieating.auth.mapper.AuthMapper;
 import kr.or.hieating.favorite.domain.Favorite;
 import kr.or.hieating.favorite.service.FavoriteService;
 import kr.or.hieating.product.domain.Product;
@@ -23,7 +28,9 @@ public class MyPageController {
 
   private final FavoriteService favoriteService;
   private final UserResolver userResolver;
-
+  private static final DateTimeFormatter BIRTH_TEXT_FORMATTER = DateTimeFormatter.ofPattern("yyyy년MM월dd일");
+  private final AuthMapper authMapper;
+  
   @GetMapping("/mypage")
   public String myPage(Model model) {
     User member =
@@ -149,4 +156,31 @@ public class MyPageController {
     model.addAttribute("favoriteProductIds", favoriteProductIds);
     return "layout/base";
   }
+  
+  @GetMapping("/mypage/edit")
+  public String editMember(Principal principal, Model model) {
+    Users member = authMapper.findByEmail(principal.getName());
+
+    String[] emailParts = splitEmail(member.getEmail());
+
+    model.addAttribute("contentTemplate", "member/edit");
+    model.addAttribute("contentFragment", "content");
+    model.addAttribute("pageStylesheet", "member-edit");
+
+    model.addAttribute("member", member);
+    model.addAttribute("emailLocal", emailParts[0]);
+    model.addAttribute("emailDomain", emailParts[1]);
+    model.addAttribute("emailDomainOptions", List.of("gmail.com", "naver.com", "daum.net", "kakao.com"));
+    model.addAttribute("birthText", member.getBirth().format(BIRTH_TEXT_FORMATTER));
+
+    return "layout/base";
+  }
+  
+  private String[] splitEmail(String email) {
+	  if (email == null || !email.contains("@")) {
+	    return new String[] {email == null ? "" : email, ""};
+	  }
+	
+	  return email.split("@", 2);
+	}
 }
