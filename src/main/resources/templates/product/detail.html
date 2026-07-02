@@ -44,7 +44,24 @@
                 th:text="${product.formattedPrice()}"
               ></strong>
 
-              <div class="purchase-controls d-flex flex-column flex-sm-row gap-3">
+              <p class="product-stock mb-3" th:text="|남은 수량 ${product.totalStock()}개|"></p>
+
+              <div
+                class="purchase-message purchase-message-success mb-3"
+                th:if="${purchaseSuccessMessage != null}"
+                th:text="${purchaseSuccessMessage}"
+              ></div>
+              <div
+                class="purchase-message purchase-message-error mb-3"
+                th:if="${purchaseErrorMessage != null}"
+                th:text="${purchaseErrorMessage}"
+              ></div>
+
+              <form
+                class="purchase-controls d-flex flex-column flex-sm-row gap-3"
+                method="post"
+                th:action="@{/product/{productId}/purchase(productId=${product.id})}"
+              >
                 <div class="quantity-control d-inline-flex align-items-center">
                   <button class="quantity-button" data-quantity-action="decrease" type="button">
                     <i aria-hidden="true" class="bi bi-dash"></i>
@@ -52,7 +69,11 @@
                   <input
                     class="quantity-input"
                     id="productQuantity"
+                    max="1"
                     min="1"
+                    name="quantity"
+                    required
+                    th:max="${product.totalStock()}"
                     type="number"
                     value="1"
                   />
@@ -60,8 +81,14 @@
                     <i aria-hidden="true" class="bi bi-plus"></i>
                   </button>
                 </div>
-                <button class="buy-button btn" type="button">구매하기</button>
-              </div>
+                <button
+                  class="buy-button btn"
+                  th:disabled="${product.totalStock() <= 0 || product.status != 'ON_SALE'}"
+                  type="submit"
+                >
+                  구매하기
+                </button>
+              </form>
             </article>
           </div>
         </section>

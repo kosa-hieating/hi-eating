@@ -10,11 +10,10 @@
       JOIN products p ON p.id = f.product_id
       LEFT JOIN (
         SELECT
-          po.product_id,
+          pc.product_id,
           SUM(pc.quantity) AS total_quantity
         FROM purchases pc
-          JOIN product_options po ON po.id = pc.product_option_id
-        GROUP BY po.product_id
+        GROUP BY pc.product_id
       ) purchase_stat ON purchase_stat.product_id = p.id
       LEFT JOIN product_pictures pp
         ON pp.id = (
