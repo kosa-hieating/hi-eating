@@ -70,13 +70,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const result = await response.json();
-      showModal("이메일 중복확인", result.message, result.available ? "is-success" : "is-danger");
+      showModal('이메일 중복확인', result.message, result.available ? 'is-success' : 'is-danger');
     } catch (error) {
-      showModal("이메일 중복확인", "중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", "is-danger");
+      showModal(
+        '이메일 중복확인',
+        '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        'is-danger',
+      );
     }
   });
 
-  signupForm.addEventListener("submit", (event) => {
+  signupForm.addEventListener('submit', (event) => {
     if (!passwordInput || !passwordConfirmInput) {
       return;
     }
