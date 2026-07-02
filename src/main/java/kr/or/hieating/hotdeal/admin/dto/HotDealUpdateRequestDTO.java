@@ -1,6 +1,8 @@
 package kr.or.hieating.hotdeal.admin.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +36,8 @@ public class HotDealUpdateRequestDTO {
   private LocalDate endsAt;
 
   @NotNull(message = "핫딜 할인율은 필수 입력값입니다.")
+  @Min(value = 1, message = "할인율은 1% 이상이어야 합니다.")
+  @Max(value = 99, message = "할인율은 99% 이하여야 합니다.")
   private Integer discountRate;
 
   @NotEmpty(message = "수정할 핫딜 상품은 최소 1개 이상 선택해야 합니다.")
