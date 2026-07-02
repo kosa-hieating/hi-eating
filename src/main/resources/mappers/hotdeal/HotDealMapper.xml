@@ -90,7 +90,7 @@
         SELECT
           product_option_id,
           SUM(quantity) AS total_quantity
-        FROM purchases
+        FROM purchase_product_options
         GROUP BY product_option_id
       ) purchase_stat ON purchase_stat.product_option_id = hp.product_option_id
       LEFT JOIN (

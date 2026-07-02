@@ -20,4 +20,21 @@
         FROM purchases
         WHERE TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
     </select>
+
+    <select id="findPurchasesForStatistics" resultType="kr.or.hieating.statistics.admin.dto.AdminStatisticsPurchaseRowDTO">
+        SELECT
+            p.id AS purchaseId,
+            p.quantity AS quantity,
+            p.purchase_price AS purchasePrice,
+            p.total_price AS totalPrice,
+            u.gender AS gender,
+            u.birth AS birth,
+            COALESCE(c.name, '기타') AS categoryName
+        FROM purchases p
+        JOIN users u ON p.user_id = u.id
+        LEFT JOIN products pr ON p.product_id = pr.id
+        LEFT JOIN categories c ON pr.category_id = c.id
+        WHERE TRUNC(p.created_at) BETWEEN #{startDate} AND #{endDate}
+        ORDER BY p.created_at, p.id
+    </select>
 </mapper>
