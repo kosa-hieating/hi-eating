@@ -20,9 +20,6 @@ public class AdminHotDealRestController {
 
   @PostMapping
   public ApiResponse<Integer> createHotDeal(@RequestBody @Valid HotDealCreateRequestDTO request) {
-    if (request.getProducts() == null || request.getProducts().isEmpty()) {
-      throw new GeneralException(ErrorStatus._BAD_REQUEST);
-    }
     int newHotDealId = adminHotDealService.createHotDeal(request);
     return ApiResponse.onSuccess(newHotDealId);
   }
