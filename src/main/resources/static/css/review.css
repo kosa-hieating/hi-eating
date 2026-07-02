@@ -73,8 +73,8 @@
   font-size: 40px;
   line-height: 1;
   transition:
-      color 160ms ease,
-      transform 160ms ease;
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .review-star:hover,
@@ -141,7 +141,7 @@
   font-size: 28px;
 }
 
-.review-image-section input[type="file"] {
+.review-image-section input[type='file'] {
   position: absolute;
   width: 1px;
   height: 1px;

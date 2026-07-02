@@ -45,4 +45,22 @@ spotless {
         googleJavaFormat()
         formatAnnotations()
     }
+
+    format 'web', {
+        target 'src/main/resources/templates/**/*.html',
+                'src/main/resources/static/**/*.js',
+                'src/main/resources/static/**/*.css'
+
+        prettier('3.3.3').config([
+                printWidth               : 100,
+                tabWidth                 : 2,
+                singleQuote              : true,
+                useTabs                  : false,
+                semi                     : true,
+                htmlWhitespaceSensitivity: 'css'
+        ])
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
