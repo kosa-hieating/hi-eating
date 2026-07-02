@@ -66,8 +66,8 @@
   font-weight: 600;
   outline: none;
   transition:
-      border-color 160ms ease,
-      box-shadow 160ms ease;
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .auth-input::placeholder {
@@ -137,7 +137,7 @@
   height: 14px;
   border-right: 2px solid #ffffff;
   border-bottom: 2px solid #ffffff;
-  content: "";
+  content: '';
   transform: rotate(40deg) translateY(-1px);
 }
 
@@ -146,7 +146,7 @@
   height: 12px;
   border-radius: 50%;
   background: #ffffff;
-  content: "";
+  content: '';
 }
 
 .auth-check input:checked + span,

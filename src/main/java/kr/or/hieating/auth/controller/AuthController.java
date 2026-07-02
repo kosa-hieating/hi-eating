@@ -33,12 +33,14 @@ public class AuthController {
 
   @GetMapping("/signup/email-check")
   @ResponseBody
-  public EmailCheckResponseDto checkEmail(@RequestParam(name = "email", required = false) String email) {
+  public EmailCheckResponseDto checkEmail(
+      @RequestParam(name = "email", required = false) String email) {
     return authService.checkEmail(email);
   }
 
   @PostMapping("/signup")
-  public String signup(SignupRequestDto request, Model model, RedirectAttributes redirectAttributes) {
+  public String signup(
+      SignupRequestDto request, Model model, RedirectAttributes redirectAttributes) {
     try {
       authService.signup(request);
     } catch (IllegalArgumentException exception) {

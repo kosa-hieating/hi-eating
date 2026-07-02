@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     modalMessage.textContent = message;
-    modalMessage.classList.remove("is-success", "is-danger");
+    modalMessage.classList.remove('is-success', 'is-danger');
 
     if (state) {
       modalMessage.classList.add(state);
@@ -38,10 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailDomain = emailDomainSelect.value.trim();
 
     if (!emailLocal) {
-      return "";
+      return '';
     }
 
-    if (emailLocal.includes("@") || !emailDomain) {
+    if (emailLocal.includes('@') || !emailDomain) {
       return emailLocal;
     }
 
@@ -61,12 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`${checkUrl}?email=${encodeURIComponent(email)}`, {
         headers: {
-          Accept: "application/json"
-        }
+          Accept: 'application/json',
+        },
       });
 
       if (!response.ok) {
-        throw new Error("Email check request failed");
+        throw new Error('Email check request failed');
       }
 
       const result = await response.json();
