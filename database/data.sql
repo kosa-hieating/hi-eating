@@ -127,8 +127,8 @@ USING (
         '/images/promotions/greenfood-open.png' AS img_src,
         '/products' AS link,
         1000 AS display_order,
-        SYSTIMESTAMP AS starts_at,
-        SYSTIMESTAMP + INTERVAL '30' DAY AS ends_at
+        TO_TIMESTAMP('2026-07-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS starts_at,
+        TO_TIMESTAMP('2026-07-01 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS ends_at
     FROM dual
 ) s
 ON (p.display_order = s.display_order)
