@@ -18,6 +18,10 @@ public class PurchaseService {
 
   private final PurchaseMapper purchaseMapper;
 
+  public int countPurchases(Long userId) {
+    return purchaseMapper.countPurchasesByUserId(userId);
+  }
+
   @Transactional
   public Long purchase(Long userId, Long productId, int quantity) {
     if (quantity < 1) {

@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import kr.or.hieating.favorite.domain.Favorite;
 import kr.or.hieating.favorite.service.FavoriteService;
 import kr.or.hieating.product.domain.Product;
 import kr.or.hieating.purchase.domain.Purchase;
+import kr.or.hieating.purchase.service.PurchaseService;
 import kr.or.hieating.user.domain.User;
 import kr.or.hieating.utils.UserResolver;
-import kr.or.hieating.visit.domain.Visit;
+import kr.or.hieating.visit.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MyPageController {
 
   private final FavoriteService favoriteService;
+  private final PurchaseService purchaseService;
+  private final VisitService visitService;
   private final UserResolver userResolver;
 
   @GetMapping("/mypage")
   public String myPage(Model model) {
+    Long userId = userResolver.currentUserId();
     User member =
         new User(
             1L,
@@ -57,11 +60,6 @@ public class MyPageController {
             recentOrderProduct.price(),
             LocalDateTime.now().minusDays(3),
             null);
-    List<Purchase> purchases = List.of(recentPurchase);
-    List<Favorite> favorites =
-        List.of(new Favorite(member.id(), 1L, LocalDateTime.now().minusDays(1), null));
-    List<Visit> visits =
-        List.of(new Visit(member.id(), recentOrderProduct.id(), LocalDateTime.now(), null));
     List<Product> recommendedProducts =
         List.of(
             new Product(
@@ -116,7 +114,10 @@ public class MyPageController {
                 null));
     Set<Long> favoriteProductIds =
         favoriteService.findFavoriteProductIds(
-            userResolver.currentUserId(), recommendedProducts.stream().map(Product::id).toList());
+            userId, recommendedProducts.stream().map(Product::id).toList());
+    int purchaseCount = purchaseService.countPurchases(userId);
+    int favoriteCount = favoriteService.countFavorites(userId);
+    int visitCount = visitService.countVisits(userId);
     Map<Long, String> productImageUrls =
         Map.of(
             recentOrderProduct.id(),
@@ -139,9 +140,9 @@ public class MyPageController {
     model.addAttribute(
         "summaryCards",
         List.of(
-            Map.of("label", "주문 상품", "count", purchases.size()),
-            Map.of("label", "관심 상품", "count", favorites.size()),
-            Map.of("label", "최근 본 상품", "count", visits.size())));
+            Map.of("label", "주문 상품", "count", purchaseCount),
+            Map.of("label", "관심 상품", "count", favoriteCount),
+            Map.of("label", "최근 본 상품", "count", visitCount)));
     model.addAttribute("recentPurchase", recentPurchase);
     model.addAttribute("recentOrderProduct", recentOrderProduct);
     model.addAttribute("productImageUrls", productImageUrls);

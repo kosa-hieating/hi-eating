@@ -44,7 +44,7 @@ public class ProductService {
   }
 
   private ProductDetail createProductDetail(ProductDetailRowDto product, Long productId) {
-    Long userId = 현.currentUserId();
+    Long userId = userResolver.currentUserId();
     List<String> imageUrls =
         productMapper.findProductImageUrls(productId).stream()
             .map(imageUrlResolver::resolve)

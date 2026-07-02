@@ -5,6 +5,12 @@
 
 <mapper namespace="kr.or.hieating.visit.mapper.VisitMapper">
 
+  <select id="countVisitsByUserId" resultType="int">
+    SELECT COUNT(*)
+    FROM visits
+    WHERE user_id = #{userId}
+  </select>
+
   <update id="upsertVisit">
     MERGE INTO visits v
     USING (

@@ -71,6 +71,12 @@
     <include refid="favoriteProductBase" />
   </select>
 
+  <select id="countFavoritesByUserId" resultType="int">
+    SELECT COUNT(*)
+    FROM favorites
+    WHERE user_id = #{userId}
+  </select>
+
   <select id="countFavorite" resultType="int">
     SELECT COUNT(*)
     FROM favorites

@@ -14,6 +14,12 @@
     WHERE id = #{productId}
   </select>
 
+  <select id="countPurchasesByUserId" resultType="int">
+    SELECT COUNT(*)
+    FROM purchases
+    WHERE user_id = #{userId}
+  </select>
+
   <select id="findProductOptionsForPurchase" resultType="kr.or.hieating.purchase.dto.PurchaseProductOptionStockDto">
     SELECT
       id AS productOptionId,

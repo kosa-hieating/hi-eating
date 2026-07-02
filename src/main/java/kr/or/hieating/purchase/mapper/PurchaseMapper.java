@@ -13,6 +13,8 @@ public interface PurchaseMapper {
 
   Optional<ProductPurchaseTargetDto> findProductForPurchase(@Param("productId") Long productId);
 
+  int countPurchasesByUserId(@Param("userId") Long userId);
+
   List<PurchaseProductOptionStockDto> findProductOptionsForPurchase(
       @Param("productId") Long productId);
 
