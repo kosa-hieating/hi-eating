@@ -59,7 +59,7 @@
   object-fit: cover;
 }
 
-.promotion-slide img[src$="logo-hi-eating.png"] {
+.promotion-slide img[src$='logo-hi-eating.png'] {
   object-fit: contain;
   padding: clamp(48px, 8vw, 96px);
   background: #fff7f1;
@@ -185,7 +185,7 @@
   border-radius: 10px;
 }
 
-.hot-deal-card__image img[src$="logo-hi-eating.png"] {
+.hot-deal-card__image img[src$='logo-hi-eating.png'] {
   object-fit: contain;
   padding: 28px;
   background: #fff;
@@ -299,7 +299,7 @@
   object-fit: cover;
 }
 
-.product-card__image img[src$="logo-hi-eating.png"] {
+.product-card__image img[src$='logo-hi-eating.png'] {
   object-fit: contain;
   padding: 28px;
   background: #fff7f1;
