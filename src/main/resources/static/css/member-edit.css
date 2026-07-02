@@ -33,6 +33,25 @@
   line-height: 1.25;
 }
 
+.member-edit-alert {
+  margin: 24px 0 0;
+  padding: 16px 18px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.member-edit-alert.is-success {
+  color: #22734b;
+  background: #edf8f2;
+}
+
+.member-edit-alert.is-danger {
+  color: #d73612;
+  background: #fff1ec;
+}
+
 .member-edit-fields {
   padding: 30px 0 26px;
   border-bottom: 1px solid #ddd7d2;
@@ -227,6 +246,84 @@ fieldset.member-edit-row .member-edit-label {
 .member-edit-danger-button:focus-visible {
   color: #ffffff;
   background: var(--color-brand, #ff4d1f);
+}
+
+.member-edit-modal .modal-content {
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 22px 60px rgba(32, 36, 44, 0.18);
+}
+
+.member-edit-modal .modal-header,
+.member-edit-modal .modal-footer {
+  border-color: #eee5df;
+}
+
+.member-edit-modal .modal-header {
+  padding: 22px 24px 18px;
+}
+
+.member-edit-modal .modal-body {
+  padding: 28px 24px;
+}
+
+.member-edit-modal .modal-footer {
+  gap: 10px;
+  padding: 18px 24px 22px;
+}
+
+.member-edit-modal .modal-title {
+  color: #20242c;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.member-edit-modal-message {
+  margin: 0;
+  color: #30343a;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.member-edit-modal-message.is-success {
+  color: #22734b;
+}
+
+.member-edit-modal-message.is-danger {
+  color: #d73612;
+}
+
+.member-edit-modal-button,
+.member-edit-modal-secondary-button {
+  min-width: 96px;
+  min-height: 44px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.member-edit-modal-button {
+  border: 0;
+  color: #ffffff;
+  background: var(--color-brand, #ff4d1f);
+}
+
+.member-edit-modal-button:hover,
+.member-edit-modal-button:focus-visible {
+  background: var(--color-brand-strong, #e83d12);
+}
+
+.member-edit-modal-secondary-button {
+  border: 1px solid #d6d9de;
+  color: #30343a;
+  background: #ffffff;
+}
+
+.member-edit-modal-secondary-button:hover,
+.member-edit-modal-secondary-button:focus-visible {
+  border-color: #aeb5bd;
+  background: #f7f8f9;
 }
 
 @media (max-width: 991.98px) {

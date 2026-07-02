@@ -54,4 +54,21 @@
 			SYSTIMESTAMP
 		)
 	</insert>
+
+	<update id="updateUserProfile">
+		UPDATE users
+		SET gender = #{gender},
+			updated_at = SYSTIMESTAMP
+		WHERE id = #{userId}
+		  AND deleted_at IS NULL
+	</update>
+
+	<update id="withdrawUser">
+		UPDATE users
+		SET email = 'deleted_' || id || '@deleted.local',
+			deleted_at = SYSTIMESTAMP,
+			updated_at = SYSTIMESTAMP
+		WHERE id = #{userId}
+		  AND deleted_at IS NULL
+	</update>
 </mapper>
