@@ -38,6 +38,10 @@
     if (empty) {
       empty.hidden = hasCards;
     }
+
+    if (!hasCards && page.querySelector(".favorite-pagination")) {
+      window.location.reload();
+    }
   };
 
   const toggleFavorite = async (button) => {
