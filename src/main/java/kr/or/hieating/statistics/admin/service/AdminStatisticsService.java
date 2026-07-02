@@ -22,7 +22,7 @@ public class AdminStatisticsService {
     LocalDate yesterday = today.minusDays(1);
     LocalDate currentMonthStart = today.withDayOfMonth(1);
     LocalDate previousMonthStart = currentMonthStart.minusMonths(1);
-    LocalDate previousMonthEnd = currentMonthStart.minusDays(1);
+    LocalDate previousMonthEnd = previousMonthComparableEndDate(today, previousMonthStart);
 
     long todaySalesAmount = sumPurchaseAmount(today, today);
     long yesterdaySalesAmount = sumPurchaseAmount(yesterday, yesterday);
@@ -75,6 +75,12 @@ public class AdminStatisticsService {
 
   private long averagePurchaseAmount(LocalDate startDate, LocalDate endDate) {
     return defaultZero(adminStatisticsMapper.averagePurchaseAmount(startDate, endDate));
+  }
+
+  private LocalDate previousMonthComparableEndDate(LocalDate today, LocalDate previousMonthStart) {
+    LocalDate previousMonthLastDate = previousMonthStart.plusMonths(1).minusDays(1);
+    LocalDate sameElapsedDate = previousMonthStart.plusDays(today.getDayOfMonth() - 1L);
+    return sameElapsedDate.isAfter(previousMonthLastDate) ? previousMonthLastDate : sameElapsedDate;
   }
 
   private long defaultZero(Long value) {
