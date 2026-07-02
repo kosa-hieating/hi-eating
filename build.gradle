@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
@@ -43,5 +44,23 @@ spotless {
     java {
         googleJavaFormat()
         formatAnnotations()
+    }
+
+    format 'web', {
+        target 'src/main/resources/templates/**/*.html',
+                'src/main/resources/static/**/*.js',
+                'src/main/resources/static/**/*.css'
+
+        prettier('3.3.3').config([
+                printWidth               : 100,
+                tabWidth                 : 2,
+                singleQuote              : true,
+                useTabs                  : false,
+                semi                     : true,
+                htmlWhitespaceSensitivity: 'css'
+        ])
+
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
