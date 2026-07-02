@@ -39,7 +39,7 @@
       empty.hidden = hasCards;
     }
 
-    if (!hasCards && page.querySelector(".favorite-pagination")) {
+    if (!hasCards && page.querySelector('.favorite-pagination')) {
       window.location.reload();
     }
   };
