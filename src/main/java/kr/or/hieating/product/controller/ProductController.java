@@ -37,12 +37,6 @@ public class ProductController {
     return "layout/base";
   }
 
-  @GetMapping("/product")
-  public String mostPurchasedProducts(Model model) {
-    model.addAttribute("products", productService.findMostPurchasedProducts());
-    return "product/products";
-  }
-
   @GetMapping("/categories/{categoryId}")
   public String categoryProducts(
       @PathVariable Long categoryId,
