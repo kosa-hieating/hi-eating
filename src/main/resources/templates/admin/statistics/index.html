@@ -56,6 +56,7 @@
                 <span class="visually-hidden">시작일</span>
                 <input
                   class="form-control form-control-sm fw-bold date-input"
+                  id="statisticsStartDate"
                   th:value="${periodStart}"
                   type="date"
                 />
@@ -65,23 +66,31 @@
                 <span class="visually-hidden">종료일</span>
                 <input
                   class="form-control form-control-sm fw-bold date-input"
+                  id="statisticsEndDate"
                   th:value="${periodEnd}"
                   type="date"
                 />
               </label>
-              <button class="btn btn-sm btn-statistics-primary fw-bold px-4" type="button">
+              <button
+                class="btn btn-sm btn-statistics-primary fw-bold px-4"
+                id="statisticsSearchButton"
+                type="button"
+              >
                 조회
               </button>
             </div>
 
             <label class="mb-0">
               <span class="visually-hidden">기간 설정</span>
-              <select class="form-select form-select-sm fw-bold period-select">
-                <option selected>기간 설정</option>
-                <option>오늘</option>
-                <option>최근 7일</option>
-                <option>이번 달</option>
-                <option>최근 3개월</option>
+              <select
+                class="form-select form-select-sm fw-bold period-select"
+                id="statisticsPeriodSelect"
+              >
+                <option value="custom">기간 설정</option>
+                <option value="today">오늘</option>
+                <option selected value="recent-7-days">최근 7일</option>
+                <option value="this-month">이번 달</option>
+                <option value="recent-3-months">최근 3개월</option>
               </select>
             </label>
           </div>
@@ -94,7 +103,11 @@
                 <div
                   class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3"
                 >
-                  <h2 class="fs-6 fw-bold mb-0" th:text="${ageSalesChart.title}"></h2>
+                  <h2
+                    class="fs-6 fw-bold mb-0"
+                    id="ageSalesChartTitle"
+                    th:text="${ageSalesChart.title}"
+                  ></h2>
                 </div>
                 <div class="bar-chart-frame">
                   <canvas
@@ -114,7 +127,11 @@
                 <div
                   class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3"
                 >
-                  <h2 class="fs-6 fw-bold mb-0" th:text="${categorySalesChart.title}"></h2>
+                  <h2
+                    class="fs-6 fw-bold mb-0"
+                    id="categorySalesChartTitle"
+                    th:text="${categorySalesChart.title}"
+                  ></h2>
                 </div>
                 <div class="row align-items-center g-3">
                   <div class="col-12 col-md-5">
@@ -129,7 +146,7 @@
                     </div>
                   </div>
                   <div class="col-12 col-md-7">
-                    <ul class="chart-legend list-unstyled mb-0">
+                    <ul class="chart-legend list-unstyled mb-0" id="categorySalesLegend">
                       <li th:each="point : ${categorySalesChart.points}">
                         <span
                           class="legend-color"
@@ -154,7 +171,11 @@
                 <div
                   class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3"
                 >
-                  <h2 class="fs-6 fw-bold mb-0" th:text="${genderSalesChart.title}"></h2>
+                  <h2
+                    class="fs-6 fw-bold mb-0"
+                    id="genderSalesChartTitle"
+                    th:text="${genderSalesChart.title}"
+                  ></h2>
                 </div>
                 <div class="row align-items-center g-3">
                   <div class="col-12 col-md-5">
@@ -169,7 +190,7 @@
                     </div>
                   </div>
                   <div class="col-12 col-md-7">
-                    <ul class="chart-legend list-unstyled mb-0">
+                    <ul class="chart-legend list-unstyled mb-0" id="genderSalesLegend">
                       <li th:each="point : ${genderSalesChart.points}">
                         <span
                           class="legend-color"
@@ -194,7 +215,11 @@
                 <div
                   class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3"
                 >
-                  <h2 class="fs-6 fw-bold mb-0" th:text="${priceSalesChart.title}"></h2>
+                  <h2
+                    class="fs-6 fw-bold mb-0"
+                    id="priceSalesChartTitle"
+                    th:text="${priceSalesChart.title}"
+                  ></h2>
                 </div>
                 <div class="bar-chart-frame">
                   <canvas
