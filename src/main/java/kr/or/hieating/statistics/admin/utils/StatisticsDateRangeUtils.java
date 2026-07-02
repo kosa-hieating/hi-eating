@@ -6,6 +6,10 @@ public final class StatisticsDateRangeUtils {
 
   private StatisticsDateRangeUtils() {}
 
+  public static LocalDate defaultChartStartDate(LocalDate today) {
+    return today.minusDays(6);
+  }
+
   public static LocalDate previousMonthComparableEndDate(
       LocalDate today, LocalDate previousMonthStart) {
     LocalDate previousMonthLastDate = previousMonthStart.plusMonths(1).minusDays(1);
