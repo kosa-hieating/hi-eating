@@ -122,10 +122,11 @@
 
         <div class="hotdeal-grid" data-hotdeal-grid th:hidden="${!productPage.hasProducts()}">
           <article class="hotdeal-product-card" th:each="product : ${productPage.products}">
-            <a
-              class="hotdeal-product-card__image"
-              th:href="@{/product/{id}(id=${product.productId})}"
-            >
+            <div class="hotdeal-product-card__image">
+              <a
+                class="hotdeal-product-card__image-link"
+                th:href="@{/product/{id}(id=${product.productId})}"
+              >
               <img
                 th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
                 th:alt="${product.productName}"
@@ -137,7 +138,11 @@
               <span class="hotdeal-product-card__stock" th:text="|재고 ${product.stock}|"
                 >재고 10</span
               >
-            </a>
+              </a>
+              <th:block
+                th:replace="~{fragments/favorite-button :: button(${product.productId}, ${product.favorite})}"
+              ></th:block>
+            </div>
 
             <p class="hotdeal-product-card__deal" th:text="${product.hotDealTitle}">핫딜 제목</p>
             <a

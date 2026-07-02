@@ -63,6 +63,10 @@ body {
   font-size: 18px;
 }
 
+.product-favorite-button:not([data-product-id]) {
+  display: none;
+}
+
 .product-favorite-button:hover,
 .product-favorite-button:focus-visible {
   background: var(--color-brand, #ff4d1f);
