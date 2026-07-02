@@ -10,7 +10,6 @@
               <a
                 th:each="category : ${categories}"
                 th:href="@{/categories/{categoryId}(categoryId=${category.id})}"
-                th:classappend="${selectedCategory != null && selectedCategory.id == category.id} ? ' is-active'"
               >
                 <span th:text="${category.name}">카테고리</span>
                 <small th:text="${category.productCount}">0</small>
@@ -18,12 +17,10 @@
             </nav>
           </section>
 
-          <form
-            class="filter-panel"
-            th:action="@{/categories/{categoryId}(categoryId=${categoryId})}"
-            method="get"
-          >
+          <form class="filter-panel" th:action="@{/search}" method="get">
             <h2>필터</h2>
+            <input type="hidden" name="keyword" th:value="${condition.keyword}" />
+            <input type="hidden" name="sort" th:value="${condition.sort}" />
 
             <label class="filter-label" for="minPrice">가격</label>
             <div class="price-filter">
@@ -55,11 +52,9 @@
               <option value="30" th:selected="${condition.minDiscountRate == 30}">30% 이상</option>
             </select>
 
-            <input type="hidden" name="sort" th:value="${condition.sort}" />
-
             <div class="filter-actions">
               <button type="submit">적용</button>
-              <a th:href="@{/categories/{categoryId}(categoryId=${categoryId})}">초기화</a>
+              <a th:href="@{/search(keyword=${condition.keyword})}">초기화</a>
             </div>
           </form>
         </aside>
@@ -67,18 +62,18 @@
         <div class="product-list-content">
           <header class="product-list-header">
             <div>
-              <p class="product-list-kicker">Category</p>
-              <h1 th:text="${selectedCategory != null ? selectedCategory.name : '상품'}">상품</h1>
+              <p class="product-list-kicker">Search</p>
+              <h1 th:if="${condition.hasKeyword()}" th:text="|'${condition.keyword}' 검색 결과|">
+                검색 결과
+              </h1>
+              <h1 th:unless="${condition.hasKeyword()}">검색 결과</h1>
               <p class="product-list-count">
                 총 <strong th:text="${productPage.totalCount}">0</strong>개의 상품
               </p>
             </div>
 
-            <form
-              class="sort-form"
-              th:action="@{/categories/{categoryId}(categoryId=${categoryId})}"
-              method="get"
-            >
+            <form class="sort-form" th:action="@{/search}" method="get">
+              <input type="hidden" name="keyword" th:value="${condition.keyword}" />
               <input type="hidden" name="minPrice" th:value="${condition.minPrice}" />
               <input type="hidden" name="maxPrice" th:value="${condition.maxPrice}" />
               <input type="hidden" name="minDiscountRate" th:value="${condition.minDiscountRate}" />
@@ -87,16 +82,17 @@
                 <option value="popular" th:selected="${condition.sort == 'popular'}">인기순</option>
                 <option value="latest" th:selected="${condition.sort == 'latest'}">최신순</option>
                 <option value="priceAsc" th:selected="${condition.sort == 'priceAsc'}">
-                  낮은가격순
+                  낮은 가격순
                 </option>
                 <option value="priceDesc" th:selected="${condition.sort == 'priceDesc'}">
-                  높은가격순
+                  높은 가격순
                 </option>
               </select>
             </form>
           </header>
 
-          <p class="product-empty" th:if="${!productPage.hasProducts()}">
+          <p class="product-empty" th:if="${!condition.hasKeyword()}">검색어를 입력해주세요.</p>
+          <p class="product-empty" th:if="${condition.hasKeyword() && !productPage.hasProducts()}">
             조건에 맞는 상품이 없습니다.
           </p>
 
@@ -116,8 +112,9 @@
                     class="catalog-product-card__badge"
                     th:if="${product.discountRate > 0}"
                     th:text="|${product.discountRate}%|"
-                    >20%</span
                   >
+                    20%
+                  </span>
                 </a>
                 <th:block
                   th:replace="~{fragments/favorite-button :: button(${product.productId}, ${product.favorite})}"
@@ -128,16 +125,18 @@
                 class="catalog-product-card__name"
                 th:href="@{/product/{id}(id=${product.productId})}"
                 th:text="${product.productName}"
-                >상품명</a
               >
+                상품명
+              </a>
 
               <div class="catalog-product-card__price">
                 <span
                   class="discount-rate"
                   th:if="${product.discountRate > 0}"
                   th:text="|${product.discountRate}%|"
-                  >20%</span
                 >
+                  20%
+                </span>
                 <strong
                   th:text="${#numbers.formatInteger(product.salePrice != null ? product.salePrice : product.price, 0, 'COMMA')} + '원'"
                 >
@@ -147,19 +146,20 @@
               <del
                 th:if="${product.discountRate > 0}"
                 th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"
-                >12,000원</del
               >
+                12,000원
+              </del>
             </article>
           </div>
 
           <nav
             class="product-pagination"
             th:if="${productPage.totalPages > 1}"
-            aria-label="상품 페이지"
+            aria-label="검색 결과 페이지"
           >
             <a
               th:classappend="${!productPage.hasPrevious()} ? ' is-disabled'"
-              th:href="@{/categories/{categoryId}(categoryId=${categoryId}, page=${productPage.page - 1}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
+              th:href="@{/search(keyword=${condition.keyword}, page=${productPage.page - 1}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
             >
               <i class="bi bi-chevron-left" aria-hidden="true"></i>
             </a>
@@ -167,13 +167,13 @@
               th:each="pageNumber : ${#numbers.sequence(1, productPage.totalPages)}"
               th:text="${pageNumber}"
               th:classappend="${pageNumber == productPage.page} ? ' is-active'"
-              th:href="@{/categories/{categoryId}(categoryId=${categoryId}, page=${pageNumber}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
+              th:href="@{/search(keyword=${condition.keyword}, page=${pageNumber}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
             >
               1
             </a>
             <a
               th:classappend="${!productPage.hasNext()} ? ' is-disabled'"
-              th:href="@{/categories/{categoryId}(categoryId=${categoryId}, page=${productPage.page + 1}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
+              th:href="@{/search(keyword=${condition.keyword}, page=${productPage.page + 1}, sort=${condition.sort}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice}, minDiscountRate=${condition.minDiscountRate})}"
             >
               <i class="bi bi-chevron-right" aria-hidden="true"></i>
             </a>

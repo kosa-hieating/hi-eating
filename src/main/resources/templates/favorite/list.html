@@ -86,10 +86,6 @@
               th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"
               >12,000원</del
             >
-            <p class="favorite-product-card__meta">
-              <span th:text="|조회 ${product.viewCount}|">조회 0</span>
-              <span th:text="|구매 ${product.totalQuantity}|">구매 0</span>
-            </p>
           </article>
         </div>
 
