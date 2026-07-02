@@ -27,9 +27,7 @@
 
           <div class="promotion-controls">
             <span class="promotion-count">
-              <span data-carousel-current>1</span>/<span th:text="${#lists.size(promotions)}"
-                >1</span
-              >
+              <span data-carousel-current>1</span>/<span th:text="${#lists.size(promotions)}">1</span>
             </span>
             <button
               aria-label="프로모션 자동 슬라이드 일시정지"
@@ -90,12 +88,19 @@
           <div class="hot-deal-viewport" data-carousel-viewport>
             <div class="hot-deal-track" data-carousel-track>
               <article class="hot-deal-card" th:each="hotDealProduct : ${hotDealProducts}">
-                <p class="hot-deal-card__eyebrow" th:text="${hotDealProduct.hotDealTitle}">
-                  올 여름 가장 시원한 혜택
-                </p>
+                <a
+                  class="hot-deal-card__eyebrow"
+                  th:href="@{/hot-deals(hotDealId=${hotDealProduct.hotDealId})}"
+                  th:text="${hotDealProduct.hotDealTitle}"
+                >
+                  핫딜 제목
+                </a>
 
                 <div class="hot-deal-card__body">
-                  <div class="hot-deal-card__image">
+                  <a
+                    class="hot-deal-card__image hot-deal-card__image-link"
+                    th:href="@{/product/{id}(id=${hotDealProduct.productId})}"
+                  >
                     <img
                       data-fallback-src="/images/logo-hi-eating.png"
                       th:alt="${hotDealProduct.productName}"
@@ -104,14 +109,19 @@
                     <span
                       class="hot-deal-card__stock"
                       th:text="|남은수량 ${hotDealProduct.stock}개|"
-                      >남은수량 4개</span
                     >
-                  </div>
+                      남은수량 4개
+                    </span>
+                  </a>
 
                   <div>
-                    <p class="hot-deal-card__name" th:text="${hotDealProduct.productName}">
+                    <a
+                      class="hot-deal-card__name"
+                      th:href="@{/product/{id}(id=${hotDealProduct.productId})}"
+                      th:text="${hotDealProduct.productName}"
+                    >
                       상품명
-                    </p>
+                    </a>
                     <p
                       class="hot-deal-card__discount"
                       th:text="|${hotDealProduct.discountRate}% 할인|"
@@ -129,8 +139,9 @@
                       <span
                         class="hot-deal-card__timer"
                         th:attr="data-end-at=${hotDealProduct.endsAt}"
-                        >00:00:00</span
                       >
+                        00:00:00
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -162,24 +173,32 @@
         <div class="most-purchased-grid" th:if="${!#lists.isEmpty(mostPurchasedProducts)}">
           <article class="product-card" th:each="product, stat : ${mostPurchasedProducts}">
             <div class="product-card__image">
-              <span class="product-card__rank" th:text="|Top ${stat.index + 1}|">Top 1</span>
-              <img
-                data-fallback-src="/images/logo-hi-eating.png"
-                th:alt="${product.productName}"
-                th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
-              />
+              <a
+                class="product-card__image-link"
+                th:href="@{/product/{id}(id=${product.productId})}"
+              >
+                <span class="product-card__rank" th:text="|Top ${stat.index + 1}|">Top 1</span>
+                <img
+                  data-fallback-src="/images/logo-hi-eating.png"
+                  th:alt="${product.productName}"
+                  th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
+                />
+              </a>
               <th:block
                 th:replace="~{fragments/favorite-button :: button(${product.productId}, ${product.favorite})}"
               ></th:block>
-              <button aria-label="즐겨찾기 담기" class="product-card__cart" type="button">
-                <i aria-hidden="true" class="bi bi-star"></i>
-              </button>
             </div>
-            <p class="product-card__name" th:text="${product.productName}">상품명</p>
+            <a
+              class="product-card__name product-card__name-link"
+              th:href="@{/product/{id}(id=${product.productId})}"
+              th:text="${product.productName}"
+            >
+              상품명
+            </a>
             <p class="product-card__price">
-              <strong th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"
-                >3,280원</strong
-              >
+              <strong th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">
+                3,280원
+              </strong>
             </p>
             <p class="product-card__quantity" th:text="|누적 ${product.totalQuantity}개 담김|">
               누적 0개 담김
