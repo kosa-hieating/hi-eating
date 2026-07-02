@@ -11,7 +11,7 @@
             h.ends_at AS endsAt,
             h.status AS status,
             COUNT(hp.product_option_id) AS productCount,
-            COALESCE(SUM(hp.hot_deal_price), 0) AS discountPrice
+            COALESCE(ROUND(AVG(100 - (hp.hot_deal_price * 100 / NULLIF(hp.original_price, 0)))), 0) AS discountRate
         FROM hot_deals h
         LEFT JOIN hot_deal_products hp ON h.id = hp.hot_deal_id
         WHERE h.deleted_at IS NULL

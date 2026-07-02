@@ -80,8 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (submitButton) submitButton.disabled = false;
             });
         });
-    });
-  }
+    }
 });
 
 function changeSort(sortType) {
@@ -485,66 +484,34 @@ function renderRegisteredDeals() {
 
   // 3. 테이블 그리기
   let html = '';
-  pagedList.forEach((deal) => {
+  pagedList.forEach(deal => {
     const startStr = formatDate(deal.startsAt);
     const endStr = formatDate(deal.endsAt);
-
+    const safeTitle = escapeHtml(deal.title);
+    
     let statusBadge = '';
     if (deal.status === 'ACTIVE') {
-      statusBadge = '<span class="status-pill status-active">진행중</span>';
+        statusBadge = '<span class="status-pill status-active">진행중</span>';
     } else if (deal.status === 'SCHEDULED') {
-      statusBadge = '<span class="status-pill status-waiting">대기중</span>';
+        statusBadge = '<span class="status-pill status-waiting">대기중</span>';
     } else if (deal.status === 'ENDED') {
-      statusBadge = '<span class="status-pill status-closed">종료됨</span>';
+        statusBadge = '<span class="status-pill status-closed">종료됨</span>';
     } else {
-      statusBadge = `<span class="status-pill status-closed">${deal.status}</span>`;
+        statusBadge = `<span class="status-pill status-closed">${escapeHtml(deal.status)}</span>`;
     }
 
-    // 1. 기간 정렬
-    const sortedList = [...registeredDeals].sort((a, b) => {
-        const dateA = new Date(a.startsAt);
-        const dateB = new Date(b.startsAt);
-        return currentDealSort === 'ASC' ? dateA - dateB : dateB - dateA;
-    });
-
-    // 2. 페이징 인덱스 계산
-    const totalPages = Math.ceil(sortedList.length / dealPageSize);
-    if (currentDealPage > totalPages) currentDealPage = totalPages;
-    if (currentDealPage < 1) currentDealPage = 1;
-
-    const startIndex = (currentDealPage - 1) * dealPageSize;
-    const pagedList = sortedList.slice(startIndex, startIndex + dealPageSize);
-
-    // 3. 테이블 그리기
-    let html = '';
-    pagedList.forEach(deal => {
-        const startStr = formatDate(deal.startsAt);
-        const endStr = formatDate(deal.endsAt);
-        const safeTitle = escapeHtml(deal.title);
-        
-        let statusBadge = '';
-        if (deal.status === 'ACTIVE') {
-            statusBadge = '<span class="status-pill status-active">진행중</span>';
-        } else if (deal.status === 'SCHEDULED') {
-            statusBadge = '<span class="status-pill status-waiting">대기중</span>';
-        } else if (deal.status === 'ENDED') {
-            statusBadge = '<span class="status-pill status-closed">종료됨</span>';
-        } else {
-            statusBadge = `<span class="status-pill status-closed">${escapeHtml(deal.status)}</span>`;
-        }
-
-        html += `
-            <tr>
-                <td><strong>${safeTitle}</strong></td>
-                <td>${startStr} ~ ${endStr}</td>
-                <td>${deal.productCount}개</td>
-                <td class="fw-bold">${deal.discountPrice.toLocaleString()}원</td>
-                <td>${statusBadge}</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-outline-custom py-1 px-3" style="font-size: 0.8rem; font-weight: 700; border-radius: 6px;" onclick="loadHotDealForEdit(${deal.id})">수정</button>
-                </td>
-            </tr>
-        `;
+    html += `
+        <tr>
+            <td><strong>${safeTitle}</strong></td>
+            <td>${startStr} ~ ${endStr}</td>
+            <td>${(deal.productCount ?? 0)}개</td>
+            <td class="fw-bold text-danger">${(deal.discountRate ?? 0)}%</td>
+            <td>${statusBadge}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-custom py-1 px-3" style="font-size: 0.8rem; font-weight: 700; border-radius: 6px;" onclick="loadHotDealForEdit(${deal.id})">수정</button>
+            </td>
+        </tr>
+    `;
   });
   tbody.innerHTML = html;
 
