@@ -71,9 +71,23 @@ body {
 
 /* 왼쪽 배너 목록 카드 스타일 */
 .banner-list {
-  max-height: 560px; /* 날짜 포함으로 늘어난 아이템 크기에 맞춰 6개까지 완전 노출되도록 조정 */
+  max-height: 700px; /* 배너 이미지 추가 버튼 위까지 배너들이 보이도록 크기를 늘림 */
   overflow-y: auto;
   padding-right: 0.25rem;
+}
+
+/* 종료 상태 표시 배지 */
+.status-badge.expired {
+  background-color: #fce8e6;
+  color: #a8071a;
+  border: 1px solid #f5222d;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 700;
+  display: inline-block;
+  margin-left: 0.5rem;
+  vertical-align: middle;
 }
 
 /* 스크롤바 커스텀 */
@@ -257,6 +271,26 @@ body {
   color: var(--text-muted);
 }
 
+/* 오른쪽 설정 영역 초기화 버튼 */
+.btn-reset {
+  background: #f8f9fa;
+  color: #495057;
+  border: 1px solid var(--border-gray);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.btn-reset:hover {
+  background: #e9ecef;
+  color: #212529;
+  border-color: #ced4da;
+}
+
 /* 오른쪽 설정 영역 저장 버튼 */
 .btn-save {
   background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%);
@@ -305,6 +339,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -422,4 +457,47 @@ body {
   left: 0;
   color: var(--orange-brand);
   font-weight: bold;
+}
+
+/* 이미지 미리보기 삭제 버튼 (x) */
+.btn-delete-preview {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: none; /* 기본 숨김 */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-preview:hover {
+  background: rgba(224, 94, 43, 0.9); /* 브랜드 오렌지 톤 */
+  transform: scale(1.1);
+}
+
+.btn-delete-preview i {
+  font-size: 0.8rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* placeholder 포인터 및 호버 */
+.preview-placeholder {
+  cursor: pointer;
+  transition: background 0.2s ease;
+  width: 100%;
+  height: 100%;
+}
+.preview-placeholder:hover {
+  background: #faf7f5;
 }

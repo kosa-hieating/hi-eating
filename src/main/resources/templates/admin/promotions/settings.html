@@ -48,6 +48,7 @@
                 class="banner-item"
                 th:classappend="${iter.first} ? 'active' : ''"
                 th:data-id="${banner.id}"
+                th:data-title="${banner.title}"
                 th:data-order="${banner.displayOrder}"
                 th:data-link="${banner.link}"
                 th:data-img="${banner.imgSrc}"
@@ -60,7 +61,11 @@
                   <img th:src="${banner.imgSrc}" alt="Banner Thumbnail" class="banner-thumb-img" />
                 </div>
                 <div class="banner-info-group">
-                  <span class="banner-title" th:text="${banner.title}">프로모션IMG</span>
+                  <div class="d-flex align-items-center flex-wrap gap-1">
+                    <span class="banner-title" th:text="${banner.title}">프로모션IMG</span>
+                    <!-- 종료일과 현재 날짜/시간을 비교하여 만료된 배너인 경우 '종료' 뱃지 노출 -->
+                    <span class="status-badge expired" th:if="${banner.endsAt.isBefore(now)}">종료</span>
+                  </div>
                   <span class="banner-date" th:text="|${#temporals.format(banner.startsAt, 'yyyy.MM.dd')} ~ ${#temporals.format(banner.endsAt, 'yyyy.MM.dd')}|">2026.07.02 ~ 2026.08.01</span>
                 </div>
                 <span class="order-badge" th:text="${iter.count}">1</span>
@@ -78,7 +83,7 @@
             <div class="add-banner-btn" id="addBannerBtn" onclick="triggerFileUpload()">
               <div class="add-circle"><i class="bi bi-plus-lg"></i></div>
               <div class="add-text-group">
-                <span class="add-title">배너 이미지 추가</span>
+                <span class="add-title">배너 이미지 추가 <span class="text-danger">*</span></span>
                 <span class="add-desc">클릭하여 이미지를 업로드하세요.</span>
               </div>
               <!-- 숨겨진 파일 인풋 -->
@@ -87,7 +92,7 @@
                 id="bannerFileInput"
                 style="display: none"
                 accept="image/*"
-                onchange="uploadBannerImage(this)"
+                onchange="handleBannerImageSelect(this)"
               />
             </div>
           </div>
@@ -99,13 +104,29 @@
                 <i class="bi bi-link-45deg text-orange fs-4"></i>
                 <h2 class="panel-title fw-bold m-0">프로모션 배너 링크</h2>
               </div>
-              <button type="button" class="btn btn-save" onclick="saveBannerLink()">
-                <i class="bi bi-check-lg me-1"></i>저장
-              </button>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-reset" onclick="resetForm()">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>초기화
+                </button>
+                <button type="button" class="btn btn-save" onclick="saveBannerLink()">
+                  <i class="bi bi-check-lg me-1"></i>저장
+                </button>
+              </div>
             </div>
 
             <!-- 배너 이미지 미리보기 -->
             <div class="banner-preview-box">
+              <!-- 이미지 삭제 버튼 (x) -->
+              <button
+                type="button"
+                id="btnDeletePreviewImg"
+                class="btn-delete-preview"
+                onclick="clearPreviewImage(event)"
+                title="이미지 삭제"
+                style="display: none"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
               <img
                 id="bannerPreviewImg"
                 src=""
@@ -113,11 +134,26 @@
                 class="banner-preview-img"
                 style="display: none"
               />
-              <div id="bannerPreviewPlaceholder" class="preview-placeholder">
-                <i class="bi bi-image fs-1 text-muted mb-2"></i>
+              <div id="bannerPreviewPlaceholder" class="preview-placeholder" onclick="triggerFileUpload()">
+                <i class="bi bi-plus-lg fs-1 text-muted mb-2"></i>
                 <p class="m-0 text-muted" style="font-size: 0.85rem">
-                  왼쪽 목록에서 배너를 선택해 주세요.
+                  클릭하여 배너 이미지를 등록해 주세요.
                 </p>
+              </div>
+            </div>
+
+
+            <!-- 배너 제목 입력 -->
+            <div class="form-group mb-4">
+              <label for="bannerTitleInput" class="form-label fw-bold" style="font-size: 0.9rem">배너 제목 <span class="text-danger">*</span></label>
+              <div class="input-icon-group">
+                <i class="bi bi-card-text input-icon"></i>
+                <input
+                  type="text"
+                  id="bannerTitleInput"
+                  class="form-control form-control-custom w-100"
+                  placeholder="예: 서울우유 1L 할인 기획전"
+                />
               </div>
             </div>
 
@@ -145,7 +181,7 @@
             <div class="row mb-4">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="bannerStartsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">시작 일자</label>
+                  <label for="bannerStartsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">시작 일자 <span class="text-danger">*</span></label>
                   <input
                     type="date"
                     id="bannerStartsAtInput"
@@ -155,7 +191,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="bannerEndsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">종료 일자</label>
+                  <label for="bannerEndsAtInput" class="form-label fw-bold" style="font-size: 0.9rem">종료 일자 <span class="text-danger">*</span></label>
                   <input
                     type="date"
                     id="bannerEndsAtInput"
