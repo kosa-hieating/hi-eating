@@ -1,6 +1,10 @@
 package kr.or.hieating.statistics.admin.service;
 
-import java.text.DecimalFormat;
+import static kr.or.hieating.statistics.admin.utils.StatisticsComparisonFormatter.formatDifferenceComparison;
+import static kr.or.hieating.statistics.admin.utils.StatisticsComparisonFormatter.formatPercentComparison;
+import static kr.or.hieating.statistics.admin.utils.StatisticsDateRangeUtils.previousMonthComparableEndDate;
+import static kr.or.hieating.statistics.admin.utils.StatisticsNumberUtils.defaultZero;
+
 import java.time.LocalDate;
 import java.util.List;
 import kr.or.hieating.statistics.admin.dto.AdminStatisticsMetricDTO;
@@ -75,58 +79,5 @@ public class AdminStatisticsService {
 
   private long averagePurchaseAmount(LocalDate startDate, LocalDate endDate) {
     return defaultZero(adminStatisticsMapper.averagePurchaseAmount(startDate, endDate));
-  }
-
-  private LocalDate previousMonthComparableEndDate(LocalDate today, LocalDate previousMonthStart) {
-    LocalDate previousMonthLastDate = previousMonthStart.plusMonths(1).minusDays(1);
-    LocalDate sameElapsedDate = previousMonthStart.plusDays(today.getDayOfMonth() - 1L);
-    return sameElapsedDate.isAfter(previousMonthLastDate) ? previousMonthLastDate : sameElapsedDate;
-  }
-
-  private long defaultZero(Long value) {
-    return value == null ? 0L : value;
-  }
-
-  private String formatPercentComparison(String label, long currentValue, long previousValue) {
-    if (previousValue == 0) {
-      return currentValue == 0 ? label + " 0%" : label + " 신규";
-    }
-
-    double changeRate = ((double) (currentValue - previousValue) / previousValue) * 100;
-    return label
-        + " "
-        + comparisonSymbol(changeRate)
-        + " "
-        + formatPercent(Math.abs(changeRate))
-        + "%";
-  }
-
-  private String formatDifferenceComparison(
-      String label, long currentValue, long previousValue, String unit) {
-    long difference = currentValue - previousValue;
-    return label
-        + " "
-        + comparisonSymbol(difference)
-        + " "
-        + formatInteger(Math.abs(difference))
-        + unit;
-  }
-
-  private String formatInteger(long value) {
-    return new DecimalFormat("#,##0").format(value);
-  }
-
-  private String formatPercent(double value) {
-    return new DecimalFormat("#,##0.#").format(value);
-  }
-
-  private String comparisonSymbol(double value) {
-    if (value > 0) {
-      return "▲";
-    }
-    if (value < 0) {
-      return "▼";
-    }
-    return "-";
   }
 }
