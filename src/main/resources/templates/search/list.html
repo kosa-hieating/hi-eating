@@ -66,9 +66,7 @@
               <h1 th:if="${condition.hasKeyword()}" th:text="|'${condition.keyword}' 검색 결과|">
                 검색 결과
               </h1>
-              <h1 th:unless="${condition.hasKeyword()}">
-                검색 결과
-              </h1>
+              <h1 th:unless="${condition.hasKeyword()}">검색 결과</h1>
               <p class="product-list-count">
                 총 <strong th:text="${productPage.totalCount}">0</strong>개의 상품
               </p>
@@ -83,15 +81,17 @@
               <select id="sort" name="sort" onchange="this.form.submit()">
                 <option value="popular" th:selected="${condition.sort == 'popular'}">인기순</option>
                 <option value="latest" th:selected="${condition.sort == 'latest'}">최신순</option>
-                <option value="priceAsc" th:selected="${condition.sort == 'priceAsc'}">낮은 가격순</option>
-                <option value="priceDesc" th:selected="${condition.sort == 'priceDesc'}">높은 가격순</option>
+                <option value="priceAsc" th:selected="${condition.sort == 'priceAsc'}">
+                  낮은 가격순
+                </option>
+                <option value="priceDesc" th:selected="${condition.sort == 'priceDesc'}">
+                  높은 가격순
+                </option>
               </select>
             </form>
           </header>
 
-          <p class="product-empty" th:if="${!condition.hasKeyword()}">
-            검색어를 입력해주세요.
-          </p>
+          <p class="product-empty" th:if="${!condition.hasKeyword()}">검색어를 입력해주세요.</p>
           <p class="product-empty" th:if="${condition.hasKeyword() && !productPage.hasProducts()}">
             조건에 맞는 상품이 없습니다.
           </p>
