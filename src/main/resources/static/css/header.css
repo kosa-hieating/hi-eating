@@ -127,8 +127,8 @@
   font-size: 21px;
   line-height: 1;
   transition:
-      opacity 180ms ease,
-      transform 180ms ease;
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
 .category-icon-menu {
@@ -141,12 +141,12 @@
   transform: rotate(-90deg) scale(0.65);
 }
 
-.nav-category-trigger[aria-expanded="true"] .category-icon-menu {
+.nav-category-trigger[aria-expanded='true'] .category-icon-menu {
   opacity: 0;
   transform: rotate(90deg) scale(0.65);
 }
 
-.nav-category-trigger[aria-expanded="true"] .category-icon-close {
+.nav-category-trigger[aria-expanded='true'] .category-icon-close {
   opacity: 1;
   transform: rotate(0deg) scale(1);
 }

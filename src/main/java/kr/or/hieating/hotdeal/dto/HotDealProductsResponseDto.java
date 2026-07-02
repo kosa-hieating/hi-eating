@@ -7,9 +7,11 @@ import lombok.Data;
 public class HotDealProductsResponseDto {
 
   private int hotDealId;
+  private int productId;
   private int productOptionId;
   private String hotDealTitle;
   private String productName;
+  private String pictureLocation;
   private int originalPrice;
   private int hotDealPrice;
   private int discountRate;
