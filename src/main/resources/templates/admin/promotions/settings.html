@@ -54,7 +54,10 @@
                 th:data-img="${banner.imgSrc}"
                 th:data-start="${#temporals.format(banner.startsAt, 'yyyy-MM-dd')}"
                 th:data-end="${#temporals.format(banner.endsAt, 'yyyy-MM-dd')}"
+                tabindex="0"
+                role="button"
                 onclick="selectBannerItem(this)"
+                onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
               >
                 <div class="drag-handle"><i class="bi bi-grip-vertical"></i></div>
                 <div class="banner-thumb-wrapper">
@@ -86,7 +89,14 @@
             </div>
 
             <!-- 배너 이미지 추가 버튼 -->
-            <div class="add-banner-btn" id="addBannerBtn" onclick="triggerFileUpload()">
+            <div
+              class="add-banner-btn"
+              id="addBannerBtn"
+              tabindex="0"
+              role="button"
+              onclick="triggerFileUpload()"
+              onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
+            >
               <div class="add-circle"><i class="bi bi-plus-lg"></i></div>
               <div class="add-text-group">
                 <span class="add-title">배너 이미지 추가 <span class="text-danger">*</span></span>
@@ -143,7 +153,10 @@
               <div
                 id="bannerPreviewPlaceholder"
                 class="preview-placeholder"
+                tabindex="0"
+                role="button"
                 onclick="triggerFileUpload()"
+                onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
               >
                 <i class="bi bi-plus-lg fs-1 text-muted mb-2"></i>
                 <p class="m-0 text-muted" style="font-size: 0.85rem">

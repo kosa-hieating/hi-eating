@@ -400,8 +400,11 @@ function saveBannerLink() {
     formData.append('startsAt', startsAtValue.replace(/-/g, '.'));
     formData.append('endsAt', endsAtValue.replace(/-/g, '.'));
 
-    // 버튼 로딩 상태 UI 갱신
-    if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+    // 버튼 로딩 상태 UI 갱신 및 비활성화 (중복 제출 방지)
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+    }
 
     // 신규 등록 API 호출 (POST multipart)
     fetch('/admin/api/promotions', {
@@ -415,13 +418,19 @@ function saveBannerLink() {
           location.reload(); // 새로고침하여 목록에 반영
         } else {
           alert('배너 등록에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
-          if (saveBtn) saveBtn.innerHTML = originalText;
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+          }
         }
       })
       .catch((err) => {
         console.error('Error saving new banner:', err);
         alert('서버와 통신하는 중 오류가 발생했습니다.');
-        if (saveBtn) saveBtn.innerHTML = originalText;
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalText;
+        }
       });
     return;
   }
@@ -442,7 +451,10 @@ function saveBannerLink() {
     formData.append('startsAt', startsAtValue.replace(/-/g, '.'));
     formData.append('endsAt', endsAtValue.replace(/-/g, '.'));
 
-    if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+    }
 
     // multipart 수정 API 호출 (POST /admin/api/promotions/{id})
     fetch(`/admin/api/promotions/${selectedBannerId}`, {
@@ -456,19 +468,28 @@ function saveBannerLink() {
           location.reload(); // 이미지 경로 변경이 일어났으므로 안전하게 화면 리로드하여 목록 갱신
         } else {
           alert('수정에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
-          if (saveBtn) saveBtn.innerHTML = originalText;
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+          }
         }
       })
       .catch((err) => {
         console.error('Error updating banner with image:', err);
         alert('서버와 통신하는 중 오류가 발생했습니다.');
-        if (saveBtn) saveBtn.innerHTML = originalText;
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalText;
+        }
       });
     return;
   }
 
   // 2-B) 이미지는 변경하지 않고, 기존 텍스트 및 기간 데이터만 수정하는 경우
-  if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>저장 중...';
+  }
 
   // 기존 텍스트 수정 API 호출 (PUT json)
   fetch(`/admin/api/promotions/${selectedBannerId}`, {
@@ -535,16 +556,25 @@ function saveBannerLink() {
             }
           }
         }
-        if (saveBtn) saveBtn.innerHTML = originalText;
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalText;
+        }
       } else {
         alert('저장에 실패했습니다: ' + (response.message || '알 수 없는 오류'));
-        if (saveBtn) saveBtn.innerHTML = originalText;
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalText;
+        }
       }
     })
     .catch((err) => {
       console.error('Error saving banner info:', err);
       alert('서버와 통신하는 중 오류가 발생했습니다.');
-      if (saveBtn) saveBtn.innerHTML = originalText;
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+      }
     });
 }
 

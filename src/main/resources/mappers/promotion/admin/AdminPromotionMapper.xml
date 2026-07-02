@@ -26,7 +26,7 @@
 
     <insert id="insertPromotion" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO promotions (title, img_src, link, display_order, starts_at, ends_at, created_at)
-        VALUES (#{title}, #{imgSrc}, #{link}, #{displayOrder}, #{startsAt}, #{endsAt}, SYSTIMESTAMP)
+        VALUES (#{title}, #{imgSrc}, #{link}, (SELECT COALESCE(MAX(display_order), 0) + 1000 FROM promotions), #{startsAt}, #{endsAt}, SYSTIMESTAMP)
     </insert>
 
     <update id="updatePromotion">
