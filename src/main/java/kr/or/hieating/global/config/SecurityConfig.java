@@ -39,7 +39,7 @@ public class SecurityConfig {
                         "/images/**",
                         "/fonts/**") // 추후 코드 병합시 핫딜과 같은 페이지 허용 필요
                     .permitAll()
-                    .requestMatchers("/admin", "/admin/**")
+                    .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())
