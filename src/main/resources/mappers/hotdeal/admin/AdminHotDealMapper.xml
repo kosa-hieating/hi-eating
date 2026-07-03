@@ -19,6 +19,32 @@
             END
     </update>
 
+    <select id="countExpiredProductOptions" resultType="int">
+        SELECT COUNT(*)
+        FROM product_options
+        WHERE expire_date &lt; TRUNC(SYSDATE)
+          AND id IN
+          <foreach collection="productOptionIds" item="productOptionId" open="(" separator="," close=")">
+              #{productOptionId}
+          </foreach>
+    </select>
+
+    <select id="countUnlinkedExpiredProductOptions" resultType="int">
+        SELECT COUNT(*)
+        FROM product_options o
+        WHERE o.expire_date &lt; TRUNC(SYSDATE)
+          AND o.id IN
+          <foreach collection="productOptionIds" item="productOptionId" open="(" separator="," close=")">
+              #{productOptionId}
+          </foreach>
+          AND NOT EXISTS (
+              SELECT 1
+              FROM hot_deal_products hp
+              WHERE hp.hot_deal_id = #{hotDealId}
+                AND hp.product_option_id = o.id
+          )
+    </select>
+
     <select id="selectManageableHotDeals" resultType="kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO">
         SELECT 
             h.id AS id,
@@ -72,7 +98,8 @@
             hp.product_option_id AS productOptionId,
             p.name AS productName,
             hp.original_price AS originalPrice,
-            hp.hot_deal_price AS hotDealPrice
+            hp.hot_deal_price AS hotDealPrice,
+            o.expire_date AS expireDate
         FROM hot_deal_products hp
         INNER JOIN product_options o ON hp.product_option_id = o.id
         INNER JOIN products p ON o.product_id = p.id
