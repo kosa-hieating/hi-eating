@@ -3,6 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper">
 
+    <update id="updateStatusesByPeriod">
+        UPDATE hot_deals
+        SET status = CASE
+                WHEN ends_at &lt; SYSTIMESTAMP THEN 'ENDED'
+                WHEN starts_at &gt; SYSTIMESTAMP THEN 'SCHEDULED'
+                ELSE 'ACTIVE'
+            END,
+            updated_at = SYSTIMESTAMP
+        WHERE deleted_at IS NULL
+          AND status != CASE
+                WHEN ends_at &lt; SYSTIMESTAMP THEN 'ENDED'
+                WHEN starts_at &gt; SYSTIMESTAMP THEN 'SCHEDULED'
+                ELSE 'ACTIVE'
+            END
+    </update>
+
     <select id="selectManageableHotDeals" resultType="kr.or.hieating.hotdeal.admin.dto.HotDealResponseDTO">
         SELECT 
             h.id AS id,
@@ -15,7 +31,6 @@
         FROM hot_deals h
         LEFT JOIN hot_deal_products hp ON h.id = hp.hot_deal_id
         WHERE h.deleted_at IS NULL
-          AND h.status IN ('ACTIVE', 'SCHEDULED')
         GROUP BY h.id, h.title, h.starts_at, h.ends_at, h.status
         ORDER BY h.starts_at DESC
     </select>

@@ -228,7 +228,13 @@ function searchProducts(resetPage = false) {
             if (diffDays <= 7) isUrgent = true;
           }
 
-          const statusBadgeClass = p.status === '유통임박' ? 'badge-orange' : 'badge-gray';
+          const statusBadgeClass =
+            p.status === '폐기'
+              ? 'badge-red'
+              : p.status === '유통임박'
+                ? 'badge-orange'
+                : 'badge-gray';
+          const isDiscarded = p.status === '폐기';
           const isChecked = selectedProducts.some((item) => item.optionId === p.productOptionId);
 
           html += `
@@ -255,6 +261,7 @@ function searchProducts(resetPage = false) {
                         <div class="text-center">
                           <input type="checkbox" class="checkbox-custom" data-option-id="${p.productOptionId}"
                                  onclick="toggleProductSelect(${p.productOptionId}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, this.checked)"
+                                 ${isDiscarded ? 'disabled' : ''}
                                  ${isChecked ? 'checked' : ''}>
                         </div>
                       </div>

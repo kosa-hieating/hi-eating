@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AdminHotDealMapper {
 
+  int updateStatusesByPeriod();
+
   List<HotDealResponseDTO> selectManageableHotDeals();
 
   void insertHotDeal(HotDeals hotDeal);

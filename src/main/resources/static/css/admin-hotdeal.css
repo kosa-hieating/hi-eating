@@ -249,6 +249,11 @@ body {
   color: var(--tag-text-gray);
 }
 
+.badge-red {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
 /* 체크박스 커스텀 스타일 */
 .checkbox-custom {
   width: 18px;
