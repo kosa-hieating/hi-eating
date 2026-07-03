@@ -142,7 +142,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (reviewPanel && reviewList && reviewPagination) {
+    openReviewTabFromHash();
     loadReviews(currentReviewPage);
+  }
+
+  function openReviewTabFromHash() {
+    if (window.location.hash !== '#product-reviews') {
+      return;
+    }
+
+    const reviewTabButton = document.getElementById('product-reviews-tab');
+    if (!reviewTabButton) {
+      return;
+    }
+
+    if (window.bootstrap?.Tab) {
+      window.bootstrap.Tab.getOrCreateInstance(reviewTabButton).show();
+      return;
+    }
+
+    reviewTabButton.click();
   }
 
   async function loadReviews(page) {
