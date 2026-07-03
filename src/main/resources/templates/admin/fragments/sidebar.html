@@ -66,8 +66,11 @@
     <!-- 프로필 섹션 (하단 고정) -->
     <div class="user-profile" th:if="${currentUser != null}">
       <div class="user-info">
-        <div class="user-avatar bg-light d-flex align-items-center justify-content-center text-secondary" style="border: 1px solid #e0e0e0;">
-          <i class="bi bi-person-fill" style="font-size: 1.25rem;"></i>
+        <div
+          class="user-avatar bg-light d-flex align-items-center justify-content-center text-secondary"
+          style="border: 1px solid #e0e0e0"
+        >
+          <i class="bi bi-person-fill" style="font-size: 1.25rem"></i>
         </div>
         <div class="user-details">
           <span class="user-name" th:text="${currentUser.name}">Eddy</span>
