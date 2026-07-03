@@ -14,10 +14,11 @@ import kr.or.hieating.auth.mapper.AuthMapper;
 import kr.or.hieating.favorite.domain.Favorite;
 import kr.or.hieating.favorite.service.FavoriteService;
 import kr.or.hieating.product.domain.Product;
-import kr.or.hieating.purchase.domain.Purchase;
+import kr.or.hieating.purchase.dto.RecentPurchaseProductDto;
+import kr.or.hieating.purchase.service.PurchaseService;
 import kr.or.hieating.user.domain.User;
 import kr.or.hieating.utils.UserResolver;
-import kr.or.hieating.visit.domain.Visit;
+import kr.or.hieating.visit.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MyPageController {
 
   private final FavoriteService favoriteService;
+  private final PurchaseService purchaseService;
+  private final VisitService visitService;
   private final UserResolver userResolver;
   private static final DateTimeFormatter BIRTH_TEXT_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy년MM월dd일");
@@ -40,6 +43,7 @@ public class MyPageController {
 
   @GetMapping("/mypage")
   public String myPage(Model model) {
+    Long userId = userResolver.requireCurrentUserId();
     User member =
         new User(
             1L,
@@ -51,31 +55,6 @@ public class MyPageController {
             LocalDateTime.now().minusMonths(6),
             null,
             null);
-    Product recentOrderProduct =
-        new Product(
-            11L,
-            6L,
-            "아침 그래놀라 오트밀 세트",
-            "든든한 아침 식사를 위한 오트밀 세트",
-            119640,
-            128,
-            "ON_SALE",
-            LocalDateTime.now().minusDays(30),
-            null);
-    Purchase recentPurchase =
-        new Purchase(
-            401L,
-            member.id(),
-            101L,
-            1,
-            recentOrderProduct.price(),
-            LocalDateTime.now().minusDays(3),
-            null);
-    List<Purchase> purchases = List.of(recentPurchase);
-    List<Favorite> favorites =
-        List.of(new Favorite(member.id(), 1L, LocalDateTime.now().minusDays(1), null));
-    List<Visit> visits =
-        List.of(new Visit(member.id(), recentOrderProduct.id(), LocalDateTime.now(), null));
     List<Product> recommendedProducts =
         List.of(
             new Product(
@@ -130,11 +109,14 @@ public class MyPageController {
                 null));
     Set<Long> favoriteProductIds =
         favoriteService.findFavoriteProductIds(
-            userResolver.currentUserId(), recommendedProducts.stream().map(Product::id).toList());
+            userId, recommendedProducts.stream().map(Product::id).toList());
+    int purchaseCount = purchaseService.countPurchases(userId);
+    int favoriteCount = favoriteService.countFavorites(userId);
+    int visitCount = visitService.countVisits(userId);
+    RecentPurchaseProductDto recentPurchaseProduct =
+        purchaseService.findLatestPurchaseProduct(userId).orElse(null);
     Map<Long, String> productImageUrls =
         Map.of(
-            recentOrderProduct.id(),
-            "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=320&q=80",
             1L,
             "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=320&q=80",
             2L,
@@ -153,11 +135,10 @@ public class MyPageController {
     model.addAttribute(
         "summaryCards",
         List.of(
-            Map.of("label", "주문 상품", "count", purchases.size()),
-            Map.of("label", "관심 상품", "count", favorites.size()),
-            Map.of("label", "최근 본 상품", "count", visits.size())));
-    model.addAttribute("recentPurchase", recentPurchase);
-    model.addAttribute("recentOrderProduct", recentOrderProduct);
+            Map.of("label", "주문 상품", "count", purchaseCount),
+            Map.of("label", "관심 상품", "count", favoriteCount),
+            Map.of("label", "최근 본 상품", "count", visitCount)));
+    model.addAttribute("recentPurchaseProduct", recentPurchaseProduct);
     model.addAttribute("productImageUrls", productImageUrls);
     model.addAttribute("recommendedProducts", recommendedProducts);
     model.addAttribute("favoriteProductIds", favoriteProductIds);
