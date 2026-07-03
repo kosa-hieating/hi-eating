@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
+import kr.or.hieating.global.apiPayload.exception.GeneralException;
 
 @Controller
 @RequiredArgsConstructor
@@ -207,8 +209,13 @@ public class MyPageController {
   @PostMapping("/mypage/withdraw")
   public String withdrawMember(Principal principal, HttpServletRequest request) {
     Users member = findCurrentMember(principal);
-    if (member != null) {
-      authMapper.withdrawUser(member.getId());
+    if (member == null) {
+      throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+    }
+
+    int withdrawn = authMapper.withdrawUser(member.getId());
+    if (withdrawn == 0) {
+      throw new GeneralException(ErrorStatus.MEMBER_WITHDRAW_FAILED);
     }
 
     SecurityContextHolder.clearContext();
