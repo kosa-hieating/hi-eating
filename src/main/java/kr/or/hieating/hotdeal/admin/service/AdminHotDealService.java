@@ -14,6 +14,7 @@ import kr.or.hieating.hotdeal.admin.dto.HotDealUpdateRequestDTO;
 import kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper;
 import kr.or.hieating.hotdeal.domain.HotDealProducts;
 import kr.or.hieating.hotdeal.domain.HotDeals;
+import kr.or.hieating.utils.UserResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminHotDealService {
 
   private final AdminHotDealMapper adminHotDealMapper;
+  private final UserResolver userResolver;
 
   @Transactional
   public List<HotDealResponseDTO> getExistingHotDeals() {
@@ -53,6 +55,7 @@ public class AdminHotDealService {
     }
 
     String status = request.getStartsAt().isAfter(today) ? "SCHEDULED" : "ACTIVE";
+    int adminUserId = Math.toIntExact(userResolver.requireCurrentUserId());
 
     HotDeals hotDeal =
         HotDeals.builder()
@@ -61,7 +64,7 @@ public class AdminHotDealService {
             .startsAt(request.getStartsAt().atStartOfDay())
             .endsAt(request.getEndsAt().atTime(23, 59, 59))
             .status(status)
-            .createdBy(1) // TODO: 실제 로그인한 관리자 ID로 변경 필요
+            .createdBy(adminUserId)
             .build();
 
     adminHotDealMapper.insertHotDeal(hotDeal);
