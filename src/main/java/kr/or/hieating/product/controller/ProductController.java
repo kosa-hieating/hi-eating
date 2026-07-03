@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
+
   private final ProductService productService;
   private final CategoryService categoryService;
   private final UserResolver userResolver;
@@ -33,7 +34,11 @@ public class ProductController {
             .findProductDetail(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-    visitService.recordVisit(userResolver.currentUserId(), id);
+    Long userId = userResolver.currentUserIdOrNull();
+
+    if (userId != null) {
+      visitService.recordVisit(userId, id);
+    }
 
     model.addAttribute("contentTemplate", "product/detail");
     model.addAttribute("contentFragment", "content");
@@ -55,7 +60,7 @@ public class ProductController {
     ProductListSearchCondition condition =
         new ProductListSearchCondition(
             categoryId,
-            userResolver.currentUserId(),
+            userResolver.currentUserIdOrNull(),
             minPrice,
             maxPrice,
             minDiscountRate,

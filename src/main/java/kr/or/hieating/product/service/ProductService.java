@@ -30,7 +30,7 @@ public class ProductService {
 
   public List<MostPurchasedProductResponseDto> findMostPurchasedProducts() {
     List<MostPurchasedProductResponseDto> products =
-        productMapper.findMostPurchasedProducts(userResolver.currentUserId());
+        productMapper.findMostPurchasedProducts(userResolver.currentUserIdOrNull());
     products.forEach(
         product ->
             product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation())));
@@ -44,7 +44,7 @@ public class ProductService {
   }
 
   private ProductDetail createProductDetail(ProductDetailRowDto product, Long productId) {
-    Long userId = userResolver.currentUserId();
+    Long userId = userResolver.currentUserIdOrNull();
     List<String> imageUrls =
         productMapper.findProductImageUrls(productId).stream()
             .map(imageUrlResolver::resolve)

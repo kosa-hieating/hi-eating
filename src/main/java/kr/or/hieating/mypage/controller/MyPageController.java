@@ -28,7 +28,7 @@ public class MyPageController {
 
   @GetMapping("/mypage")
   public String myPage(Model model) {
-    Long userId = userResolver.currentUserId();
+    Long userId = userResolver.requireCurrentUserId();
     User member =
         new User(
             1L,

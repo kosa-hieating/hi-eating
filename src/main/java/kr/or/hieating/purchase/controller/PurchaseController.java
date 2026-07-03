@@ -23,7 +23,7 @@ public class PurchaseController {
       @RequestParam(defaultValue = "1") int quantity,
       RedirectAttributes redirectAttributes) {
     try {
-      purchaseService.purchase(userResolver.currentUserId(), productId, quantity);
+      purchaseService.purchase(userResolver.requireCurrentUserId(), productId, quantity);
       redirectAttributes.addFlashAttribute("purchaseSuccessMessage", "구매가 완료되었습니다.");
     } catch (PurchaseException e) {
       redirectAttributes.addFlashAttribute("purchaseErrorMessage", e.getMessage());
