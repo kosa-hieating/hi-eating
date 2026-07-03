@@ -1,7 +1,6 @@
 package kr.or.hieating.auth.security;
 
 import java.util.Collection;
-
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
