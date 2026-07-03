@@ -80,10 +80,6 @@
           <strong>${formatPrice(product.hotDealPrice)}</strong>
         </div>
         <del>${formatPrice(product.originalPrice)}</del>
-        <p class="hotdeal-product-card__meta">
-          <span>\uC870\uD68C ${product.viewCount}</span>
-          <span>\uAD6C\uB9E4 ${product.totalQuantity}</span>
-        </p>
       </article>
     `;
   };

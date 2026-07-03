@@ -252,15 +252,6 @@
   font-size: 13px;
 }
 
-.catalog-product-card__meta {
-  display: flex;
-  gap: 10px;
-  margin: 8px 0 0;
-  color: #9a9189;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 .product-pagination {
   display: flex;
   justify-content: center;

@@ -1,5 +1,10 @@
 <!doctype html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <body>
     <header class="site-header sticky-top bg-white" th:fragment="siteHeader">
       <div class="header-brand-row bg-white border-bottom">
@@ -9,7 +14,6 @@
           <a aria-label="Hi Eating 홈" class="brand-link flex-shrink-0 order-1" th:href="@{/}">
             <img alt="Hi Eating" class="brand-logo" th:src="@{/images/logo-hi-eating.png}" />
           </a>
-
           <form
             class="header-search input-group order-3 order-lg-2 w-100 mx-lg-auto"
             method="get"
@@ -21,21 +25,28 @@
               class="form-control"
               id="global-search"
               name="keyword"
-              placeholder="먹고 싶은 메뉴나 식당을 검색해 보세요"
+              placeholder="건강을 쉽게, HI-Eating"
+              th:value="${keyword}"
               type="search"
             />
             <button aria-label="검색" class="btn btn-hi-search" type="submit">
               <i aria-hidden="true" class="bi bi-search"></i>
             </button>
           </form>
-
           <nav
-            aria-label="회원 메뉴"
             class="auth-links small order-2 order-lg-3 ms-auto d-flex align-items-center justify-content-end gap-2 gap-lg-3 text-nowrap"
+            aria-label="회원 메뉴"
           >
-            <a th:href="@{/login}">로그인</a>
-            <a th:href="@{/signup}">회원가입</a>
-            <a th:href="@{/logout}">로그아웃</a>
+            <span sec:authorize="isAnonymous()">
+              <a th:href="@{/login}">로그인</a>
+              <a th:href="@{/signup}">회원가입</a>
+            </span>
+            <span sec:authorize="isAuthenticated()">
+              <b><span sec:authentication="name"></span></b>계정으로 로그인 되었습니다
+              <a th:href="@{/mypage}">마이페이지</a>
+              <a th:href="@{/logout}">로그아웃</a>
+              <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">관리자 페이지</a>
+            </span>
           </nav>
         </div>
       </div>
@@ -64,8 +75,9 @@
                   class="dropdown-item"
                   th:href="@{/categories/{categoryId}(categoryId=${category.id})}"
                   th:text="${category.name}"
-                  >카테고리</a
                 >
+                  카테고리
+                </a>
               </li>
             </ul>
           </div>
@@ -73,8 +85,9 @@
           <a
             class="nav-hotdeal d-inline-flex align-items-center justify-content-center px-2 px-sm-3"
             th:href="@{/hot-deals}"
-            >핫딜</a
           >
+            핫딜
+          </a>
 
           <nav
             aria-label="개인 메뉴"

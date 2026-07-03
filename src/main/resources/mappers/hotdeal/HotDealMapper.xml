@@ -29,8 +29,7 @@
           FROM product_pictures pp2
           WHERE pp2.product_id = p.id
         )
-    WHERE h.status = 'ACTIVE'
-      AND h.deleted_at IS NULL
+    WHERE h.deleted_at IS NULL
       AND SYSTIMESTAMP BETWEEN h.starts_at AND h.ends_at
       AND po.stock > 0
     ORDER BY h.ends_at, h.id, hp.product_option_id
@@ -53,8 +52,7 @@
         FETCH FIRST 1 ROWS ONLY
       ) AS heroImageLocation
     FROM hot_deals h
-    WHERE h.status = 'ACTIVE'
-      AND h.deleted_at IS NULL
+    WHERE h.deleted_at IS NULL
       AND SYSTIMESTAMP BETWEEN h.starts_at AND h.ends_at
     ORDER BY h.ends_at ASC, h.id ASC
   </select>
@@ -98,8 +96,7 @@
         FROM favorites
         WHERE user_id = #{userId}
       ) favorite_stat ON favorite_stat.product_id = p.id
-    WHERE h.status = 'ACTIVE'
-      AND h.deleted_at IS NULL
+    WHERE h.deleted_at IS NULL
       AND SYSTIMESTAMP BETWEEN h.starts_at AND h.ends_at
       AND po.stock > 0
       <if test="hotDealId != null">

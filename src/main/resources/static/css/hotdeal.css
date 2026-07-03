@@ -310,15 +310,6 @@
   font-size: 13px;
 }
 
-.hotdeal-product-card__meta {
-  display: flex;
-  gap: 10px;
-  margin: 8px 0 0;
-  color: #9a9189;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 @media (max-width: 991.98px) {
   .hotdeal-hero {
     grid-template-columns: 1fr;
