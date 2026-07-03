@@ -1,16 +1,18 @@
 package kr.or.hieating.auth.security;
 
 import java.util.Collection;
+
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class HiEatingUserPrincipal implements UserDetails {
+public class HiEatingUserPrincipal implements UserDetails, CredentialsContainer {
 
   private static final long serialVersionUID = 1L;
 
   private final Long id;
   private final String email;
-  private final String password;
+  private String password;
   private final String name;
   private final Collection<? extends GrantedAuthority> authorities;
 
@@ -72,5 +74,10 @@ public class HiEatingUserPrincipal implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @Override
+  public void eraseCredentials() {
+    this.password = null;
   }
 }
