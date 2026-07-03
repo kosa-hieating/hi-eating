@@ -1,20 +1,14 @@
 package kr.or.hieating.utils;
 
-import kr.or.hieating.auth.domain.Users;
-import kr.or.hieating.auth.mapper.AuthMapper;
-import lombok.RequiredArgsConstructor;
+import kr.or.hieating.auth.security.HiEatingUserPrincipal;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class UserResolver {
-
-  private final AuthMapper authMapper;
 
   public Long currentUserIdOrNull() {
 
@@ -28,9 +22,8 @@ public class UserResolver {
 
     Object principal = authentication.getPrincipal();
 
-    if (principal instanceof UserDetails userDetails) {
-      Users user = authMapper.findByEmail(userDetails.getUsername());
-      return user == null ? null : user.getId();
+    if (principal instanceof HiEatingUserPrincipal userPrincipal) {
+      return userPrincipal.getId();
     }
 
     return null;
