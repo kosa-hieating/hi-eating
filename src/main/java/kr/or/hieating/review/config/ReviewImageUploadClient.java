@@ -30,7 +30,7 @@ public class ReviewImageUploadClient {
       RestClient.Builder restClientBuilder,
       @Value("${greenfood.review-image.upload-url}") String uploadUrl,
       @Value("${greenfood.review-image.public-path-prefix:/uploads/images}")
-      String publicPathPrefix) {
+          String publicPathPrefix) {
     this.restClient = restClientBuilder.build();
     this.uploadUrl = uploadUrl;
     this.publicPathPrefix = normalizePublicPathPrefix(publicPathPrefix);

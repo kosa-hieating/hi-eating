@@ -35,8 +35,8 @@ public class ReviewService {
     ReviewFormResponseDto reviewForm =
         purchaseId != null
             ? reviewMapper
-            .findReviewFormByPurchaseId(userId, purchaseId)
-            .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND))
+                .findReviewFormByPurchaseId(userId, purchaseId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND))
             : reviewMapper
                 .findLatestReviewFormByProductId(userId, productId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND));
