@@ -1,10 +1,16 @@
 package kr.or.hieating.mypage.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import kr.or.hieating.auth.domain.Users;
+import kr.or.hieating.auth.mapper.AuthMapper;
 import kr.or.hieating.favorite.domain.Favorite;
 import kr.or.hieating.favorite.service.FavoriteService;
 import kr.or.hieating.product.domain.Product;
@@ -13,9 +19,13 @@ import kr.or.hieating.user.domain.User;
 import kr.or.hieating.utils.UserResolver;
 import kr.or.hieating.visit.domain.Visit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +33,10 @@ public class MyPageController {
 
   private final FavoriteService favoriteService;
   private final UserResolver userResolver;
+  private static final DateTimeFormatter BIRTH_TEXT_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy년MM월dd일");
+  private static final Set<String> EDITABLE_GENDERS = Set.of("MALE", "FEMALE");
+  private final AuthMapper authMapper;
 
   @GetMapping("/mypage")
   public String myPage(Model model) {
@@ -148,5 +162,85 @@ public class MyPageController {
     model.addAttribute("recommendedProducts", recommendedProducts);
     model.addAttribute("favoriteProductIds", favoriteProductIds);
     return "layout/base";
+  }
+
+  @GetMapping("/mypage/edit")
+  public String editMember(Principal principal, Model model) {
+    Users member = findCurrentMember(principal);
+    if (member == null) {
+      return "redirect:/login";
+    }
+
+    setEditPage(model, member);
+    return "layout/base";
+  }
+
+  @PostMapping("/mypage/edit")
+  public String updateMember(
+      Principal principal,
+      @RequestParam(name = "gender", required = false) String gender,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+    Users member = findCurrentMember(principal);
+    if (member == null) {
+      return "redirect:/login";
+    }
+
+    try {
+      validateMemberEdit(gender);
+
+      int updated = authMapper.updateUserProfile(member.getId(), gender);
+      if (updated == 0) {
+        throw new IllegalArgumentException("회원 정보를 수정할 수 없습니다.");
+      }
+
+      redirectAttributes.addFlashAttribute("editMessage", "회원 정보가 수정되었습니다.");
+      return "redirect:/mypage/edit";
+    } catch (IllegalArgumentException exception) {
+      member.setGender(gender);
+      model.addAttribute("editError", exception.getMessage());
+      setEditPage(model, member);
+      return "layout/base";
+    }
+  }
+
+  @PostMapping("/mypage/withdraw")
+  public String withdrawMember(Principal principal, HttpServletRequest request) {
+    Users member = findCurrentMember(principal);
+    if (member != null) {
+      authMapper.withdrawUser(member.getId());
+    }
+
+    SecurityContextHolder.clearContext();
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+
+    return "redirect:/";
+  }
+
+  private void setEditPage(Model model, Users member) {
+    model.addAttribute("contentTemplate", "member/edit");
+    model.addAttribute("contentFragment", "content");
+    model.addAttribute("pageStylesheet", "member-edit");
+    model.addAttribute("pageScript", "member-edit");
+
+    model.addAttribute("member", member);
+    model.addAttribute("birthText", member.getBirth().format(BIRTH_TEXT_FORMATTER));
+  }
+
+  private Users findCurrentMember(Principal principal) {
+    if (principal == null) {
+      return null;
+    }
+
+    return authMapper.findByEmail(principal.getName());
+  }
+
+  private void validateMemberEdit(String gender) {
+    if (!EDITABLE_GENDERS.contains(gender)) {
+      throw new IllegalArgumentException("성별 값을 확인해 주세요.");
+    }
   }
 }

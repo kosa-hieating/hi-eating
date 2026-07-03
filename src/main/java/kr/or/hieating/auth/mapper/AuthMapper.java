@@ -17,4 +17,8 @@ public interface AuthMapper {
   int insertUser(SignupUserParam param);
 
   int insertUserAuth(@Param("userId") long userId, @Param("auth") String auth);
+
+  int updateUserProfile(@Param("userId") long userId, @Param("gender") String gender);
+
+  int withdrawUser(@Param("userId") long userId);
 }
