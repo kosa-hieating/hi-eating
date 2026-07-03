@@ -160,8 +160,7 @@ public class MyPageController {
   @PostMapping("/mypage/edit")
   public String updateMember(
       @RequestParam(name = "name", required = false) String name,
-      @RequestParam(name = "birth", required = false)
-          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+      @RequestParam(name = "birth", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           LocalDate birth,
       @RequestParam(name = "gender", required = false) String gender,
       Model model,
