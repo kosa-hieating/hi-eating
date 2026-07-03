@@ -1,8 +1,128 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Insert title here</title>
-  </head>
-  <body></body>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <section class="member-edit-page" th:fragment="content">
+      <div class="member-edit-container">
+        <form class="member-edit-form" th:action="@{/mypage/edit}" method="post">
+          <div class="member-edit-panel">
+            <h1 class="member-edit-title">회원 정보</h1>
+
+            <p
+              class="member-edit-alert is-success"
+              th:if="${editMessage != null}"
+              th:text="${editMessage}"
+            >
+              회원 정보가 수정되었습니다.
+            </p>
+            <p
+              class="member-edit-alert is-danger"
+              th:if="${editError != null}"
+              th:text="${editError}"
+            >
+              회원 정보를 확인해 주세요.
+            </p>
+
+            <div class="member-edit-fields">
+              <div class="member-edit-row">
+                <span class="member-edit-label">이름</span>
+                <p class="member-edit-static" th:text="${member.name}">이재우</p>
+              </div>
+
+              <div class="member-edit-row">
+                <span class="member-edit-label">이메일</span>
+                <p class="member-edit-static" th:text="${member.email}">user@greenfood.test</p>
+              </div>
+
+              <div class="member-edit-row">
+                <span class="member-edit-label">생년월일</span>
+                <p class="member-edit-static" th:text="${birthText}">1999년04월27일</p>
+              </div>
+
+              <fieldset class="member-edit-row member-edit-gender-row">
+                <legend class="member-edit-label">성별</legend>
+                <div class="member-edit-radio-group">
+                  <label class="member-edit-radio">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="MALE"
+                      th:checked="${member.gender == 'MALE'}"
+                    />
+                    <span aria-hidden="true"></span>
+                    남성
+                  </label>
+                  <label class="member-edit-radio">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="FEMALE"
+                      th:checked="${member.gender == 'FEMALE'}"
+                    />
+                    <span aria-hidden="true"></span>
+                    여성
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <p class="member-edit-help">
+              * 이름을 개명한 경우 고객센터로 문의해 주세요. (고객센터 : 1800-0700)
+            </p>
+          </div>
+
+          <div class="member-edit-actions">
+            <button class="member-edit-primary-button" type="submit">수정 완료</button>
+            <button class="member-edit-danger-button" id="member-withdraw-button" type="button">
+              회원 탈퇴
+            </button>
+          </div>
+        </form>
+
+        <form id="member-withdraw-form" th:action="@{/mypage/withdraw}" method="post"></form>
+
+        <div
+          class="modal fade member-edit-modal"
+          id="member-withdraw-modal"
+          tabindex="-1"
+          aria-labelledby="member-withdraw-modal-title"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title" id="member-withdraw-modal-title">회원 탈퇴</h2>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="닫기"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p class="member-edit-modal-message is-danger">
+                  회원 탈퇴 후에는 현재 계정으로 로그인할 수 없습니다.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="member-edit-modal-secondary-button"
+                  data-bs-dismiss="modal"
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  class="member-edit-modal-button"
+                  id="member-withdraw-confirm-button"
+                >
+                  탈퇴하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
