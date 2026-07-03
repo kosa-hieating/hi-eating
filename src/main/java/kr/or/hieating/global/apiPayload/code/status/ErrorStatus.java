@@ -31,9 +31,9 @@ public enum ErrorStatus implements BaseErrorCode {
   HOT_DEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "HOTDEAL4004", "해당 핫딜이 존재하지 않습니다."),
   INVALID_STATISTICS_DATE_RANGE(
       HttpStatus.BAD_REQUEST, "STATISTICS4001", "시작날짜는 끝날짜 이후로 설정할 수 없습니다."),
-	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4001", "회원 정보를 찾을 수 없습니다."),
-	MEMBER_WITHDRAW_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4002", "이미 탈퇴했거나 탈퇴할 수 없는 회원입니다.");
-	
+  MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4001", "회원 정보를 찾을 수 없습니다."),
+  MEMBER_WITHDRAW_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4002", "이미 탈퇴했거나 탈퇴할 수 없는 회원입니다.");
+
   private final HttpStatus httpStatus;
   private final String code;
   private final String message;

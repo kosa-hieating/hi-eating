@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import kr.or.hieating.auth.domain.Users;
 import kr.or.hieating.auth.mapper.AuthMapper;
-import kr.or.hieating.favorite.domain.Favorite;
 import kr.or.hieating.favorite.service.FavoriteService;
+import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
+import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.product.domain.Product;
 import kr.or.hieating.purchase.dto.RecentPurchaseProductDto;
 import kr.or.hieating.purchase.service.PurchaseService;
@@ -27,8 +28,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
-import kr.or.hieating.global.apiPayload.exception.GeneralException;
 
 @Controller
 @RequiredArgsConstructor
