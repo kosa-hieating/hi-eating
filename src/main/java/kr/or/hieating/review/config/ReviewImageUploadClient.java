@@ -1,14 +1,17 @@
 package kr.or.hieating.review.config;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -17,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Slf4j
 public class ReviewImageUploadClient {
 
   private static final List<String> ALLOWED_EXTENSIONS =
@@ -30,8 +34,13 @@ public class ReviewImageUploadClient {
       RestClient.Builder restClientBuilder,
       @Value("${greenfood.review-image.upload-url}") String uploadUrl,
       @Value("${greenfood.review-image.public-path-prefix:/uploads/images}")
-          String publicPathPrefix) {
-    this.restClient = restClientBuilder.build();
+          String publicPathPrefix,
+      @Value("${greenfood.review-image.connect-timeout-ms:3000}") long connectTimeoutMillis,
+      @Value("${greenfood.review-image.read-timeout-ms:10000}") long readTimeoutMillis) {
+    this.restClient =
+        restClientBuilder
+            .requestFactory(createRequestFactory(connectTimeoutMillis, readTimeoutMillis))
+            .build();
     this.uploadUrl = uploadUrl;
     this.publicPathPrefix = normalizePublicPathPrefix(publicPathPrefix);
   }
@@ -57,8 +66,17 @@ public class ReviewImageUploadClient {
     } catch (GeneralException e) {
       throw e;
     } catch (Exception e) {
+      log.warn("Review image upload failed. uploadUrl={}", uploadUrl, e);
       throw new GeneralException(ErrorStatus.REVIEW_IMAGE_UPLOAD_FAILED);
     }
+  }
+
+  private SimpleClientHttpRequestFactory createRequestFactory(
+      long connectTimeoutMillis, long readTimeoutMillis) {
+    SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+    requestFactory.setConnectTimeout(Duration.ofMillis(connectTimeoutMillis));
+    requestFactory.setReadTimeout(Duration.ofMillis(readTimeoutMillis));
+    return requestFactory;
   }
 
   private MultiValueMap<String, Object> createRequestBody(MultipartFile file) throws IOException {

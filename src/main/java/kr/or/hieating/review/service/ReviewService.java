@@ -16,12 +16,14 @@ import kr.or.hieating.review.mapper.ReviewMapper;
 import kr.or.hieating.review.utils.ReviewImageUrlResolver;
 import kr.or.hieating.utils.ImageUrlResolver;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
   private static final String FALLBACK_PRODUCT_IMAGE_URL = "/images/logo-hi-eating.png";
@@ -30,6 +32,7 @@ public class ReviewService {
   private final ImageUrlResolver imageUrlResolver;
   private final ReviewImageUrlResolver reviewImageUrlResolver;
   private final ReviewImageUploadClient reviewImageUploadClient;
+  private final TransactionTemplate transactionTemplate;
 
   public ReviewFormResponseDto findReviewForm(Long userId, Long purchaseId, Long productId) {
     ReviewFormResponseDto reviewForm =
@@ -63,7 +66,6 @@ public class ReviewService {
     return new ProductReviewPageResponseDto(reviews, normalizedPage, size, totalCount, totalPages);
   }
 
-  @Transactional
   public ReviewCreateResponseDto createReview(Long userId, ReviewCreateRequestDto request) {
     if (reviewMapper.countReviewByPurchaseId(request.getPurchaseId()) > 0) {
       throw new GeneralException(ErrorStatus.DUPLICATE_REVIEW);
@@ -79,6 +81,16 @@ public class ReviewService {
     }
 
     String imgSrc = uploadReviewImageIfExists(request.getReviewImage());
+    try {
+      return transactionTemplate.execute(status -> insertReview(userId, request, imgSrc));
+    } catch (RuntimeException e) {
+      log.warn("Review insert failed after image upload. orphanImgSrc={}", imgSrc, e);
+      throw e;
+    }
+  }
+
+  private ReviewCreateResponseDto insertReview(
+      Long userId, ReviewCreateRequestDto request, String imgSrc) {
     ReviewCreateCommand command =
         new ReviewCreateCommand(
             null,
