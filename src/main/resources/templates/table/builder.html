@@ -19,12 +19,10 @@
           </label>
 
           <div class="table-product-list" aria-live="polite">
-            <button
+            <article
               th:each="product : ${products}"
-              type="button"
               class="table-product-card"
               th:classappend="${!product.hasModel()} ? ' is-disabled'"
-              th:disabled="${!product.hasModel()}"
               th:data-product-id="${product.productId}"
               th:data-product-name="${product.productName}"
               th:data-glb-src="${product.glbSrc}"
@@ -37,7 +35,14 @@
                 />
               </span>
               <span class="table-product-card__body">
-                <strong th:text="${product.productName}">상품명</strong>
+                <span class="table-product-card__name-row">
+                  <strong th:text="${product.productName}">상품명</strong>
+                  <i
+                    th:if="${product.favorite}"
+                    class="bi bi-star-fill table-product-card__favorite"
+                    aria-label="즐겨찾기 상품"
+                  ></i>
+                </span>
                 <span class="table-product-card__price">
                   <em th:if="${product.discountRate > 0}" th:text="|${product.discountRate}%|"
                     >20%</em
@@ -49,8 +54,15 @@
                 </span>
                 <small th:if="${!product.hasModel()}">3D 모델 없음</small>
               </span>
-              <i class="bi bi-plus-lg table-product-card__add" aria-hidden="true"></i>
-            </button>
+              <button
+                type="button"
+                class="table-product-card__toggle"
+                th:disabled="${!product.hasModel()}"
+                th:aria-label="${product.hasModel()} ? ${product.productName} + ' 추가' : ${product.productName} + ' 모델 없음'"
+              >
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
+              </button>
+            </article>
           </div>
 
           <p class="table-product-empty" th:if="${#lists.isEmpty(products)}">
@@ -74,6 +86,14 @@
           </div>
 
           <div id="table-viewer" class="table-viewer" aria-label="3D 캔버스"></div>
+
+          <div class="table-key-hint" aria-label="키보드 조작 안내">
+            <span>선택한 모델 회전</span>
+            <kbd>Q</kbd>
+            <small>왼쪽</small>
+            <kbd>E</kbd>
+            <small>오른쪽</small>
+          </div>
 
           <a id="table-capture-link" class="table-capture-link" href="#" target="_blank" hidden>
             저장된 이미지 보기

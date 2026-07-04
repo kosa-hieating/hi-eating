@@ -38,8 +38,8 @@ public class TableBuilderService {
     this.transactionTemplate = transactionTemplate;
   }
 
-  public List<TableBuilderProductDto> findProducts() {
-    List<TableBuilderProductDto> products = tableBuilderMapper.findTableBuilderProducts();
+  public List<TableBuilderProductDto> findProducts(Long userId) {
+    List<TableBuilderProductDto> products = tableBuilderMapper.findTableBuilderProducts(userId);
     products.forEach(
         product -> {
           product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation()));

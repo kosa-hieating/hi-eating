@@ -12,7 +12,15 @@
       deal_stat.sale_price AS salePrice,
       NVL(deal_stat.discount_rate, 0) AS discountRate,
       pp.picture_saved_location AS pictureLocation,
-      p.glb_src AS glbSrc
+      p.glb_src AS glbSrc,
+      <choose>
+        <when test="userId != null">
+          CASE WHEN favorite_stat.product_id IS NULL THEN 0 ELSE 1 END AS favorite
+        </when>
+        <otherwise>
+          0 AS favorite
+        </otherwise>
+      </choose>
     FROM products p
     LEFT JOIN (
       SELECT
@@ -33,8 +41,16 @@
         FROM product_pictures pp2
         WHERE pp2.product_id = p.id
       )
+    <if test="userId != null">
+      LEFT JOIN (
+        SELECT DISTINCT product_id
+        FROM favorites
+        WHERE user_id = #{userId}
+      ) favorite_stat ON favorite_stat.product_id = p.id
+    </if>
     WHERE p.status = 'ON_SALE'
     ORDER BY
+      favorite DESC,
       CASE WHEN p.glb_src IS NULL THEN 1 ELSE 0 END,
       p.created_at DESC,
       p.id DESC
