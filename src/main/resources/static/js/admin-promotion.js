@@ -73,7 +73,7 @@ function initializeBannerDragAndDrop() {
       const movedItem = draggedBannerItem;
       draggedBannerItem = null;
       const changedOrder = getOrderedPromotionIds();
-      
+
       if (originalBannerOrder.join(',') === changedOrder.join(',')) return;
 
       updateOrderBadges();
