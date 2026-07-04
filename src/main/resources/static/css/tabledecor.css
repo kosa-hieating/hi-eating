@@ -1,8 +1,7 @@
 .table-decor-page {
   min-height: 720px;
   padding: 36px clamp(18px, 4vw, 64px) 72px;
-  background:
-    linear-gradient(180deg, #fff3ed 0%, #fbfaf8 220px, #ffffff 100%);
+  background: linear-gradient(180deg, #fff3ed 0%, #fbfaf8 220px, #ffffff 100%);
 }
 
 .table-decor-shell {

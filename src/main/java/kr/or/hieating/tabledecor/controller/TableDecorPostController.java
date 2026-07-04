@@ -19,10 +19,10 @@ public class TableDecorPostController {
   private final UserResolver userResolver;
 
   @GetMapping("/table-decorations")
-  public String tableDecorations(
-      @RequestParam(defaultValue = "1") Integer page, Model model) {
+  public String tableDecorations(@RequestParam(defaultValue = "1") Integer page, Model model) {
     Long currentUserId = userResolver.currentUserIdOrNull();
-    TableDecorPostSearchCondition condition = new TableDecorPostSearchCondition(page, currentUserId);
+    TableDecorPostSearchCondition condition =
+        new TableDecorPostSearchCondition(page, currentUserId);
     TableDecorPostPageResponseDto postPage = tableDecorPostService.findPosts(condition);
 
     model.addAttribute("contentTemplate", "tabledecor/list");
@@ -40,8 +40,8 @@ public class TableDecorPostController {
   public TableDecorPostPageResponseDto tableDecorationPosts(
       @RequestParam(defaultValue = "1") Integer page) {
     Long currentUserId = userResolver.currentUserIdOrNull();
-    TableDecorPostSearchCondition condition = new TableDecorPostSearchCondition(page, currentUserId);
+    TableDecorPostSearchCondition condition =
+        new TableDecorPostSearchCondition(page, currentUserId);
     return tableDecorPostService.findPosts(condition);
   }
-
 }

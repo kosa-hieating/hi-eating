@@ -85,20 +85,24 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const setLikeState = (postId, liked, likeCount) => {
-    document.querySelectorAll(`[data-table-decor-like][data-post-id="${postId}"]`).forEach((button) => {
-      button.classList.toggle('is-active', liked);
-      button.setAttribute('aria-pressed', String(liked));
+    document
+      .querySelectorAll(`[data-table-decor-like][data-post-id="${postId}"]`)
+      .forEach((button) => {
+        button.classList.toggle('is-active', liked);
+        button.setAttribute('aria-pressed', String(liked));
 
-      const count = button.querySelector('[data-table-decor-like-count]');
-      if (count) {
-        count.textContent = String(likeCount);
-      }
-    });
+        const count = button.querySelector('[data-table-decor-like-count]');
+        if (count) {
+          count.textContent = String(likeCount);
+        }
+      });
 
-    document.querySelectorAll(`[data-table-decor-trigger][data-post-id="${postId}"]`).forEach((trigger) => {
-      trigger.dataset.likeCount = String(likeCount);
-      trigger.dataset.liked = String(liked);
-    });
+    document
+      .querySelectorAll(`[data-table-decor-trigger][data-post-id="${postId}"]`)
+      .forEach((trigger) => {
+        trigger.dataset.likeCount = String(likeCount);
+        trigger.dataset.liked = String(liked);
+      });
 
     if (previewLikeButton.dataset.postId === postId) {
       previewLikeButton.classList.toggle('is-active', liked);
@@ -211,10 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const postPage = await response.json();
-      feed.insertAdjacentHTML(
-        'beforeend',
-        (postPage.posts || []).map(postCardTemplate).join(''),
-      );
+      feed.insertAdjacentHTML('beforeend', (postPage.posts || []).map(postCardTemplate).join(''));
       currentPage = postPage.page;
       totalPages = postPage.totalPages;
       page.dataset.tableDecorPage = String(currentPage);
@@ -274,7 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginRequiredLink = event.target.closest('[data-table-decor-login-required]');
     if (loginRequiredLink && !isAuthenticated) {
       event.preventDefault();
-      openAuthModal('내 식탁 등록은 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.');
+      openAuthModal(
+        '내 식탁 등록은 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
+      );
       return;
     }
 
