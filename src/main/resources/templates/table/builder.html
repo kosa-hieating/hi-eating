@@ -74,6 +74,40 @@
           <div class="table-stage__topbar">
             <div class="table-stage__status" id="table-builder-status">3D 모델 로딩 중...</div>
             <div class="table-stage__actions">
+              <div class="table-model-picker" aria-label="테이블 모델 선택">
+                <button
+                  type="button"
+                  class="table-model-picker__button is-active"
+                  data-table-model-src="/models/table.glb"
+                  aria-pressed="true"
+                >
+                  1
+                </button>
+                <button
+                  type="button"
+                  class="table-model-picker__button"
+                  data-table-model-src="/models/table2.glb"
+                  aria-pressed="false"
+                >
+                  2
+                </button>
+                <button
+                  type="button"
+                  class="table-model-picker__button"
+                  data-table-model-src="/models/table3.glb"
+                  aria-pressed="false"
+                >
+                  3
+                </button>
+                <button
+                  type="button"
+                  class="table-model-picker__button"
+                  data-table-model-src="/models/table4.glb"
+                  aria-pressed="false"
+                >
+                  4
+                </button>
+              </div>
               <button type="button" id="table-reset-btn" class="table-icon-button">
                 <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                 <span class="visually-hidden">위치 초기화</span>

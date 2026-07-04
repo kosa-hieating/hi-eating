@@ -10,7 +10,8 @@ const captureBtn = document.getElementById('table-capture-btn');
 const resetBtn = document.getElementById('table-reset-btn');
 const captureLink = document.getElementById('table-capture-link');
 const searchInput = document.getElementById('table-product-search');
-const productButtons = Array.from(document.querySelectorAll('.table-product-card'));
+const productCards = Array.from(document.querySelectorAll('.table-product-card'));
+const tableModelButtons = Array.from(document.querySelectorAll('.table-model-picker__button'));
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf8f4ef);
@@ -47,6 +48,7 @@ const mouse = new THREE.Vector2();
 const draggableObjects = [];
 const foodModels = [];
 const initialPositions = new Map();
+const addedModelsByProductId = new Map();
 
 let table = null;
 let tableTopY = 0;
@@ -54,6 +56,7 @@ let selectedModel = null;
 let lastSelectedModel = null;
 let isDragging = false;
 let isCapturing = false;
+let isChangingTable = false;
 let nextSlotIndex = 0;
 
 const dragPlane = new THREE.Plane();
@@ -73,17 +76,92 @@ function setStatus(message) {
 async function init() {
   try {
     const tableModelSrc = page.dataset.tableModelSrc || '/models/table.glb';
-    table = await loadGLB(tableModelSrc, { brighten: false });
-    table.name = 'table';
-    table.position.set(0, 0, 0);
-    normalizeModel(table, 7);
+    table = await createTableModel(tableModelSrc);
     scene.add(table);
-    tableTopY = getModelTopY(table);
+    updateTableTopY();
+    setActiveTableButton(tableModelSrc);
     setStatus('식탁이 준비되었습니다.');
   } catch (error) {
     console.error(error);
     setStatus('식탁 모델을 불러오지 못했습니다.');
   }
+}
+
+async function createTableModel(url) {
+  const tableModel = await loadGLB(url, { brighten: false });
+  tableModel.name = 'table';
+  tableModel.position.set(0, 0, 0);
+  normalizeModel(tableModel, 7);
+  return tableModel;
+}
+
+async function changeTableModel(button) {
+  if (isChangingTable || button.classList.contains('is-active')) {
+    return;
+  }
+
+  const nextTableSrc = button.dataset.tableModelSrc;
+
+  try {
+    isChangingTable = true;
+    setTableModelButtonsDisabled(true);
+    setStatus('테이블을 바꾸는 중입니다.');
+
+    const nextTable = await createTableModel(nextTableSrc);
+    const previousTable = table;
+
+    table = nextTable;
+    scene.add(table);
+    scene.remove(previousTable);
+    disposeModel(previousTable);
+
+    updateTableTopY();
+    alignFoodsToTableTop();
+    setActiveTableButton(nextTableSrc);
+    setStatus('선택한 테이블로 변경되었습니다.');
+  } catch (error) {
+    console.error(error);
+    setStatus('테이블 모델을 불러오지 못했습니다.');
+  } finally {
+    isChangingTable = false;
+    setTableModelButtonsDisabled(false);
+  }
+}
+
+function updateTableTopY() {
+  tableTopY = getModelTopY(table);
+}
+
+function alignFoodsToTableTop() {
+  foodModels.forEach((model) => {
+    const previousY = model.position.y;
+    placeOnTable(model, model.position.x, tableTopY, model.position.z);
+    const yDelta = model.position.y - previousY;
+    const initial = initialPositions.get(model.uuid);
+
+    if (initial) {
+      initial.position.y += yDelta;
+    }
+  });
+}
+
+function setActiveTableButton(tableModelSrc) {
+  tableModelButtons.forEach((button) => {
+    const isActive =
+      normalizeUrlPath(button.dataset.tableModelSrc) === normalizeUrlPath(tableModelSrc);
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function setTableModelButtonsDisabled(disabled) {
+  tableModelButtons.forEach((button) => {
+    button.disabled = disabled;
+  });
+}
+
+function normalizeUrlPath(url) {
+  return new URL(url, window.location.origin).pathname;
 }
 
 function loadGLB(url, options = {}) {
@@ -142,8 +220,20 @@ function loadGLB(url, options = {}) {
   });
 }
 
-async function addProductToTable(button) {
-  const { productName, glbSrc, productId } = button.dataset;
+async function toggleProductOnTable(card) {
+  const productId = card.dataset.productId;
+
+  if (addedModelsByProductId.has(productId)) {
+    removeProductFromTable(card);
+    return;
+  }
+
+  await addProductToTable(card);
+}
+
+async function addProductToTable(card) {
+  const { productName, glbSrc, productId } = card.dataset;
+  const toggleButton = card.querySelector('.table-product-card__toggle');
 
   if (!glbSrc) {
     setStatus('이 상품에는 3D 모델이 없습니다.');
@@ -151,7 +241,7 @@ async function addProductToTable(button) {
   }
 
   try {
-    button.disabled = true;
+    toggleButton.disabled = true;
     setStatus(`${productName} 모델을 불러오는 중입니다.`);
 
     const model = await loadGLB(glbSrc, { brighten: true });
@@ -165,14 +255,54 @@ async function addProductToTable(button) {
     saveInitialTransform(model);
     scene.add(model);
 
+    addedModelsByProductId.set(productId, model);
     lastSelectedModel = model;
+    setProductCardAdded(card, true);
     setStatus(`${productName} 모델이 식탁에 추가되었습니다.`);
   } catch (error) {
     console.error(error);
     setStatus(`${productName} 모델을 불러오지 못했습니다.`);
   } finally {
-    button.disabled = false;
+    toggleButton.disabled = false;
   }
+}
+
+function removeProductFromTable(card) {
+  const { productId, productName } = card.dataset;
+  const model = addedModelsByProductId.get(productId);
+
+  if (!model) {
+    setProductCardAdded(card, false);
+    return;
+  }
+
+  if (selectedModel === model) {
+    selectedModel = null;
+    isDragging = false;
+    controls.enabled = true;
+  }
+
+  if (lastSelectedModel === model) {
+    lastSelectedModel = null;
+  }
+
+  unregisterDraggableFood(model);
+  initialPositions.delete(model.uuid);
+  addedModelsByProductId.delete(productId);
+  scene.remove(model);
+  disposeModel(model);
+  setProductCardAdded(card, false);
+  setStatus(`${productName} 모델을 식탁에서 제거했습니다.`);
+}
+
+function setProductCardAdded(card, isAdded) {
+  const toggleButton = card.querySelector('.table-product-card__toggle');
+  const icon = toggleButton.querySelector('i');
+  const productName = card.dataset.productName || '상품';
+
+  card.classList.toggle('is-added', isAdded);
+  toggleButton.setAttribute('aria-label', `${productName} ${isAdded ? '제거' : '추가'}`);
+  icon.className = `bi ${isAdded ? 'bi-dash-lg' : 'bi-plus-lg'}`;
 }
 
 function getNextSlot() {
@@ -236,6 +366,38 @@ function registerDraggableFood(model) {
       child.userData.draggableRoot = model;
       draggableObjects.push(child);
     }
+  });
+}
+
+function unregisterDraggableFood(model) {
+  removeFromArray(foodModels, model);
+
+  model.traverse((child) => {
+    if (child.isMesh) {
+      removeFromArray(draggableObjects, child);
+      delete child.userData.draggableRoot;
+    }
+  });
+}
+
+function removeFromArray(items, item) {
+  const index = items.indexOf(item);
+
+  if (index >= 0) {
+    items.splice(index, 1);
+  }
+}
+
+function disposeModel(model) {
+  model.traverse((child) => {
+    if (!child.isMesh) {
+      return;
+    }
+
+    child.geometry?.dispose();
+
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    materials.forEach((material) => material?.dispose());
   });
 }
 
@@ -432,9 +594,9 @@ function createCaptureFileName() {
 function filterProducts() {
   const query = searchInput.value.trim().toLowerCase();
 
-  productButtons.forEach((button) => {
-    const name = (button.dataset.productName || '').toLowerCase();
-    button.classList.toggle('is-hidden', query !== '' && !name.includes(query));
+  productCards.forEach((card) => {
+    const name = (card.dataset.productName || '').toLowerCase();
+    card.classList.toggle('is-hidden', query !== '' && !name.includes(query));
   });
 }
 
@@ -453,8 +615,13 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-productButtons.forEach((button) => {
-  button.addEventListener('click', () => addProductToTable(button));
+productCards.forEach((card) => {
+  const toggleButton = card.querySelector('.table-product-card__toggle');
+  toggleButton.addEventListener('click', () => toggleProductOnTable(card));
+});
+
+tableModelButtons.forEach((button) => {
+  button.addEventListener('click', () => changeTableModel(button));
 });
 
 searchInput.addEventListener('input', filterProducts);
