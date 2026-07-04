@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <section
+      th:fragment="content"
+      class="table-builder-page"
+      th:data-table-model-src="${tableModelSrc}"
+    >
+      <div class="table-builder-shell">
+        <aside class="table-product-panel" aria-label="식탁에 올릴 상품">
+          <header class="table-panel-header">
+            <p>My Table</p>
+            <h1>내 식탁 꾸미기</h1>
+          </header>
+
+          <label class="table-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input id="table-product-search" type="search" placeholder="상품 검색" />
+          </label>
+
+          <div class="table-product-list" aria-live="polite">
+            <button
+              th:each="product : ${products}"
+              type="button"
+              class="table-product-card"
+              th:classappend="${!product.hasModel()} ? ' is-disabled'"
+              th:disabled="${!product.hasModel()}"
+              th:data-product-id="${product.productId}"
+              th:data-product-name="${product.productName}"
+              th:data-glb-src="${product.glbSrc}"
+            >
+              <span class="table-product-card__image">
+                <img
+                  th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
+                  th:alt="${product.productName}"
+                  data-fallback-src="/images/logo-hi-eating.png"
+                />
+              </span>
+              <span class="table-product-card__body">
+                <strong th:text="${product.productName}">상품명</strong>
+                <span class="table-product-card__price">
+                  <em th:if="${product.discountRate > 0}" th:text="|${product.discountRate}%|"
+                    >20%</em
+                  >
+                  <span
+                    th:text="${#numbers.formatInteger(product.salePrice != null ? product.salePrice : product.price, 0, 'COMMA')} + '원'"
+                    >9,900원</span
+                  >
+                </span>
+                <small th:if="${!product.hasModel()}">3D 모델 없음</small>
+              </span>
+              <i class="bi bi-plus-lg table-product-card__add" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <p class="table-product-empty" th:if="${#lists.isEmpty(products)}">
+            판매 중인 상품이 없습니다.
+          </p>
+        </aside>
+
+        <section class="table-stage" aria-label="3D 식탁 미리보기">
+          <div class="table-stage__topbar">
+            <div class="table-stage__status" id="table-builder-status">3D 모델 로딩 중...</div>
+            <div class="table-stage__actions">
+              <button type="button" id="table-reset-btn" class="table-icon-button">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                <span class="visually-hidden">위치 초기화</span>
+              </button>
+              <button type="button" id="table-capture-btn" class="table-primary-button">
+                <i class="bi bi-camera" aria-hidden="true"></i>
+                <span>캡쳐하기</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="table-viewer" class="table-viewer" aria-label="3D 캔버스"></div>
+
+          <a id="table-capture-link" class="table-capture-link" href="#" target="_blank" hidden>
+            저장된 이미지 보기
+          </a>
+        </section>
+      </div>
+
+      <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+          }
+        }
+      </script>
+      <script type="module" th:src="@{/js/table-builder.js}"></script>
+    </section>
+  </body>
+</html>
