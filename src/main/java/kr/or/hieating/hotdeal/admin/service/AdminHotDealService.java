@@ -14,6 +14,7 @@ import kr.or.hieating.hotdeal.admin.dto.HotDealUpdateRequestDTO;
 import kr.or.hieating.hotdeal.admin.mapper.AdminHotDealMapper;
 import kr.or.hieating.hotdeal.domain.HotDealProducts;
 import kr.or.hieating.hotdeal.domain.HotDeals;
+import kr.or.hieating.utils.UserResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminHotDealService {
 
   private final AdminHotDealMapper adminHotDealMapper;
+  private final UserResolver userResolver;
 
+  @Transactional
   public List<HotDealResponseDTO> getExistingHotDeals() {
+    adminHotDealMapper.updateStatusesByPeriod();
     return adminHotDealMapper.selectManageableHotDeals();
   }
 
@@ -42,7 +46,16 @@ public class AdminHotDealService {
       throw new GeneralException(ErrorStatus.INVALID_END_DATE);
     }
 
+    List<Integer> productOptionIds =
+        request.getProducts().stream()
+            .map(HotDealCreateRequestDTO.ProductItemDTO::getProductOptionId)
+            .toList();
+    if (adminHotDealMapper.countExpiredProductOptions(productOptionIds) > 0) {
+      throw new GeneralException(ErrorStatus._BAD_REQUEST);
+    }
+
     String status = request.getStartsAt().isAfter(today) ? "SCHEDULED" : "ACTIVE";
+    int adminUserId = Math.toIntExact(userResolver.requireCurrentUserId());
 
     HotDeals hotDeal =
         HotDeals.builder()
@@ -50,10 +63,8 @@ public class AdminHotDealService {
             .description(request.getDescription())
             .startsAt(request.getStartsAt().atStartOfDay())
             .endsAt(request.getEndsAt().atTime(23, 59, 59))
-            .status(
-                status) // TODO: 날짜에 따라 자동으로 상태 결정하는 로직 필요 (시작일이 되면 ACTIVE로 변경, 종료일이 지나면 EXPIRED로
-            // 변경)
-            .createdBy(1) // TODO: 실제 로그인한 관리자 ID로 변경 필요
+            .status(status)
+            .createdBy(adminUserId)
             .build();
 
     adminHotDealMapper.insertHotDeal(hotDeal);
@@ -95,6 +106,14 @@ public class AdminHotDealService {
 
     if (request.getEndsAt().isBefore(request.getStartsAt())) {
       throw new GeneralException(ErrorStatus.INVALID_END_DATE);
+    }
+
+    List<Integer> requestedProductOptionIds =
+        request.getProducts().stream()
+            .map(HotDealUpdateRequestDTO.ProductItemDTO::getProductOptionId)
+            .toList();
+    if (adminHotDealMapper.countUnlinkedExpiredProductOptions(id, requestedProductOptionIds) > 0) {
+      throw new GeneralException(ErrorStatus._BAD_REQUEST);
     }
 
     String status = request.getStartsAt().isAfter(today) ? "SCHEDULED" : "ACTIVE";

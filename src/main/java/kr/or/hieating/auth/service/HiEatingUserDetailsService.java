@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kr.or.hieating.auth.domain.Users;
 import kr.or.hieating.auth.mapper.AuthMapper;
+import kr.or.hieating.auth.security.HiEatingUserPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +33,8 @@ public class HiEatingUserDetailsService implements UserDetailsService {
     List<SimpleGrantedAuthority> authorities =
         authStrings.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
-    // 스프링 시큐리티가 제공하는 기본 User 객체 리턴!
-    return new User(myUser.getEmail(), myUser.getPassword(), authorities);
+    // Principal에서 DB 사용자 id를 바로 꺼낼 수 있도록 커스텀 UserDetails를 반환한다.
+    return new HiEatingUserPrincipal(
+        myUser.getId(), myUser.getEmail(), myUser.getPassword(), myUser.getName(), authorities);
   }
 }
