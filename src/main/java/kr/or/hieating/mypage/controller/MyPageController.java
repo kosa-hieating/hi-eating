@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +43,6 @@ public class MyPageController {
   private final PurchaseService purchaseService;
   private final VisitService visitService;
   private final UserResolver userResolver;
-
-  private static final Set<String> EDITABLE_GENDERS = Set.of("MALE", "FEMALE");
   private final AuthMapper authMapper;
 
   @GetMapping("/mypage")
