@@ -290,6 +290,65 @@ function triggerFileUpload() {
   }
 }
 
+function startCreatePromotion(openFilePicker = false) {
+  selectedBannerId = null;
+  selectedFile = null;
+  isImageDeleted = false;
+
+  document.querySelectorAll('.banner-item').forEach((item) => {
+    item.classList.remove('active');
+  });
+
+  const today = new Date();
+  const offset = today.getTimezoneOffset() * 60000;
+  const todayStr = new Date(today.getTime() - offset).toISOString().split('T')[0];
+  const nextMonth = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const nextMonthOffset = nextMonth.getTimezoneOffset() * 60000;
+  const nextMonthStr = new Date(nextMonth.getTime() - nextMonthOffset).toISOString().split('T')[0];
+
+  const previewImg = document.getElementById('bannerPreviewImg');
+  const previewPlaceholder = document.getElementById('bannerPreviewPlaceholder');
+  const deletePreviewBtn = document.getElementById('btnDeletePreviewImg');
+  const titleInput = document.getElementById('bannerTitleInput');
+  const linkInput = document.getElementById('bannerLinkInput');
+  const startsAtInput = document.getElementById('bannerStartsAtInput');
+  const endsAtInput = document.getElementById('bannerEndsAtInput');
+  const fileInput = document.getElementById('bannerFileInput');
+
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (previewPlaceholder) previewPlaceholder.style.display = 'flex';
+  if (deletePreviewBtn) deletePreviewBtn.style.display = 'none';
+  if (titleInput) {
+    titleInput.disabled = false;
+    titleInput.value = '';
+  }
+  if (linkInput) {
+    linkInput.disabled = false;
+    linkInput.value = '';
+  }
+  if (startsAtInput) {
+    startsAtInput.disabled = false;
+    startsAtInput.value = todayStr;
+    startsAtInput.min = todayStr;
+  }
+  if (endsAtInput) {
+    endsAtInput.disabled = false;
+    endsAtInput.value = nextMonthStr;
+    endsAtInput.min = todayStr;
+  }
+  if (fileInput) fileInput.value = '';
+
+  updateLinkPreview('');
+  if (openFilePicker) {
+    triggerFileUpload();
+  } else if (titleInput) {
+    titleInput.focus();
+  }
+}
+
 /**
  * [배너이미지 추가] 기능: 사용자가 로컬 파일 탐색기에서 사진을 선택하면 실행됩니다.
  * 사진을 우측 프로모션 배너 미리보기 영역에 연동하고, 새 배너 등록 폼 입력란을 활성화시킵니다.
@@ -669,7 +728,6 @@ function saveBannerLink() {
 
 /**
  * 삭제 버튼 클릭 시 프로모션을 삭제하는 API를 호출합니다.
- * (하드디스크 원본 이미지도 백엔드에서 물리적으로 지워집니다.)
  *
  * @param {number} id 삭제할 배너의 식별자 ID
  * @param {Event} event 클릭 이벤트 객체 (부모 로우 상세조회 클릭 전파 방지용)
@@ -681,7 +739,7 @@ function deleteBanner(id, event) {
 
   if (
     !confirm(
-      '정말로 이 프로모션 배너를 삭제하시겠습니까?\n삭제 시 메인 화면에 더 이상 노출되지 않으며, 서버의 원본 이미지도 함께 영구 삭제됩니다.',
+      '정말로 이 프로모션 배너를 삭제하시겠습니까?\n삭제 시 메인 화면에 더 이상 노출되지 않습니다.',
     )
   ) {
     return;
@@ -712,6 +770,11 @@ function deleteBanner(id, event) {
 function resetForm() {
   selectedFile = null;
   isImageDeleted = false;
+  if (!selectedBannerId) {
+    startCreatePromotion(false);
+    return;
+  }
+
   const activeItem = document.querySelector(`.banner-item[data-id="${selectedBannerId}"]`);
   if (activeItem) {
     selectBannerItem(activeItem);

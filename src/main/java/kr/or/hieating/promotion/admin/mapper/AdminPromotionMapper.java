@@ -5,7 +5,6 @@ import kr.or.hieating.promotion.domain.Promotions;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/** 프로모션 배너 테이블(promotions)에 접근하는 MyBatis Mapper 인터페이스입니다. */
 @Mapper
 public interface AdminPromotionMapper {
 
