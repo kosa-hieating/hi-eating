@@ -44,7 +44,93 @@ document.addEventListener('DOMContentLoaded', () => {
     // 등록된 배너가 없다면 우측 상세 정보 패널을 비활성화 상태로 표시
     updateRightPanelState(null);
   }
+
+  initializeBannerDragAndDrop();
 });
+
+let draggedBannerItem = null;
+let originalBannerOrder = [];
+
+function initializeBannerDragAndDrop() {
+  const bannerList = document.getElementById('bannerList');
+  if (!bannerList) return;
+
+  bannerList.querySelectorAll('.banner-item').forEach((item) => {
+    item.draggable = true;
+
+    item.addEventListener('dragstart', (event) => {
+      draggedBannerItem = item;
+      originalBannerOrder = getOrderedPromotionIds();
+      item.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', item.dataset.id);
+    });
+
+    item.addEventListener('dragend', async () => {
+      item.classList.remove('dragging');
+      if (!draggedBannerItem) return;
+
+      const movedItem = draggedBannerItem;
+      draggedBannerItem = null;
+      const changedOrder = getOrderedPromotionIds();
+      if (originalBannerOrder.join(',') === changedOrder.join(',')) return;
+
+      updateOrderBadges();
+      await saveBannerOrder(movedItem, changedOrder);
+    });
+  });
+
+  bannerList.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    if (!draggedBannerItem) return;
+
+    const target = event.target.closest('.banner-item');
+    if (!target || target === draggedBannerItem) return;
+
+    const targetRect = target.getBoundingClientRect();
+    const insertAfter = event.clientY > targetRect.top + targetRect.height / 2;
+    bannerList.insertBefore(draggedBannerItem, insertAfter ? target.nextSibling : target);
+  });
+}
+
+function getOrderedPromotionIds() {
+  return Array.from(document.querySelectorAll('#bannerList .banner-item')).map((item) =>
+    parseInt(item.dataset.id, 10),
+  );
+}
+
+function updateOrderBadges() {
+  document.querySelectorAll('#bannerList .banner-item .order-badge').forEach((badge, index) => {
+    badge.textContent = index + 1;
+  });
+}
+
+async function saveBannerOrder(movedItem, orderedPromotionIds) {
+  const items = Array.from(document.querySelectorAll('#bannerList .banner-item'));
+  const movedIndex = items.indexOf(movedItem);
+  const request = {
+    movedPromotionId: parseInt(movedItem.dataset.id, 10),
+    previousPromotionId: movedIndex > 0 ? parseInt(items[movedIndex - 1].dataset.id, 10) : null,
+    nextPromotionId:
+      movedIndex < items.length - 1 ? parseInt(items[movedIndex + 1].dataset.id, 10) : null,
+    orderedPromotionIds,
+  };
+
+  try {
+    const response = await fetch('/admin/api/promotions/order', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.isSuccess) {
+      throw new Error(result.message || '배너 순서 변경에 실패했습니다.');
+    }
+  } catch (error) {
+    alert(error.message);
+    window.location.reload();
+  }
+}
 
 /**
  * 왼쪽 배너 리스트에서 특정 배너 아이템을 클릭했을 때의 선택 이벤트를 처리합니다.
@@ -198,6 +284,65 @@ function triggerFileUpload() {
   const fileInput = document.getElementById('bannerFileInput');
   if (fileInput) {
     fileInput.click();
+  }
+}
+
+function startCreatePromotion(openFilePicker = false) {
+  selectedBannerId = null;
+  selectedFile = null;
+  isImageDeleted = false;
+
+  document.querySelectorAll('.banner-item').forEach((item) => {
+    item.classList.remove('active');
+  });
+
+  const today = new Date();
+  const offset = today.getTimezoneOffset() * 60000;
+  const todayStr = new Date(today.getTime() - offset).toISOString().split('T')[0];
+  const nextMonth = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const nextMonthOffset = nextMonth.getTimezoneOffset() * 60000;
+  const nextMonthStr = new Date(nextMonth.getTime() - nextMonthOffset).toISOString().split('T')[0];
+
+  const previewImg = document.getElementById('bannerPreviewImg');
+  const previewPlaceholder = document.getElementById('bannerPreviewPlaceholder');
+  const deletePreviewBtn = document.getElementById('btnDeletePreviewImg');
+  const titleInput = document.getElementById('bannerTitleInput');
+  const linkInput = document.getElementById('bannerLinkInput');
+  const startsAtInput = document.getElementById('bannerStartsAtInput');
+  const endsAtInput = document.getElementById('bannerEndsAtInput');
+  const fileInput = document.getElementById('bannerFileInput');
+
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (previewPlaceholder) previewPlaceholder.style.display = 'flex';
+  if (deletePreviewBtn) deletePreviewBtn.style.display = 'none';
+  if (titleInput) {
+    titleInput.disabled = false;
+    titleInput.value = '';
+  }
+  if (linkInput) {
+    linkInput.disabled = false;
+    linkInput.value = '';
+  }
+  if (startsAtInput) {
+    startsAtInput.disabled = false;
+    startsAtInput.value = todayStr;
+    startsAtInput.min = todayStr;
+  }
+  if (endsAtInput) {
+    endsAtInput.disabled = false;
+    endsAtInput.value = nextMonthStr;
+    endsAtInput.min = todayStr;
+  }
+  if (fileInput) fileInput.value = '';
+
+  updateLinkPreview('');
+  if (openFilePicker) {
+    triggerFileUpload();
+  } else if (titleInput) {
+    titleInput.focus();
   }
 }
 
@@ -580,7 +725,6 @@ function saveBannerLink() {
 
 /**
  * 삭제 버튼 클릭 시 프로모션을 삭제하는 API를 호출합니다.
- * (하드디스크 원본 이미지도 백엔드에서 물리적으로 지워집니다.)
  *
  * @param {number} id 삭제할 배너의 식별자 ID
  * @param {Event} event 클릭 이벤트 객체 (부모 로우 상세조회 클릭 전파 방지용)
@@ -592,7 +736,7 @@ function deleteBanner(id, event) {
 
   if (
     !confirm(
-      '정말로 이 프로모션 배너를 삭제하시겠습니까?\n삭제 시 메인 화면에 더 이상 노출되지 않으며, 서버의 원본 이미지도 함께 영구 삭제됩니다.',
+      '정말로 이 프로모션 배너를 삭제하시겠습니까?\n삭제 시 메인 화면에 더 이상 노출되지 않습니다.',
     )
   ) {
     return;
@@ -623,6 +767,11 @@ function deleteBanner(id, event) {
 function resetForm() {
   selectedFile = null;
   isImageDeleted = false;
+  if (!selectedBannerId) {
+    startCreatePromotion(false);
+    return;
+  }
+
   const activeItem = document.querySelector(`.banner-item[data-id="${selectedBannerId}"]`);
   if (activeItem) {
     selectBannerItem(activeItem);
