@@ -29,7 +29,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 2.8;
+renderer.toneMappingExposure = 1.45;
 container.appendChild(renderer.domElement);
 
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -197,7 +197,7 @@ function loadGLB(url, options = {}) {
             child.material.map.colorSpace = THREE.SRGBColorSpace;
           }
 
-          child.material.envMapIntensity = brighten ? 2.8 : 1.3;
+          child.material.envMapIntensity = brighten ? 1.55 : 0.95;
 
           if (brighten) {
             if ('metalness' in child.material) {
@@ -210,7 +210,7 @@ function loadGLB(url, options = {}) {
 
             if ('emissive' in child.material) {
               child.material.emissive = new THREE.Color(0x222222);
-              child.material.emissiveIntensity = 0.35;
+              child.material.emissiveIntensity = 0.08;
             }
           }
 
