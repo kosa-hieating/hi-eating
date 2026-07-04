@@ -19,14 +19,14 @@ public class AdminProductService {
   private final ImageUrlResolver imageUrlResolver;
 
   public ProductPageResponseDTO searchProducts(
-      String keyword, Long categoryId, String sortBy, int page, int size) {
+      String keyword, Long categoryId, Integer hotDealId, String sortBy, int page, int size) {
+    String normalizedKeyword = normalizeKeyword(keyword);
     int offset = (page - 1) * size;
     List<ProductSearchResponseDTO> list =
-        adminProductMapper.searchProductsForHotDeal(keyword, categoryId, sortBy, offset, size);
-    list.forEach(
-        product ->
-            product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation())));
-    int totalCount = adminProductMapper.countProductsForHotDeal(keyword, categoryId);
+        adminProductMapper.searchProductsForHotDeal(
+            normalizedKeyword, categoryId, hotDealId, sortBy, offset, size);
+    int totalCount =
+        adminProductMapper.countProductsForHotDeal(normalizedKeyword, categoryId, hotDealId);
     int totalPages = (int) Math.ceil((double) totalCount / size);
 
     return ProductPageResponseDTO.builder()
@@ -39,5 +39,12 @@ public class AdminProductService {
 
   public List<CategoryResponseDTO> getAllCategories() {
     return adminProductMapper.selectAllCategories();
+  }
+
+  private String normalizeKeyword(String keyword) {
+    if (keyword == null || keyword.isBlank()) {
+      return null;
+    }
+    return keyword.trim();
   }
 }
