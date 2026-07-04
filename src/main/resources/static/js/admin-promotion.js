@@ -73,6 +73,7 @@ function initializeBannerDragAndDrop() {
       const movedItem = draggedBannerItem;
       draggedBannerItem = null;
       const changedOrder = getOrderedPromotionIds();
+      
       if (originalBannerOrder.join(',') === changedOrder.join(',')) return;
 
       updateOrderBadges();
@@ -108,6 +109,7 @@ function updateOrderBadges() {
 async function saveBannerOrder(movedItem, orderedPromotionIds) {
   const items = Array.from(document.querySelectorAll('#bannerList .banner-item'));
   const movedIndex = items.indexOf(movedItem);
+
   const request = {
     movedPromotionId: parseInt(movedItem.dataset.id, 10),
     previousPromotionId: movedIndex > 0 ? parseInt(items[movedIndex - 1].dataset.id, 10) : null,
@@ -123,6 +125,7 @@ async function saveBannerOrder(movedItem, orderedPromotionIds) {
       body: JSON.stringify(request),
     });
     const result = await response.json();
+
     if (!response.ok || !result.isSuccess) {
       throw new Error(result.message || '배너 순서 변경에 실패했습니다.');
     }

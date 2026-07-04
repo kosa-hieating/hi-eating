@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import java.util.Objects;
 import java.util.stream.Stream;
 import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.promotion.admin.config.PromotionImageUploadClient;
+import java.util.UUID;
+
 import kr.or.hieating.promotion.admin.dto.PromotionReorderRequestDTO;
 import kr.or.hieating.promotion.admin.mapper.AdminPromotionMapper;
 import kr.or.hieating.promotion.domain.Promotions;
@@ -93,8 +96,67 @@ public class AdminPromotionService {
 
     List<Promotions> adjacentPromotions =
         adminPromotionMapper.selectPromotionsByIdsForUpdate(adjacentIds);
+
     if (adjacentPromotions.size() != adjacentIds.size()) {
       throw new GeneralException(ErrorStatus._BAD_REQUEST);
+    }
+
+    Map<Integer, Promotions> promotionById = new HashMap<>();
+    adjacentPromotions.forEach(promotion -> promotionById.put(promotion.getId(), promotion)); //
+
+    Integer previousId = request.getPreviousPromotionId();
+    Integer nextId = request.getNextPromotionId();
+
+    if (previousId == null && nextId == null) {
+      return;
+    }
+
+    if (previousId == null) {
+      int newOrder = promotionById.get(nextId).getDisplayOrder() - 1000;
+      adminPromotionMapper.updateDisplayOrder(request.getMovedPromotionId(), newOrder);
+      return;
+    }
+
+    if (nextId == null) {
+      int newOrder = promotionById.get(previousId).getDisplayOrder() + 1000;
+      adminPromotionMapper.updateDisplayOrder(request.getMovedPromotionId(), newOrder);
+      return;
+    }
+
+    int previousOrder = promotionById.get(previousId).getDisplayOrder();
+    int nextOrder = promotionById.get(nextId).getDisplayOrder();
+    if (nextOrder - previousOrder > 1) {
+      int newOrder = previousOrder + (nextOrder - previousOrder) / 2;
+      adminPromotionMapper.updateDisplayOrder(request.getMovedPromotionId(), newOrder);
+      return;
+    }
+
+    rebalanceDisplayOrders(request.getOrderedPromotionIds());
+  }
+
+  // 1점보다 작을 경우 타는 함수
+  private void rebalanceDisplayOrders(List<Integer> orderedPromotionIds) {
+    List<Integer> storedPromotionIds = adminPromotionMapper.selectAllPromotionIdsForUpdate();
+    if (storedPromotionIds.size() != orderedPromotionIds.size()
+        || !storedPromotionIds.containsAll(orderedPromotionIds)) {
+      throw new GeneralException(ErrorStatus._BAD_REQUEST);
+    }
+
+    // UNIQUE 제약조건과 기존 순서값이 충돌하지 않도록 먼저 모든 값을 임시 영역으로 이동합니다.
+    adminPromotionMapper.moveDisplayOrdersToTemporaryRange();
+
+    for (int index = 0; index < orderedPromotionIds.size(); index++) {
+      adminPromotionMapper.updateDisplayOrder(orderedPromotionIds.get(index), (index + 1) * 1000);
+    }
+  }
+
+  /**
+   * 이미지 업로드를 공통 처리하고, 확장자 및 Content-Type을 화이트리스트로 검증합니다. 경로 조작(Path Traversal) 방지를 위해 고유 UUID 파일명만
+   * 사용합니다.
+   */
+  private String uploadImage(MultipartFile file) {
+    if (file == null || file.isEmpty()) {
+      throw new GeneralException(ErrorStatus.EMPTY_FILE);
     }
 
     Map<Integer, Promotions> promotionById = new HashMap<>();
