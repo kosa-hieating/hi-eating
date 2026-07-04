@@ -32,6 +32,11 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 2.8;
 container.appendChild(renderer.domElement);
 
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+const environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environment = environment;
+pmremGenerator.dispose();
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 1.2, 0);
 controls.enableDamping = true;
@@ -389,6 +394,8 @@ function removeFromArray(items, item) {
 }
 
 function disposeModel(model) {
+  const disposedTextures = new Set();
+
   model.traverse((child) => {
     if (!child.isMesh) {
       return;
@@ -397,8 +404,25 @@ function disposeModel(model) {
     child.geometry?.dispose();
 
     const materials = Array.isArray(child.material) ? child.material : [child.material];
-    materials.forEach((material) => material?.dispose());
+    materials.forEach((material) => disposeMaterial(material, disposedTextures));
   });
+}
+
+function disposeMaterial(material, disposedTextures) {
+  if (!material) {
+    return;
+  }
+
+  Object.values(material).forEach((value) => {
+    if (!value?.isTexture || disposedTextures.has(value)) {
+      return;
+    }
+
+    value.dispose();
+    disposedTextures.add(value);
+  });
+
+  material.dispose();
 }
 
 function saveInitialTransform(model) {
