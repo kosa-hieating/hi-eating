@@ -44,11 +44,4 @@ public class TableDecorPostController {
     return tableDecorPostService.findPosts(condition);
   }
 
-  @GetMapping("/table-decorations/new")
-  public String newTableDecoration(Model model) {
-    model.addAttribute("contentTemplate", "tabledecor/new");
-    model.addAttribute("contentFragment", "content");
-    model.addAttribute("pageStylesheet", "tabledecor");
-    return "layout/base";
-  }
 }

@@ -30,6 +30,15 @@ public class TableDecorPostService {
         posts, condition.getPage(), condition.getSize(), totalCount, totalPages);
   }
 
+  public List<TableDecorPostListItemDto> findTopLikedPosts(Long currentUserId, int limit) {
+    int safeLimit = Math.max(1, limit);
+    List<TableDecorPostListItemDto> posts =
+        tableDecorPostMapper.findTopLikedPosts(currentUserId, safeLimit);
+
+    posts.forEach(post -> post.setImageSrc(imageUrlResolver.resolve(post.getImageSrc())));
+    return posts;
+  }
+
   @Transactional
   public TableDecorLikeToggleResponseDto toggleLike(Long userId, Long postId) {
     boolean alreadyLiked = tableDecorPostMapper.countLike(userId, postId) > 0;

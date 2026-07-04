@@ -46,6 +46,36 @@
     <include refid="postListBase" />
   </select>
 
+  <select id="findTopLikedPosts" resultType="kr.or.hieating.tabledecor.dto.TableDecorPostListItemDto">
+    SELECT
+      p.id AS postId,
+      p.user_id AS userId,
+      u.name AS userName,
+      NVL(p.likes, 0) AS likeCount,
+      p.img_src AS imageSrc,
+      p.created_at AS createdAt,
+      <choose>
+        <when test="currentUserId != null">
+          CASE
+            WHEN EXISTS (
+              SELECT 1
+              FROM likes l
+              WHERE l.post_id = p.id
+                AND l.user_id = #{currentUserId}
+                AND l.deleted_at IS NULL
+            ) THEN 1
+            ELSE 0
+          END AS liked
+        </when>
+        <otherwise>
+          0 AS liked
+        </otherwise>
+      </choose>
+    <include refid="postListBase" />
+    ORDER BY NVL(p.likes, 0) DESC, p.created_at DESC, p.id DESC
+    FETCH FIRST #{limit} ROWS ONLY
+  </select>
+
   <select id="countLike" resultType="int">
     SELECT COUNT(*)
     FROM likes

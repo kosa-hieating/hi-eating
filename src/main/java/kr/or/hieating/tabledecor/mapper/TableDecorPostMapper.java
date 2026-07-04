@@ -13,6 +13,9 @@ public interface TableDecorPostMapper {
 
   int countPosts(TableDecorPostSearchCondition condition);
 
+  List<TableDecorPostListItemDto> findTopLikedPosts(
+      @Param("currentUserId") Long currentUserId, @Param("limit") int limit);
+
   int countLike(@Param("userId") Long userId, @Param("postId") Long postId);
 
   int insertLike(@Param("userId") Long userId, @Param("postId") Long postId);
