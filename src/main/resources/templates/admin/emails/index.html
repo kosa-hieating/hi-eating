@@ -78,7 +78,9 @@
               <i class="bi bi-hdd-network" aria-hidden="true"></i>
             </span>
             <div>
-              <strong data-admin-email-summary="publishedCount" th:text="${emailSummary.publishedCount}"
+              <strong
+                data-admin-email-summary="publishedCount"
+                th:text="${emailSummary.publishedCount}"
                 >0</strong
               >
               <span>RabbitMQ 발행 완료</span>
@@ -244,7 +246,10 @@
                 <i class="bi bi-shield-exclamation" aria-hidden="true"></i>
                 <div>
                   <strong>AI 검증 의견</strong>
-                  <p data-admin-email-validation-reason th:text="${selectedEmailDraft.validationReason}">
+                  <p
+                    data-admin-email-validation-reason
+                    th:text="${selectedEmailDraft.validationReason}"
+                  >
                     검증 의견
                   </p>
                 </div>

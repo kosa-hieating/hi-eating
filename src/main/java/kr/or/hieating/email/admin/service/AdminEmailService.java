@@ -22,8 +22,7 @@ public class AdminEmailService {
 
   public AdminEmailDashboardDto getDashboard(Long selectedEmailDraftId) {
     List<EmailDraftDto> emailDrafts = emailDraftRepository.findAll();
-    EmailDraftDto selectedEmailDraft =
-        findSelectedEmailDraft(emailDrafts, selectedEmailDraftId);
+    EmailDraftDto selectedEmailDraft = findSelectedEmailDraft(emailDrafts, selectedEmailDraftId);
 
     return new AdminEmailDashboardDto(emailDrafts, selectedEmailDraft, createSummary(emailDrafts));
   }
@@ -73,7 +72,9 @@ public class AdminEmailService {
   }
 
   public List<EmailDraftDto> publishEmailDrafts(AdminEmailPublishRequestDto request) {
-    if (request == null || request.getEmailDraftIds() == null || request.getEmailDraftIds().isEmpty()) {
+    if (request == null
+        || request.getEmailDraftIds() == null
+        || request.getEmailDraftIds().isEmpty()) {
       throw new IllegalArgumentException("발송할 이메일을 선택해주세요.");
     }
 
@@ -126,7 +127,8 @@ public class AdminEmailService {
         .count();
   }
 
-  private long countPublishStatus(List<EmailDraftDto> emailDrafts, EmailPublishStatus publishStatus) {
+  private long countPublishStatus(
+      List<EmailDraftDto> emailDrafts, EmailPublishStatus publishStatus) {
     return emailDrafts.stream()
         .filter(emailDraft -> emailDraft.getPublishStatus() == publishStatus)
         .count();

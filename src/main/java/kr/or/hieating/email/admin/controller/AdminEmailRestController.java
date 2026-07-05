@@ -26,8 +26,7 @@ public class AdminEmailRestController {
   private final AdminEmailService adminEmailService;
 
   @GetMapping
-  public ApiResponse<AdminEmailDashboardDto> emails(
-      @RequestParam(required = false) Long emailId) {
+  public ApiResponse<AdminEmailDashboardDto> emails(@RequestParam(required = false) Long emailId) {
     return ApiResponse.onSuccess(adminEmailService.getDashboard(emailId));
   }
 
@@ -36,7 +35,8 @@ public class AdminEmailRestController {
     try {
       return ApiResponse.onSuccess(adminEmailService.getEmailDraft(emailDraftId));
     } catch (IllegalArgumentException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
@@ -44,9 +44,11 @@ public class AdminEmailRestController {
   public ApiResponse<EmailDraftDto> updateEmailContent(
       @PathVariable Long emailDraftId, @RequestBody AdminEmailUpdateRequestDto request) {
     try {
-      return ApiResponse.onSuccess(adminEmailService.updateFailedEmailContent(emailDraftId, request));
+      return ApiResponse.onSuccess(
+          adminEmailService.updateFailedEmailContent(emailDraftId, request));
     } catch (IllegalArgumentException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
@@ -55,7 +57,8 @@ public class AdminEmailRestController {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishEmailDraft(emailDraftId));
     } catch (RuntimeException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
@@ -65,7 +68,8 @@ public class AdminEmailRestController {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishEmailDrafts(request));
     } catch (RuntimeException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
@@ -74,7 +78,8 @@ public class AdminEmailRestController {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishValidationPassedReadyEmails());
     } catch (RuntimeException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 }

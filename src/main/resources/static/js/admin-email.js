@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = document.querySelector('.admin-email-main');
   const editor = document.querySelector('[data-admin-email-editor]');
   const passPublishButton = document.querySelector('[data-admin-email-publish-pass-button]');
-  const selectedPublishButton = document.querySelector('[data-admin-email-publish-selected-button]');
+  const selectedPublishButton = document.querySelector(
+    '[data-admin-email-publish-selected-button]',
+  );
   const selectAllCheckbox = document.querySelector('[data-admin-email-select-all]');
   const tableBody = document.querySelector('[data-admin-email-table-body]');
   const message = editor?.querySelector('[data-admin-email-editor-message]');
@@ -15,7 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const validationNote = document.querySelector('[data-admin-email-validation-note]');
   const validationReason = document.querySelector('[data-admin-email-validation-reason]');
 
-  let selectedEmailDraftId = editor?.dataset.emailDraftId ? Number(editor.dataset.emailDraftId) : null;
+  let selectedEmailDraftId = editor?.dataset.emailDraftId
+    ? Number(editor.dataset.emailDraftId)
+    : null;
 
   const validationMeta = {
     PASS: { label: '검증 통과', className: 'is-success' },
@@ -102,7 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const setSelectedRow = (emailDraftId) => {
     document.querySelectorAll('[data-admin-email-row]').forEach((row) => {
-      row.classList.toggle('is-selected', Number(row.dataset.emailDraftId) === Number(emailDraftId));
+      row.classList.toggle(
+        'is-selected',
+        Number(row.dataset.emailDraftId) === Number(emailDraftId),
+      );
     });
   };
 
