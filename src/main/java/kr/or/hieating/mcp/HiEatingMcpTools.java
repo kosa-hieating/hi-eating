@@ -62,8 +62,7 @@ public class HiEatingMcpTools {
           String sort,
       @McpToolParam(description = "Page number starting from 1.", required = false) Integer page) {
     return productSearchService.searchProducts(
-        new ProductSearchCondition(
-            keyword, null, minPrice, maxPrice, minDiscountRate, sort, page));
+        new ProductSearchCondition(keyword, null, minPrice, maxPrice, minDiscountRate, sort, page));
   }
 
   @McpTool(
@@ -150,7 +149,9 @@ public class HiEatingMcpTools {
       description = "Get review summary and recent review excerpts for a Hi Eating product.")
   public ProductReviewSummaryResponse getProductReviewSummary(
       @McpToolParam(description = "Product ID.", required = true) Long productId,
-      @McpToolParam(description = "Number of recent review excerpts from 1 to 20.", required = false)
+      @McpToolParam(
+              description = "Number of recent review excerpts from 1 to 20.",
+              required = false)
           Integer recentReviewCount) {
     ProductDetail product = findProductOrThrow(productId);
     ReviewSummary summary = product.reviewSummary();
