@@ -1,20 +1,43 @@
 package kr.or.hieating.ai.controller;
 
-import kr.or.hieating.ai.service.AiChatService;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+import kr.or.hieating.ai.service.EmailGenerationAiService;
+import kr.or.hieating.ai.service.EmailValidationAiService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/ai")
-@RequiredArgsConstructor
+@RequestMapping("/ai/test")
+@ConditionalOnProperty(
+    prefix = "greenfood.ai",
+    name = "test-endpoint-enabled",
+    havingValue = "true")
 public class AiTestController {
 
-    private final AiChatService aiChatService;
+  private final EmailGenerationAiService generationAiService;
+  private final EmailValidationAiService validationAiService;
 
-    @GetMapping("/test")
-    public String test() {
-        return aiChatService.chat("안녕하세요. 자기소개 한 줄 해줘.");
-    }
+  public AiTestController(
+      EmailGenerationAiService generationAiService, EmailValidationAiService validationAiService) {
+    this.generationAiService = generationAiService;
+    this.validationAiService = validationAiService;
+  }
+
+  @GetMapping
+  public Map<String, String> test() {
+    String generatedEmail =
+        generationAiService.generate("고객에게 보낼 건강식품 할인 안내 이메일을 제목과 본문을 포함해 짧게 작성해 줘.");
+    String validationResult =
+        validationAiService.validate(
+            """
+            다음 이메일의 품질을 검증하고 PASS 또는 FAIL로 시작해 줘.
+
+            %s
+            """
+                .formatted(generatedEmail));
+
+    return Map.of("generatedEmail", generatedEmail, "validationResult", validationResult);
+  }
 }
