@@ -1,7 +1,10 @@
 package kr.or.hieating.email.admin.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import kr.or.hieating.email.admin.dto.AdminEmailDashboardDto;
+import kr.or.hieating.email.admin.dto.AdminEmailPublishBatchResponseDto;
+import kr.or.hieating.email.admin.dto.AdminEmailPublishFailureDto;
 import kr.or.hieating.email.admin.dto.AdminEmailPublishRequestDto;
 import kr.or.hieating.email.admin.dto.AdminEmailSummaryDto;
 import kr.or.hieating.email.admin.dto.AdminEmailUpdateRequestDto;
@@ -71,27 +74,39 @@ public class AdminEmailService {
         .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
   }
 
-  public List<EmailDraftDto> publishEmailDrafts(AdminEmailPublishRequestDto request) {
+  public AdminEmailPublishBatchResponseDto publishEmailDrafts(AdminEmailPublishRequestDto request) {
     if (request == null
         || request.getEmailDraftIds() == null
         || request.getEmailDraftIds().isEmpty()) {
       throw new IllegalArgumentException("발송할 이메일을 선택해주세요.");
     }
 
-    return request.getEmailDraftIds().stream().map(this::publishEmailDraft).toList();
+    return publishEmailDrafts(request.getEmailDraftIds());
   }
 
-  public List<EmailDraftDto> publishValidationPassedReadyEmails() {
+  public AdminEmailPublishBatchResponseDto publishValidationPassedReadyEmails() {
     List<EmailDraftDto> publishReadyDrafts = emailDraftRepository.findPublishReadyDrafts();
 
     if (publishReadyDrafts.isEmpty()) {
       throw new IllegalArgumentException("자동 발송할 검증 통과 이메일이 없습니다.");
     }
 
-    return publishReadyDrafts.stream()
-        .map(EmailDraftDto::getId)
-        .map(this::publishEmailDraft)
-        .toList();
+    return publishEmailDrafts(publishReadyDrafts.stream().map(EmailDraftDto::getId).toList());
+  }
+
+  private AdminEmailPublishBatchResponseDto publishEmailDrafts(List<Long> emailDraftIds) {
+    List<EmailDraftDto> publishedEmails = new ArrayList<>();
+    List<AdminEmailPublishFailureDto> failedEmails = new ArrayList<>();
+
+    for (Long emailDraftId : emailDraftIds) {
+      try {
+        publishedEmails.add(publishEmailDraft(emailDraftId));
+      } catch (IllegalArgumentException exception) {
+        failedEmails.add(new AdminEmailPublishFailureDto(emailDraftId, exception.getMessage()));
+      }
+    }
+
+    return new AdminEmailPublishBatchResponseDto(publishedEmails, failedEmails);
   }
 
   private EmailDraftDto findSelectedEmailDraft(

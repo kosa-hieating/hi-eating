@@ -74,6 +74,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return body.result;
   };
 
+  const createBatchPublishMessage = (result, successText) => {
+    const publishedCount = result?.publishedCount ?? result?.publishedEmails?.length ?? 0;
+    const failedCount = result?.failedCount ?? result?.failedEmails?.length ?? 0;
+
+    if (failedCount === 0) {
+      return { text: successText, state: 'is-success' };
+    }
+
+    const failedSummary = (result.failedEmails || [])
+      .slice(0, 3)
+      .map((failure) => `#${failure.emailDraftId || '-'} ${failure.reason}`)
+      .join(' / ');
+    const suffix = failedSummary ? ` (${failedSummary})` : '';
+    const state = publishedCount > 0 ? 'is-success' : 'is-danger';
+
+    return {
+      text: `RabbitMQ 발행 ${publishedCount}건 완료, ${failedCount}건 실패${suffix}`,
+      state,
+    };
+  };
+
   const getValidationMeta = (draft) =>
     validationMeta[draft.validationStatus] || {
       label: draft.validationStatusLabel || '검증 대기',
@@ -334,12 +355,16 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedPublishButton.disabled = true;
 
     try {
-      await fetchApi(publishUrl, {
+      const result = await fetchApi(publishUrl, {
         method: 'POST',
         body: JSON.stringify({ emailDraftIds }),
       });
       await refreshDashboard(selectedEmailDraftId);
-      showMessage('선택한 이메일의 RabbitMQ 발행이 완료되었습니다.', 'is-success');
+      const batchMessage = createBatchPublishMessage(
+        result,
+        '선택한 이메일의 RabbitMQ 발행이 완료되었습니다.'
+      );
+      showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {
       await refreshDashboard(selectedEmailDraftId);
       showMessage(error.message, 'is-danger');
@@ -358,9 +383,13 @@ document.addEventListener('DOMContentLoaded', () => {
     passPublishButton.disabled = true;
 
     try {
-      await fetchApi(publishUrl, { method: 'POST' });
+      const result = await fetchApi(publishUrl, { method: 'POST' });
       await refreshDashboard(selectedEmailDraftId);
-      showMessage('검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.', 'is-success');
+      const batchMessage = createBatchPublishMessage(
+        result,
+        '검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.'
+      );
+      showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {
       await refreshDashboard(selectedEmailDraftId);
       showMessage(error.message, 'is-danger');

@@ -1,7 +1,7 @@
 package kr.or.hieating.email.admin.controller;
 
-import java.util.List;
 import kr.or.hieating.email.admin.dto.AdminEmailDashboardDto;
+import kr.or.hieating.email.admin.dto.AdminEmailPublishBatchResponseDto;
 import kr.or.hieating.email.admin.dto.AdminEmailPublishRequestDto;
 import kr.or.hieating.email.admin.dto.AdminEmailUpdateRequestDto;
 import kr.or.hieating.email.admin.service.AdminEmailService;
@@ -56,28 +56,28 @@ public class AdminEmailRestController {
   public ApiResponse<EmailDraftDto> publishEmail(@PathVariable Long emailDraftId) {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishEmailDraft(emailDraftId));
-    } catch (RuntimeException exception) {
+    } catch (IllegalArgumentException exception) {
       return ApiResponse.onFailure(
           ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
   @PostMapping("/publish")
-  public ApiResponse<List<EmailDraftDto>> publishEmails(
+  public ApiResponse<AdminEmailPublishBatchResponseDto> publishEmails(
       @RequestBody AdminEmailPublishRequestDto request) {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishEmailDrafts(request));
-    } catch (RuntimeException exception) {
+    } catch (IllegalArgumentException exception) {
       return ApiResponse.onFailure(
           ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
   @PostMapping("/publish/validation-pass")
-  public ApiResponse<List<EmailDraftDto>> publishValidationPassedEmails() {
+  public ApiResponse<AdminEmailPublishBatchResponseDto> publishValidationPassedEmails() {
     try {
       return ApiResponse.onSuccess(adminEmailService.publishValidationPassedReadyEmails());
-    } catch (RuntimeException exception) {
+    } catch (IllegalArgumentException exception) {
       return ApiResponse.onFailure(
           ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
