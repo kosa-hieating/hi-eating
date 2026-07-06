@@ -46,7 +46,7 @@ class HotDealTargetMapperIntegrationTest {
     if (!candidateIds.isEmpty()) {
       List<UserProfileRow> profiles =
           targetMapper.findUserProfilesByIds(
-              candidateIds.subList(0, Math.min(30, candidateIds.size())), 6);
+              candidateIds.subList(0, Math.min(30, candidateIds.size())), categoryIds, 6);
       assertThat(profiles).isNotEmpty();
       assertThat(profiles).allSatisfy(profile -> assertThat(profile.email()).isNotBlank());
     }

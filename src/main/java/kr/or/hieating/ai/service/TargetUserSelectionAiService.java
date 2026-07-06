@@ -65,7 +65,7 @@ public class TargetUserSelectionAiService {
     for (int start = 0; start < candidateIds.size(); start += settings.batchSize()) {
       int end = Math.min(start + settings.batchSize(), candidateIds.size());
       List<Long> batchIds = candidateIds.subList(start, end);
-      selectBatch(hotDeal, batchIds, settings, evaluationsByUserId, selectedByUserId);
+      selectBatch(hotDeal, categoryIds, batchIds, settings, evaluationsByUserId, selectedByUserId);
     }
 
     List<TargetSelectionEvaluationDto> evaluations = new ArrayList<>(evaluationsByUserId.values());
@@ -82,12 +82,13 @@ public class TargetUserSelectionAiService {
 
   private void selectBatch(
       HotDealTargetInfoDto hotDeal,
+      List<Long> categoryIds,
       List<Long> batchIds,
       AiProperties.TargetSelection settings,
       Map<Long, TargetSelectionEvaluationDto> evaluationsByUserId,
       Map<Long, TargetUserDto> selectedByUserId) {
     List<UserProfileRow> rows =
-        hotDealTargetMapper.findUserProfilesByIds(batchIds, settings.recentMonths());
+        hotDealTargetMapper.findUserProfilesByIds(batchIds, categoryIds, settings.recentMonths());
     if (rows.isEmpty()) {
       throw new IllegalStateException("후보 사용자 프로필을 조회하지 못했습니다. userIds=" + batchIds);
     }

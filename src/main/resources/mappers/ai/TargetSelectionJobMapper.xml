@@ -111,6 +111,10 @@
             failure_reason = '애플리케이션 재시작으로 중단된 작업',
             updated_at = SYSTIMESTAMP
         WHERE status = 'PROCESSING'
+          AND (
+              started_at IS NULL
+              OR started_at &lt;= SYSTIMESTAMP - NUMTODSINTERVAL(10, 'MINUTE')
+          )
     </update>
 
 </mapper>

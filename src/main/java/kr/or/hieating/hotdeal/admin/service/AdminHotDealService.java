@@ -29,7 +29,8 @@ public class AdminHotDealService {
   private final AdminHotDealMapper adminHotDealMapper;
   private final UserResolver userResolver;
 
-  // Bean이 존재하지 않을 수 있으므로 ObjectProvider 사용 (AI와 핫딜 등록은 독립적이여야함)
+  // AI 비활성화 시에도 핫딜 등록이 가능하도록 선택적으로 Bean을 조회한다.
+  // AI 활성화 시에는 핫딜과 Job을 같은 트랜잭션에 저장해 Job 유실을 방지한다.
   private final ObjectProvider<TargetSelectionJobRegistrar> targetSelectionJobRegistrar;
 
   @Transactional
@@ -93,7 +94,7 @@ public class AdminHotDealService {
       adminHotDealMapper.insertHotDealProduct(child);
     }
 
-    // AI 대상 선정 작업 등록 (Bean이 존재할 경우에만)
+    // 원격 AI 호출은 Scheduler가 수행하며, 여기서는 처리할 DB Job만 등록한다.
     targetSelectionJobRegistrar.ifAvailable(registrar -> registrar.register(hotDealId));
     return hotDealId;
   }

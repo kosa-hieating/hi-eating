@@ -43,14 +43,20 @@ public class TargetScoreResponseParser {
   private String extractJson(String response) {
     String withoutFence = response.replace("```json", "").replace("```", "").trim();
     int arrayStart = withoutFence.indexOf('[');
-    int arrayEnd = withoutFence.lastIndexOf(']');
-    if (arrayStart >= 0 && arrayEnd >= arrayStart) {
-      return withoutFence.substring(arrayStart, arrayEnd + 1);
+    int objectStart = withoutFence.indexOf('{');
+
+    if (arrayStart >= 0 && (objectStart < 0 || arrayStart < objectStart)) {
+      int arrayEnd = withoutFence.lastIndexOf(']');
+      if (arrayEnd >= arrayStart) {
+        return withoutFence.substring(arrayStart, arrayEnd + 1);
+      }
     }
 
-    int objectStart = withoutFence.indexOf('{');
-    int objectEnd = withoutFence.lastIndexOf('}');
-    if (objectStart >= 0 && objectEnd >= objectStart) {
+    if (objectStart >= 0) {
+      int objectEnd = withoutFence.lastIndexOf('}');
+      if (objectEnd < objectStart) {
+        throw new IllegalStateException("AI 대상 선정 응답에 완성된 JSON 객체가 없습니다.");
+      }
       return "[" + withoutFence.substring(objectStart, objectEnd + 1) + "]";
     }
     throw new IllegalStateException("AI 대상 선정 응답에 JSON 배열 또는 객체가 없습니다.");

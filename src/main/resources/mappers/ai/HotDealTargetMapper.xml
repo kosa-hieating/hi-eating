@@ -71,8 +71,13 @@
             (
                 SELECT COUNT(*)
                 FROM purchases pu
+                INNER JOIN products p ON p.id = pu.product_id
                 WHERE pu.user_id = u.id
                   AND pu.created_at &gt;= ADD_MONTHS(SYSTIMESTAMP, -#{recentMonths})
+                  AND p.category_id IN
+                  <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+                      #{categoryId}
+                  </foreach>
             ) AS purchaseCount,
             (
                 SELECT LISTAGG(DISTINCT c.name, ',') WITHIN GROUP (ORDER BY c.name)

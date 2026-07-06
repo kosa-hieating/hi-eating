@@ -53,7 +53,7 @@ class TargetUserSelectionAiServiceTest {
         .thenReturn(new HotDealInfoRow(hotDealId, "건강식품 핫딜", "설명", "건강식품"));
     when(targetMapper.findHotDealProducts(hotDealId))
         .thenReturn(List.of(new HotDealProductInfoDto("비타민", 10000, 7000)));
-    when(targetMapper.findUserProfilesByIds(List.of(1L, 2L, 3L), 6))
+    when(targetMapper.findUserProfilesByIds(List.of(1L, 2L, 3L), List.of(3L), 6))
         .thenReturn(
             List.of(
                 profile(1L, "one@example.com"),
@@ -107,7 +107,7 @@ class TargetUserSelectionAiServiceTest {
         .thenReturn(new HotDealInfoRow(hotDealId, "건강식품 핫딜", "설명", "건강식품"));
     when(targetMapper.findHotDealProducts(hotDealId))
         .thenReturn(List.of(new HotDealProductInfoDto("비타민", 10000, 7000)));
-    when(targetMapper.findUserProfilesByIds(List.of(1L, 2L), 6))
+    when(targetMapper.findUserProfilesByIds(List.of(1L, 2L), List.of(3L), 6))
         .thenReturn(List.of(profile(1L, "one@example.com"), profile(2L, "two@example.com")));
     when(scoringClient.score(org.mockito.ArgumentMatchers.any(), anyList()))
         .thenReturn(List.of(new UserScoreDto(1L, 96, "구매 이력이 일치합니다.")));

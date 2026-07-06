@@ -53,6 +53,19 @@ class TargetScoreResponseParserTest {
   }
 
   @Test
+  void parsesSingleObjectContainingReasonArray() {
+    String response =
+        """
+        분석 결과입니다.
+        {"userId":4,"score":85,"reason":["구매 2회", "즐겨찾기 1회"]}
+        """;
+
+    List<UserScoreDto> scores = parser.parse(response);
+
+    assertThat(scores).containsExactly(new UserScoreDto(4L, 85, "구매 2회 즐겨찾기 1회"));
+  }
+
+  @Test
   void rejectsResponseWithoutJson() {
     assertThatIllegalStateException()
         .isThrownBy(() -> parser.parse("응답을 생성하지 못했습니다."))
