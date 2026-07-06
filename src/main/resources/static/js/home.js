@@ -111,7 +111,9 @@
       }
 
       if (!isAuthenticated) {
-        openAuthModal('좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.');
+        openAuthModal(
+          '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
+        );
         return;
       }
 
