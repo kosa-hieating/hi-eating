@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await refreshDashboard(selectedEmailDraftId);
       const batchMessage = createBatchPublishMessage(
         result,
-        '선택한 이메일의 승인 및 RabbitMQ 발행이 완료되었습니다.'
+        '선택한 이메일의 승인 및 RabbitMQ 발행이 완료되었습니다.',
       );
       showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await refreshDashboard(selectedEmailDraftId);
       const batchMessage = createBatchPublishMessage(
         result,
-        '검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.'
+        '검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.',
       );
       showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {

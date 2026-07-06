@@ -85,8 +85,7 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
     return updateSendStatus(id, status, publishErrorMessage);
   }
 
-  public EmailDraftDto updateSendStatus(
-      Long id, EmailSendStatus sendStatus, String failureReason) {
+  public EmailDraftDto updateSendStatus(Long id, EmailSendStatus sendStatus, String failureReason) {
     int updated = emailSendLogMapper.updateStatus(id, sendStatus.name(), failureReason);
     if (updated == 0) {
       throw new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다.");
@@ -95,7 +94,6 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
   }
 
   private EmailDraftDto findRequired(Long id) {
-    return findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
+    return findById(id).orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
   }
 }
