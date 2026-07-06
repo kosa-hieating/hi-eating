@@ -28,5 +28,7 @@ public interface ProductMapper {
 
   Optional<Product> findById(@Param("productId") Long productId);
 
+  Optional<Product> findByIdIgnoreStatus(@Param("productId") Long productId);
+
   List<Product> findAllActiveProducts();
 }

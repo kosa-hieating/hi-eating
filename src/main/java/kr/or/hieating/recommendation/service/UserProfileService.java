@@ -126,7 +126,7 @@ public class UserProfileService {
     }
 
     for (Long id : highRatedIds) {
-      if (purchasedIds.contains(id) || favoriteIds.contains(id)) continue;
+      if (purchasedIds.contains(id) || favoriteIds.contains(id) || visitedIds.contains(id)) continue;
       try {
         String text = productEmbeddingService.getProductName(id);
         items.add(new UserActionItem(text, 1.5));

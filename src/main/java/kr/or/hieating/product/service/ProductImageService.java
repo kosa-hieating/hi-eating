@@ -16,7 +16,8 @@ public class ProductImageService {
 
   public Map<Long, String> getImageUrls(List<Long> productIds) {
     return productIds.stream()
-        .collect(java.util.stream.Collectors.toMap(productId -> productId, this::getProductImage));
+        .collect(java.util.stream.Collectors.toMap(
+            productId -> productId, this::getProductImage, (a, b) -> a));
   }
 
   public String getProductImage(Long productId) {

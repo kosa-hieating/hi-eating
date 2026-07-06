@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,7 +84,7 @@ public class RecommendationController {
   }
 
   @PostMapping("/refresh/{productId}")
-  public ResponseEntity<String> refreshProductEmbedding(Long productId) {
+  public ResponseEntity<String> refreshProductEmbedding(@PathVariable Long productId) {
     log.info("상품 {} 임베딩 갱신 시작", productId);
 
     try {

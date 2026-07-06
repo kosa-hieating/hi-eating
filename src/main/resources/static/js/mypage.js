@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadingEl = document.getElementById('recommendLoading');
 
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
   function renderProducts(products) {
     if (!carousel) return;
     if (loadingEl) loadingEl.classList.add('is-hidden');
@@ -15,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (p) => `
       <article class="product-card recommend-card pb-2">
         <div class="product-image-frame position-relative overflow-hidden mb-2 rounded">
-          <a class="product-image-link d-block" href="/product/${p.id}">
-            <img class="d-block w-100" alt="${p.name}" src="${p.imageUrl}" loading="lazy" />
+          <a class="product-image-link d-block" href="/product/${encodeURIComponent(p.id)}">
+            <img class="d-block w-100" alt="${escapeHtml(p.name)}" src="${escapeHtml(p.imageUrl)}" loading="lazy" />
           </a>
           <button
             aria-label="관심 상품 즐겨찾기"
@@ -28,9 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <i aria-hidden="true" class="bi ${p.favorited ? 'bi-star-fill' : 'bi-star'}"></i>
           </button>
         </div>
-        <h3 class="mb-2">${p.name}</h3>
+        <h3 class="mb-2">${escapeHtml(p.name)}</h3>
         <div class="product-price d-flex align-items-baseline gap-2 mb-2">
-          <strong>${p.formattedPrice}</strong>
+          <strong>${escapeHtml(p.formattedPrice)}</strong>
         </div>
       </article>
     `,

@@ -77,14 +77,8 @@ public class ProductEmbeddingService implements CommandLineRunner {
   }
 
   public void updateProductEmbedding(Long productId) {
-    ProductEmbedding oldEmbedding = productEmbeddings.get(productId);
-    if (oldEmbedding == null) {
-      log.warn("상품 {}의 임베딩이 존재하지 않아 갱신할 수 없습니다.", productId);
-      return;
-    }
-
     try {
-      Product product = findProductById(productId);
+      Product product = findProductByIdIgnoreStatus(productId);
       String text = generateEmbeddingText(product);
       float[] raw = embeddingModel.embed(text);
       List<Float> newEmbedding = toFloatList(raw);
@@ -98,6 +92,12 @@ public class ProductEmbeddingService implements CommandLineRunner {
     } catch (Exception e) {
       log.error("상품 {} 임베딩 갱신 실패: {}", productId, e.getMessage(), e);
     }
+  }
+
+  private Product findProductByIdIgnoreStatus(Long productId) {
+    return productMapper
+        .findByIdIgnoreStatus(productId)
+        .orElseThrow(() -> new IllegalArgumentException("상품 " + productId + "을(를) 찾을 수 없습니다."));
   }
 
   public Product findProductById(Long productId) {
