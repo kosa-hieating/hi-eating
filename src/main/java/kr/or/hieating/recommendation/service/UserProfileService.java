@@ -3,14 +3,12 @@ package kr.or.hieating.recommendation.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import kr.or.hieating.recommendation.domain.UserProfile;
+import kr.or.hieating.recommendation.mapper.RecommendationMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import kr.or.hieating.recommendation.domain.ProductEmbedding;
-import kr.or.hieating.recommendation.domain.UserProfile;
-import kr.or.hieating.recommendation.mapper.RecommendationMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +33,11 @@ public class UserProfileService {
       return new UserProfile(userId, new ArrayList<>(), 0);
     }
 
-    List<String> textsToEmbed = actionItems.stream()
-        .map(item -> item.text)
-        .collect(Collectors.toList());
+    List<String> textsToEmbed =
+        actionItems.stream().map(item -> item.text).collect(Collectors.toList());
 
-    List<List<Float>> actionEmbeddings = productEmbeddingService
-        .getEmbeddingsForMultipleTexts(textsToEmbed);
+    List<List<Float>> actionEmbeddings =
+        productEmbeddingService.getEmbeddingsForMultipleTexts(textsToEmbed);
 
     int dimension = 0;
     if (!actionEmbeddings.isEmpty() && !actionEmbeddings.get(0).isEmpty()) {
@@ -79,8 +76,7 @@ public class UserProfileService {
       normalized.add((float) (weightedSum[j] / totalWeight));
     }
 
-    log.info("사용자 {} 프로필 벡터 생성 완료. 차원: {}, 항목 수: {}",
-        userId, dimension, actionItems.size());
+    log.info("사용자 {} 프로필 벡터 생성 완료. 차원: {}, 항목 수: {}", userId, dimension, actionItems.size());
 
     return new UserProfile(userId, normalized, dimension);
   }
@@ -91,8 +87,12 @@ public class UserProfileService {
     List<Long> visitedIds = recommendationMapper.findVisitedProductIds(userId);
     List<Long> highRatedIds = recommendationMapper.findHighRatedReviewProductIds(userId, 4);
 
-    log.debug("구매: {}, 찜: {}, 방문: {}, 높은평점리뷰: {}",
-        purchasedIds.size(), favoriteIds.size(), visitedIds.size(), highRatedIds.size());
+    log.debug(
+        "구매: {}, 찜: {}, 방문: {}, 높은평점리뷰: {}",
+        purchasedIds.size(),
+        favoriteIds.size(),
+        visitedIds.size(),
+        highRatedIds.size());
 
     List<UserActionItem> items = new ArrayList<>();
 

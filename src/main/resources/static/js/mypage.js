@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!carousel) return;
     if (loadingEl) loadingEl.classList.add('is-hidden');
     if (products.length === 0) return;
-    carousel.innerHTML = products.map(p => `
+    carousel.innerHTML = products
+      .map(
+        (p) => `
       <article class="product-card recommend-card pb-2">
         <div class="product-image-frame position-relative overflow-hidden mb-2 rounded">
           <a class="product-image-link d-block" href="/product/${p.id}">
@@ -31,12 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
           <strong>${p.formattedPrice}</strong>
         </div>
       </article>
-    `).join('');
+    `,
+      )
+      .join('');
   }
 
   fetch('/api/recommendation/products')
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       renderProducts(data.products);
       initCarousel();
     })

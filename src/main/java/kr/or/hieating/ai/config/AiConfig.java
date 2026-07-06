@@ -1,5 +1,7 @@
 package kr.or.hieating.ai.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.ollama.OllamaChatModel;
@@ -12,8 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClient;
 
 /**
@@ -47,8 +47,8 @@ public class AiConfig {
   }
 
   /**
-   * EmbeddingModel 생성 로직. 원격 Ollama 서버에 연결되는 EmbeddingModel을 만든다.
-   * 상품명, 설명 등 텍스트를 벡터(임베딩)로 변환하는 데 사용.
+   * EmbeddingModel 생성 로직. 원격 Ollama 서버에 연결되는 EmbeddingModel을 만든다. 상품명, 설명 등 텍스트를 벡터(임베딩)로 변환하는 데
+   * 사용.
    *
    * @param settings 추천용 Ollama 접속 설정
    * @return 설정이 반영된 EmbeddingModel 인스턴스
@@ -71,13 +71,11 @@ public class AiConfig {
     OllamaEmbeddingModel embeddingModelBean =
         OllamaEmbeddingModel.builder()
             .ollamaApi(ollamaApi)
-            .defaultOptions(
-                OllamaEmbeddingOptions.builder()
-                    .model(embeddingModelName)
-                    .build())
+            .defaultOptions(OllamaEmbeddingOptions.builder().model(embeddingModelName).build())
             .build();
 
-    log.info("Ollama EmbeddingModel 설정 완료. 모델: {}, 기본 URL: {}", embeddingModelName, settings.baseUrl());
+    log.info(
+        "Ollama EmbeddingModel 설정 완료. 모델: {}, 기본 URL: {}", embeddingModelName, settings.baseUrl());
 
     return embeddingModelBean;
   }

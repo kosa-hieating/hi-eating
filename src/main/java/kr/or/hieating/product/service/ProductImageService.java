@@ -2,10 +2,10 @@ package kr.or.hieating.product.service;
 
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import kr.or.hieating.product.mapper.ProductMapper;
 import kr.or.hieating.utils.ImageUrlResolver;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -15,11 +15,8 @@ public class ProductImageService {
   private final ImageUrlResolver imageUrlResolver;
 
   public Map<Long, String> getImageUrls(List<Long> productIds) {
-    return productIds.stream().collect(
-        java.util.stream.Collectors.toMap(
-            productId -> productId,
-            this::getProductImage
-        ));
+    return productIds.stream()
+        .collect(java.util.stream.Collectors.toMap(productId -> productId, this::getProductImage));
   }
 
   public String getProductImage(Long productId) {

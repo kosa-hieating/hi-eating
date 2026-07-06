@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import kr.or.hieating.product.domain.Product;
+import kr.or.hieating.product.mapper.ProductMapper;
+import kr.or.hieating.recommendation.domain.ProductEmbedding;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
-import kr.or.hieating.recommendation.domain.ProductEmbedding;
-import kr.or.hieating.product.domain.Product;
-import kr.or.hieating.product.mapper.ProductMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -101,8 +101,9 @@ public class ProductEmbeddingService implements CommandLineRunner {
   }
 
   public Product findProductById(Long productId) {
-    return productMapper.findById(productId).orElseThrow(
-        () -> new IllegalArgumentException("상품 " + productId + "을(를) 찾을 수 없습니다."));
+    return productMapper
+        .findById(productId)
+        .orElseThrow(() -> new IllegalArgumentException("상품 " + productId + "을(를) 찾을 수 없습니다."));
   }
 
   public Map<Long, List<Float>> getEmbeddingsForProductIds(List<Long> productIds) {

@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import kr.or.hieating.product.domain.Product;
 import kr.or.hieating.product.mapper.ProductMapper;
 import kr.or.hieating.recommendation.domain.ProductEmbedding;
 import kr.or.hieating.recommendation.domain.RecommendationResult;
 import kr.or.hieating.recommendation.domain.UserProfile;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
