@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import kr.or.hieating.ai.service.TargetSelectionJobRegistrar;
 import kr.or.hieating.global.apiPayload.code.status.ErrorStatus;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.hotdeal.admin.dto.HotDealCreateRequestDTO;
@@ -16,6 +17,7 @@ import kr.or.hieating.hotdeal.domain.HotDealProducts;
 import kr.or.hieating.hotdeal.domain.HotDeals;
 import kr.or.hieating.utils.UserResolver;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,9 @@ public class AdminHotDealService {
 
   private final AdminHotDealMapper adminHotDealMapper;
   private final UserResolver userResolver;
+
+  // Bean이 존재하지 않을 수 있으므로 ObjectProvider 사용 (AI와 핫딜 등록은 독립적이여야함)
+  private final ObjectProvider<TargetSelectionJobRegistrar> targetSelectionJobRegistrar;
 
   @Transactional
   public List<HotDealResponseDTO> getExistingHotDeals() {
@@ -88,6 +93,8 @@ public class AdminHotDealService {
       adminHotDealMapper.insertHotDealProduct(child);
     }
 
+    // AI 대상 선정 작업 등록 (Bean이 존재할 경우에만)
+    targetSelectionJobRegistrar.ifAvailable(registrar -> registrar.register(hotDealId));
     return hotDealId;
   }
 
