@@ -23,6 +23,13 @@ class AiConfigTest {
                 "validation-model",
                 0.2,
                 Duration.ofSeconds(3),
+                Duration.ofSeconds(120)),
+            new AiProperties.TargetSelection(80, 30, 6, 1, 3),
+            new AiProperties.Ollama(
+                "http://validation:11436",
+                "embeding-model",
+                0.2,
+                Duration.ofSeconds(3),
                 Duration.ofSeconds(120)));
     AiConfig config = new AiConfig();
 

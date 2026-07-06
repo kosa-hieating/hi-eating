@@ -24,6 +24,7 @@ public class HomeController {
   public String home(Model model) {
     Long currentUserId = userResolver.currentUserIdOrNull();
     model.addAttribute("promotions", promotionService.findActivePromotions());
+    model.addAttribute("tableDecorAuthenticated", currentUserId != null);
     model.addAttribute(
         "popularTableDecorPosts", tableDecorPostService.findTopLikedPosts(currentUserId, 3));
     model.addAttribute("hotDealProducts", hotDealService.findActiveHotDealProducts());
