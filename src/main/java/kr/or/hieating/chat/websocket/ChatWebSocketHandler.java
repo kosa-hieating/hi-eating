@@ -85,7 +85,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
       }
 
       broadcast(event);
-    } catch (IllegalArgumentException exception) {
+    } catch (com.fasterxml.jackson.core.JsonProcessingException | IllegalArgumentException exception) {
       sendToSession(session, ChatWebSocketEvent.error(exception.getMessage()));
     }
   }
@@ -130,7 +130,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
       Set<WebSocketSession> sessions = userSessions.get(userId);
       if (sessions != null) {
         for (WebSocketSession session : sessions) {
-          sendPayload(session, payload);
+          try {
+            sendPayload(session, payload);
+          } catch (IOException exception) {
+            removeSession(session);
+          }
         }
       }
     }
@@ -140,7 +144,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
       Set<WebSocketSession> sessions = adminSessions.get(adminId);
       if (sessions != null) {
         for (WebSocketSession session : sessions) {
-          sendPayload(session, payload);
+          try {
+            sendPayload(session, payload);
+          } catch (IOException exception) {
+            removeSession(session);
+          }
         }
       }
     }

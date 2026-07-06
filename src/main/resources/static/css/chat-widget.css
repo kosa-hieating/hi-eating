@@ -134,7 +134,7 @@
   font-size: 14px;
   line-height: 1.45;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .chat-widget__message.is-user .chat-widget__bubble {

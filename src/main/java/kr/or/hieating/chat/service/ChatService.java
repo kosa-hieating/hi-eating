@@ -9,6 +9,7 @@ import kr.or.hieating.chat.dto.ChatRoomSummaryDto;
 import kr.or.hieating.chat.dto.ChatWebSocketEvent;
 import kr.or.hieating.chat.mapper.ChatMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +105,14 @@ public class ChatService {
         .orElseGet(
             () -> {
               ChatRoomCreateCommand command = new ChatRoomCreateCommand(null, userId);
-              chatMapper.insertRoom(command);
+              try {
+                chatMapper.insertRoom(command);
+              } catch (DuplicateKeyException ignored) {
+                // 동시 요청으로 이미 방이 생성된 경우 기존 방을 반환
+                return chatMapper
+                    .findRoomByUserId(userId)
+                    .orElseThrow(() -> new IllegalStateException("Failed to find chat room."));
+              }
               if (command.getId() == null) {
                 throw new IllegalStateException("Failed to create chat room.");
               }

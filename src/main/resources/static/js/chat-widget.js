@@ -164,6 +164,7 @@
 
     socket.addEventListener('close', () => {
       setStatus('연결이 끊겼습니다');
+      setTimeout(connect, 3000);
     });
   };
 

@@ -254,8 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
         statusSelect.value = 'ONLINE';
       }
     });
-    socket.addEventListener('close', () => setStatus('실시간 연결 끊김'));
-    socket.addEventListener('message', async (event) => {
+    socket.addEventListener('close', () => {
+      setStatus('실시간 연결 끊김');
+      setTimeout(connect, 3000);
+    });
+    socket.addEventListener('message', (event) => {
       const payload = JSON.parse(event.data);
       if (payload.type === 'ERROR') {
         setStatus(payload.error || '메시지를 처리하지 못했습니다');
@@ -269,13 +272,15 @@ document.addEventListener('DOMContentLoaded', () => {
       upsertRoom(payload.room);
       renderRooms();
 
-      if (payload.room?.roomId === selectedRoomId) {
-        await selectRoom(selectedRoomId);
+      if (payload.room?.roomId === selectedRoomId && payload.message) {
+        appendMessage(payload.message);
+        scrollToBottom();
       }
     });
   };
 
   refreshButton?.addEventListener('click', () => {
+    connect();
     loadRooms().catch((error) => {
       console.error(error);
       renderRoomState('상담방을 불러오지 못했습니다.');

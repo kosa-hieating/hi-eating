@@ -278,7 +278,7 @@
   font-size: 14px;
   line-height: 1.45;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .admin-chat-message.is-admin .admin-chat-bubble {

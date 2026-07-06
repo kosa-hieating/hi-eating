@@ -19,26 +19,8 @@
     r.last_message_at,
     r.created_at,
     r.updated_at,
-    (
-      SELECT content
-      FROM (
-        SELECT m.content
-        FROM chat_messages m
-        WHERE m.room_id = r.id
-        ORDER BY m.created_at DESC, m.id DESC
-      )
-      WHERE ROWNUM = 1
-    ) AS last_message_content,
-    (
-      SELECT sender_type
-      FROM (
-        SELECT m.sender_type
-        FROM chat_messages m
-        WHERE m.room_id = r.id
-        ORDER BY m.created_at DESC, m.id DESC
-      )
-      WHERE ROWNUM = 1
-    ) AS last_sender_type
+    lm.content AS last_message_content,
+    lm.sender_type AS last_sender_type
   </sql>
 
   <select id="findRoomByUserId" resultType="kr.or.hieating.chat.dto.ChatRoomSummaryDto">
@@ -51,6 +33,15 @@
       ON au.id = r.assigned_admin_id
     LEFT JOIN chat_admin_presences ap
       ON ap.admin_id = r.assigned_admin_id
+    LEFT JOIN (
+      SELECT room_id, content, sender_type
+      FROM (
+        SELECT room_id, content, sender_type,
+               ROW_NUMBER() OVER (PARTITION BY room_id ORDER BY created_at DESC, id DESC) rn
+        FROM chat_messages
+      )
+      WHERE rn = 1
+    ) lm ON lm.room_id = r.id
     WHERE r.user_id = #{userId}
       AND u.deleted_at IS NULL
   </select>
@@ -65,6 +56,15 @@
       ON au.id = r.assigned_admin_id
     LEFT JOIN chat_admin_presences ap
       ON ap.admin_id = r.assigned_admin_id
+    LEFT JOIN (
+      SELECT room_id, content, sender_type
+      FROM (
+        SELECT room_id, content, sender_type,
+               ROW_NUMBER() OVER (PARTITION BY room_id ORDER BY created_at DESC, id DESC) rn
+        FROM chat_messages
+      )
+      WHERE rn = 1
+    ) lm ON lm.room_id = r.id
     WHERE r.id = #{roomId}
       AND u.deleted_at IS NULL
   </select>
@@ -79,6 +79,15 @@
       ON au.id = r.assigned_admin_id
     LEFT JOIN chat_admin_presences ap
       ON ap.admin_id = r.assigned_admin_id
+    LEFT JOIN (
+      SELECT room_id, content, sender_type
+      FROM (
+        SELECT room_id, content, sender_type,
+               ROW_NUMBER() OVER (PARTITION BY room_id ORDER BY created_at DESC, id DESC) rn
+        FROM chat_messages
+      )
+      WHERE rn = 1
+    ) lm ON lm.room_id = r.id
     WHERE u.deleted_at IS NULL
       AND r.assigned_admin_id = #{adminId}
     ORDER BY
