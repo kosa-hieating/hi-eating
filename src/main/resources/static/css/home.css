@@ -56,7 +56,7 @@
 
 .promotion-section {
   position: relative;
-  margin-bottom: 64px;
+  margin-bottom: 96px;
 }
 
 .promotion-carousel {
@@ -145,8 +145,8 @@
 
 .popular-table-section {
   max-width: 1120px;
-  margin-top: 86px;
-  margin-bottom: 104px;
+  margin-top: 112px;
+  margin-bottom: 136px;
   padding-right: clamp(28px, 4vw, 56px);
   padding-left: clamp(28px, 4vw, 56px);
 }
@@ -448,7 +448,7 @@
 .hot-deal-section {
   max-width: 1120px;
   margin-top: 0;
-  margin-bottom: 120px;
+  margin-bottom: 148px;
   padding-right: clamp(28px, 4vw, 56px);
   padding-left: clamp(28px, 4vw, 56px);
 }
@@ -621,7 +621,7 @@
 
 .most-purchased-section {
   max-width: 1120px;
-  margin-bottom: 112px;
+  margin-bottom: 136px;
   padding-right: clamp(28px, 4vw, 56px);
   padding-left: clamp(28px, 4vw, 56px);
 }
