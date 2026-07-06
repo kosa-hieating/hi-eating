@@ -16,7 +16,7 @@
             </span>
             <h1>이메일 관리</h1>
             <p>
-              AI가 생성하고 검증한 핫딜 안내 메일을 확인한 뒤 RabbitMQ 발송 대기열로 전달합니다.
+              AI 검증에서 부적합 처리된 핫딜 안내 메일을 검수하고 발송합니다.
             </p>
           </div>
 
@@ -26,40 +26,18 @@
               새로고침
             </a>
             <button
-              class="admin-email-secondary-button"
-              data-admin-email-publish-pass-button
-              th:attr="data-publish-url=@{/admin/api/emails/publish/validation-pass}"
-              type="button"
-            >
-              <i class="bi bi-magic" aria-hidden="true"></i>
-              검증 통과 자동 발송
-            </button>
-            <button
               class="admin-email-primary-button"
               data-admin-email-publish-selected-button
               th:attr="data-publish-url=@{/admin/api/emails/publish}"
               type="button"
             >
               <i class="bi bi-send-check" aria-hidden="true"></i>
-              선택 발송
+              선택 승인 발송
             </button>
           </div>
         </header>
 
         <section class="admin-email-summary" aria-label="이메일 처리 현황">
-          <article class="admin-email-metric-card">
-            <span class="admin-email-metric-icon is-success">
-              <i class="bi bi-check2-circle" aria-hidden="true"></i>
-            </span>
-            <div>
-              <strong
-                data-admin-email-summary="validationPassCount"
-                th:text="${emailSummary.validationPassCount}"
-                >0</strong
-              >
-              <span>검증 통과</span>
-            </div>
-          </article>
           <article class="admin-email-metric-card">
             <span class="admin-email-metric-icon is-warning">
               <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
@@ -73,43 +51,14 @@
               <span>관리자 검수 필요</span>
             </div>
           </article>
-          <article class="admin-email-metric-card">
-            <span class="admin-email-metric-icon is-brand">
-              <i class="bi bi-hdd-network" aria-hidden="true"></i>
-            </span>
-            <div>
-              <strong
-                data-admin-email-summary="publishedCount"
-                th:text="${emailSummary.publishedCount}"
-                >0</strong
-              >
-              <span>RabbitMQ 발행 완료</span>
-            </div>
-          </article>
-          <article class="admin-email-metric-card">
-            <span class="admin-email-metric-icon is-muted">
-              <i class="bi bi-clock-history" aria-hidden="true"></i>
-            </span>
-            <div>
-              <strong data-admin-email-summary="readyCount" th:text="${emailSummary.readyCount}"
-                >0</strong
-              >
-              <span>대기 중</span>
-            </div>
-          </article>
         </section>
 
         <section class="admin-email-workspace" aria-label="검수 대상 이메일">
           <article class="admin-email-card admin-email-review-panel">
             <div class="admin-email-card-header">
               <div>
-                <h2>이메일 발송 후보</h2>
-                <p>AI가 생성한 메일 후보를 검증 상태와 발행 상태 기준으로 확인합니다.</p>
-              </div>
-              <div class="admin-email-filter-group" aria-label="메일 상태 필터">
-                <button class="is-active" type="button">전체</button>
-                <button type="button">검증 실패</button>
-                <button type="button">발행 대기</button>
+                <h2>관리자 검수 필요 이메일</h2>
+                <p>AI 검증을 통과하지 못한 메일을 확인하고 수정 또는 승인 발송합니다.</p>
               </div>
             </div>
 
@@ -140,7 +89,7 @@
                     <td>
                       <input
                         data-admin-email-select
-                        th:disabled="${!draft.publishable}"
+                        th:disabled="${!draft.publishable and !draft.validationFailed}"
                         th:value="${draft.id}"
                         th:aria-label="|${draft.recipientName} 메일 선택|"
                         type="checkbox"
@@ -268,7 +217,7 @@
                 <button
                   class="admin-email-primary-button"
                   data-admin-email-publish-current-button
-                  th:disabled="${!selectedEmailDraft.publishable}"
+                  th:disabled="${!selectedEmailDraft.publishable and !selectedEmailDraft.validationFailed}"
                   type="button"
                 >
                   <i class="bi bi-send-check" aria-hidden="true"></i>

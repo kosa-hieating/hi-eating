@@ -9,6 +9,7 @@ import kr.or.hieating.email.admin.dto.AdminEmailPublishRequestDto;
 import kr.or.hieating.email.admin.dto.AdminEmailSummaryDto;
 import kr.or.hieating.email.admin.dto.AdminEmailUpdateRequestDto;
 import kr.or.hieating.email.domain.EmailPublishStatus;
+import kr.or.hieating.email.domain.EmailSendStatus;
 import kr.or.hieating.email.domain.EmailValidationStatus;
 import kr.or.hieating.email.dto.EmailDraftDto;
 import kr.or.hieating.email.publisher.EmailPublisher;
@@ -55,7 +56,7 @@ public class AdminEmailService {
             .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
 
     if (emailDraft.getValidationStatus() != EmailValidationStatus.FAIL) {
-      throw new IllegalArgumentException("검증 실패 이메일만 관리자 수정이 가능합니다.");
+      throw new IllegalArgumentException("검증 필요 이메일만 관리자 수정이 가능합니다.");
     }
 
     return emailDraftRepository.updateContent(emailDraftId, subject, content);
@@ -63,11 +64,10 @@ public class AdminEmailService {
 
   public EmailDraftDto publishEmailDraft(Long emailDraftId) {
     EmailDraftDto emailDraft = validatePublishTarget(emailDraftId);
-    emailPublisher.publish(emailDraftId);
-
-    if (emailDraft.getValidationStatus() == EmailValidationStatus.FAIL) {
+    if (emailDraft.getSendStatus() == EmailSendStatus.NEEDS_REVIEW) {
       emailDraftRepository.updateValidationResult(emailDraftId, EmailValidationStatus.PASS, null);
     }
+    emailPublisher.publish(emailDraftId);
 
     return emailDraftRepository
         .findById(emailDraftId)
@@ -128,7 +128,10 @@ public class AdminEmailService {
   private AdminEmailSummaryDto createSummary(List<EmailDraftDto> emailDrafts) {
     long validationPassCount = countValidationStatus(emailDrafts, EmailValidationStatus.PASS);
     long validationFailCount = countValidationStatus(emailDrafts, EmailValidationStatus.FAIL);
-    long publishedCount = countPublishStatus(emailDrafts, EmailPublishStatus.PUBLISHED);
+    long publishedCount =
+        emailDrafts.stream()
+            .filter(emailDraft -> isPublishedFlow(emailDraft.getSendStatus()))
+            .count();
     long readyCount = countPublishStatus(emailDrafts, EmailPublishStatus.READY);
 
     return new AdminEmailSummaryDto(
@@ -149,6 +152,13 @@ public class AdminEmailService {
         .count();
   }
 
+  private boolean isPublishedFlow(EmailSendStatus sendStatus) {
+    return sendStatus == EmailSendStatus.PUBLISHED
+        || sendStatus == EmailSendStatus.SENDING
+        || sendStatus == EmailSendStatus.SENT
+        || sendStatus == EmailSendStatus.RETRYING;
+  }
+
   private String normalizeRequiredText(String value, String fieldName) {
     if (value == null || value.trim().isEmpty()) {
       throw new IllegalArgumentException(fieldName + "을(를) 입력해주세요.");
@@ -167,8 +177,9 @@ public class AdminEmailService {
             .findById(emailDraftId)
             .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
 
-    if (emailDraft.getPublishStatus() == EmailPublishStatus.PUBLISHED) {
-      throw new IllegalArgumentException("이미 발행 완료된 이메일입니다.");
+    if (emailDraft.getSendStatus() != EmailSendStatus.APPROVED
+        && emailDraft.getSendStatus() != EmailSendStatus.NEEDS_REVIEW) {
+      throw new IllegalArgumentException("관리자 검수 필요 또는 승인 상태의 이메일만 발행할 수 있습니다.");
     }
 
     normalizeRequiredText(emailDraft.getRecipientEmail(), "수신자");

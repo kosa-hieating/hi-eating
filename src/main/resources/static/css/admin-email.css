@@ -108,7 +108,7 @@ body {
 
 .admin-email-summary {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
   width: 100%;
@@ -279,6 +279,14 @@ body {
   background: #fffaf7;
 }
 
+.admin-email-table tbody tr {
+  cursor: pointer;
+}
+
+.admin-email-table input {
+  cursor: pointer;
+}
+
 .admin-email-table strong,
 .admin-email-table span {
   display: block;
@@ -337,6 +345,11 @@ body {
 .admin-email-status.is-brand {
   background: var(--admin-email-brand-soft);
   color: var(--admin-email-brand) !important;
+}
+
+.admin-email-status.is-muted {
+  background: #f4f1ef;
+  color: var(--admin-email-muted) !important;
 }
 
 .admin-email-editor {

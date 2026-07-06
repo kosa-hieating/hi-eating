@@ -3,6 +3,7 @@ package kr.or.hieating.email.publisher;
 import java.time.LocalDateTime;
 import kr.or.hieating.email.config.EmailEventProperties;
 import kr.or.hieating.email.domain.EmailPublishStatus;
+import kr.or.hieating.email.domain.EmailSendStatus;
 import kr.or.hieating.email.dto.EmailDraftDto;
 import kr.or.hieating.email.repository.EmailDraftRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,16 @@ public class EmailPublisher {
             .findById(emailDraftId)
             .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
 
+    if (emailDraft.getSendStatus() != EmailSendStatus.APPROVED) {
+      throw new IllegalArgumentException("승인된 이메일만 RabbitMQ로 발행할 수 있습니다.");
+    }
+
     EmailPublishMessage message = createMessage(emailDraft);
 
     try {
+      emailDraftRepository.updatePublishStatus(emailDraftId, EmailPublishStatus.PUBLISHED, null);
       rabbitTemplate.convertAndSend(
           emailEventProperties.exchange(), emailEventProperties.routingKey(), message);
-      emailDraftRepository.updatePublishStatus(emailDraftId, EmailPublishStatus.PUBLISHED, null);
       return message;
     } catch (AmqpException exception) {
       emailDraftRepository.updatePublishStatus(

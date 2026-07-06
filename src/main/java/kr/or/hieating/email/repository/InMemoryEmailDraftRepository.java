@@ -10,9 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import kr.or.hieating.email.domain.EmailPublishStatus;
 import kr.or.hieating.email.domain.EmailValidationStatus;
 import kr.or.hieating.email.dto.EmailDraftDto;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class InMemoryEmailDraftRepository implements EmailDraftRepository {
 
   private final AtomicLong sequence = new AtomicLong(1);
@@ -189,6 +187,7 @@ public class InMemoryEmailDraftRepository implements EmailDraftRepository {
         .content(source.getContent())
         .validationStatus(source.getValidationStatus())
         .validationReason(source.getValidationReason())
+        .sendStatus(source.getSendStatus())
         .publishStatus(source.getPublishStatus())
         .publishErrorMessage(source.getPublishErrorMessage())
         .publishedAt(source.getPublishedAt())

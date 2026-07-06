@@ -1,8 +1,9 @@
 package kr.or.hieating.email.domain;
 
-public enum EmailPublishStatus {
+public enum EmailSendStatus {
   PENDING,
-  READY,
+  NEEDS_REVIEW,
+  APPROVED,
   PUBLISHED,
   SENDING,
   SENT,

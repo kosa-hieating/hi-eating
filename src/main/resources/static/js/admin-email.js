@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveButton = editor?.querySelector('[data-admin-email-save-button]');
   const currentPublishButton = editor?.querySelector('[data-admin-email-publish-current-button]');
   const detailStatus = document.querySelector('[data-admin-email-detail-validation-status]');
+  const filterButtons = Array.from(document.querySelectorAll('[data-admin-email-filter]'));
   const subjectInput = editor?.querySelector('[name="subject"]');
   const recipientInput = editor?.querySelector('input[type="email"]');
   const contentInput = editor?.querySelector('[name="content"]');
@@ -20,16 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedEmailDraftId = editor?.dataset.emailDraftId
     ? Number(editor.dataset.emailDraftId)
     : null;
+  let currentFilter = 'ALL';
 
   const validationMeta = {
     PASS: { label: '검증 통과', className: 'is-success' },
-    FAIL: { label: '검증 필요', className: 'is-danger' },
+    FAIL: { label: '부적합', className: 'is-danger' },
     PENDING: { label: '검증 대기', className: 'is-warning' },
   };
 
   const publishMeta = {
+    PENDING: { label: '관리자 검수 필요', className: 'is-muted' },
     READY: { label: '발행 대기', className: 'is-brand' },
     PUBLISHED: { label: '발행 완료', className: 'is-success' },
+    SENDING: { label: '발송 중', className: 'is-brand' },
+    SENT: { label: '발송 완료', className: 'is-success' },
+    RETRYING: { label: '재시도 대기', className: 'is-warning' },
     FAILED: { label: '발행 실패', className: 'is-danger' },
   };
 
@@ -103,12 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const getPublishMeta = (draft) =>
     publishMeta[draft.publishStatus] || {
-      label: draft.publishStatusLabel || '발행 대기',
-      className: draft.publishStatusClass || 'is-brand',
+      label: draft.publishStatusLabel || '관리자 검수 필요',
+      className: draft.publishStatusClass || 'is-muted',
     };
 
   const resetStatusClass = (element) => {
-    element.classList.remove('is-success', 'is-danger', 'is-warning', 'is-brand');
+    element.classList.remove('is-success', 'is-danger', 'is-warning', 'is-brand', 'is-muted');
   };
 
   const createStatus = (meta) => {
@@ -123,6 +129,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const key = element.dataset.adminEmailSummary;
       element.textContent = String(summary?.[key] ?? 0);
     });
+  };
+
+  const updateFilterButtons = () => {
+    filterButtons.forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.adminEmailFilter === currentFilter);
+    });
+  };
+
+  const filterDrafts = (drafts) => {
+    if (currentFilter === 'VALIDATION_FAIL') {
+      return drafts.filter((draft) => draft.validationStatus === 'FAIL');
+    }
+
+    if (currentFilter === 'PUBLISH_READY') {
+      return drafts.filter((draft) => draft.publishStatus === 'READY');
+    }
+
+    return drafts;
   };
 
   const setSelectedRow = (emailDraftId) => {
@@ -144,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = String(draft.id);
-    checkbox.disabled = !draft.publishable;
+    checkbox.disabled = !draft.publishable && !draft.validationFailed;
     checkbox.dataset.adminEmailSelect = '';
     checkbox.setAttribute('aria-label', `${draft.recipientName || '수신자'} 메일 선택`);
     selectCell.appendChild(checkbox);
@@ -188,7 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tableBody.replaceChildren();
-    drafts.forEach((draft) => tableBody.appendChild(createEmailRow(draft)));
+    filterDrafts(drafts).forEach((draft) => tableBody.appendChild(createEmailRow(draft)));
+    updateFilterButtons();
 
     if (selectAllCheckbox) {
       selectAllCheckbox.checked = false;
@@ -207,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const editable = Boolean(draft.validationFailed);
     const publishable = Boolean(draft.publishable);
+    const canPublishFromDetail = publishable || editable;
 
     if (subjectInput) {
       subjectInput.value = draft.subject || '';
@@ -223,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveButton.disabled = !editable;
     }
     if (currentPublishButton) {
-      currentPublishButton.disabled = !publishable;
+      currentPublishButton.disabled = !canPublishFromDetail;
     }
     if (detailStatus) {
       const meta = getValidationMeta(draft);
@@ -272,6 +298,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboard = await fetchApi(url);
     renderDashboard(dashboard, preferredEmailDraftId);
     return dashboard;
+  };
+
+  const loadEmailDetail = async (emailDraftId, detailUrl) => {
+    if (!emailDraftId && !detailUrl) {
+      return;
+    }
+
+    try {
+      const url = detailUrl || `/admin/api/emails/${emailDraftId}`;
+      const draft = await fetchApi(url);
+      renderDetail(draft);
+    } catch (error) {
+      showMessage(error.message, 'is-danger');
+    }
   };
 
   const saveCurrentEmail = async () => {
@@ -362,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await refreshDashboard(selectedEmailDraftId);
       const batchMessage = createBatchPublishMessage(
         result,
-        '선택한 이메일의 RabbitMQ 발행이 완료되었습니다.',
+        '선택한 이메일의 승인 및 RabbitMQ 발행이 완료되었습니다.'
       );
       showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {
@@ -387,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await refreshDashboard(selectedEmailDraftId);
       const batchMessage = createBatchPublishMessage(
         result,
-        '검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.',
+        '검증 통과 이메일의 RabbitMQ 발행이 완료되었습니다.'
       );
       showMessage(batchMessage.text, batchMessage.state);
     } catch (error) {
@@ -409,24 +449,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   tableBody?.addEventListener('click', async (event) => {
-    const link = event.target.closest('[data-admin-email-detail-link]');
-    if (!link) {
+    const row = event.target.closest('[data-admin-email-row]');
+    if (!row) {
       return;
     }
 
-    event.preventDefault();
-
-    try {
-      const draft = await fetchApi(link.dataset.detailUrl);
-      renderDetail(draft);
-    } catch (error) {
-      showMessage(error.message, 'is-danger');
+    const checkbox = event.target.closest('[data-admin-email-select]');
+    if (!checkbox) {
+      event.preventDefault();
     }
+
+    const link = row.querySelector('[data-admin-email-detail-link]');
+    loadEmailDetail(row.dataset.emailDraftId, link?.dataset.detailUrl);
   });
 
   currentPublishButton?.addEventListener('click', publishCurrentEmail);
   selectedPublishButton?.addEventListener('click', publishSelectedEmails);
   passPublishButton?.addEventListener('click', publishValidationPassedEmails);
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      currentFilter = button.dataset.adminEmailFilter || 'ALL';
+      refreshDashboard(selectedEmailDraftId);
+    });
+  });
 
   selectAllCheckbox?.addEventListener('change', () => {
     document.querySelectorAll('[data-admin-email-select]').forEach((checkbox) => {
