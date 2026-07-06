@@ -225,10 +225,12 @@
         admin_id,
         status,
         last_connected_at,
+        created_at,
         updated_at
       ) VALUES (
         s.admin_id,
         'ONLINE',
+        SYSTIMESTAMP,
         SYSTIMESTAMP,
         SYSTIMESTAMP
       )
@@ -248,10 +250,12 @@
         admin_id,
         status,
         last_disconnected_at,
+        created_at,
         updated_at
       ) VALUES (
         s.admin_id,
         'OFFLINE',
+        SYSTIMESTAMP,
         SYSTIMESTAMP,
         SYSTIMESTAMP
       )
@@ -274,10 +278,12 @@
       INSERT (
         admin_id,
         status,
+        created_at,
         updated_at
       ) VALUES (
         s.admin_id,
         s.status,
+        SYSTIMESTAMP,
         SYSTIMESTAMP
       )
   </insert>
@@ -295,10 +301,12 @@
         admin_id,
         status,
         last_user_message_at,
+        created_at,
         updated_at
       ) VALUES (
         s.admin_id,
         'OFFLINE',
+        SYSTIMESTAMP,
         SYSTIMESTAMP,
         SYSTIMESTAMP
       )
