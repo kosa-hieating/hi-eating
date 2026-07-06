@@ -94,6 +94,15 @@
 
         <nav class="mt-5" th:if="${productPage.totalPages > 1}" aria-label="최근 본 상품 페이지">
           <ul class="pagination justify-content-center gap-2 mb-0">
+            <li class="page-item" th:classappend="${!productPage.hasPreviousBlock()} ? ' disabled'">
+              <a
+                class="page-link rounded-circle"
+                aria-label="이전 페이지 구간"
+                th:href="@{/visits(page=${productPage.previousBlockPage()})}"
+              >
+                <i class="bi bi-chevron-double-left" aria-hidden="true"></i>
+              </a>
+            </li>
             <li class="page-item" th:classappend="${!productPage.hasPrevious()} ? ' disabled'">
               <a
                 class="page-link rounded-circle"
@@ -104,7 +113,7 @@
             </li>
             <li
               class="page-item"
-              th:each="pageNumber : ${#numbers.sequence(1, productPage.totalPages)}"
+              th:each="pageNumber : ${#numbers.sequence(productPage.startPage(), productPage.endPage())}"
               th:classappend="${pageNumber == productPage.page} ? ' active'"
             >
               <a
@@ -121,6 +130,15 @@
                 th:href="@{/visits(page=${productPage.page + 1})}"
               >
                 <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </a>
+            </li>
+            <li class="page-item" th:classappend="${!productPage.hasNextBlock()} ? ' disabled'">
+              <a
+                class="page-link rounded-circle"
+                aria-label="다음 페이지 구간"
+                th:href="@{/visits(page=${productPage.nextBlockPage()})}"
+              >
+                <i class="bi bi-chevron-double-right" aria-hidden="true"></i>
               </a>
             </li>
           </ul>

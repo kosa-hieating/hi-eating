@@ -19,9 +19,17 @@ public class VisitController {
 
   @GetMapping("/visits")
   public String visits(@RequestParam(defaultValue = "1") Integer page, Model model) {
+    if (page == null || page < 1) {
+      return "redirect:/visits?page=1";
+    }
+
     VisitProductListSearchCondition condition =
         new VisitProductListSearchCondition(userResolver.requireCurrentUserId(), page);
     VisitProductListPageResponseDto productPage = visitService.findVisitProducts(condition);
+
+    if (page > productPage.totalPages()) {
+      return "redirect:/visits?page=" + productPage.totalPages();
+    }
 
     model.addAttribute("contentTemplate", "visits/list");
     model.addAttribute("contentFragment", "content");

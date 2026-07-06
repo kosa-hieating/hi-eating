@@ -23,10 +23,18 @@ public class PurchaseController {
 
   @GetMapping("/orders")
   public String orders(@RequestParam(defaultValue = "1") Integer page, Model model) {
+    if (page == null || page < 1) {
+      return "redirect:/orders?page=1";
+    }
+
     PurchaseProductListSearchCondition condition =
         new PurchaseProductListSearchCondition(userResolver.requireCurrentUserId(), page);
     PurchaseProductListPageResponseDto productPage =
         purchaseService.findPurchaseProducts(condition);
+
+    if (page > productPage.totalPages()) {
+      return "redirect:/orders?page=" + productPage.totalPages();
+    }
 
     model.addAttribute("contentTemplate", "orders/list");
     model.addAttribute("contentFragment", "content");
