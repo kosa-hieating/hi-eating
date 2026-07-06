@@ -9,7 +9,8 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "greenfood.ai")
-public record AiProperties(@Valid Ollama generation, @Valid Ollama validation) {
+public record AiProperties(
+    @Valid Ollama generation, @Valid Ollama validation, @Valid Ollama recommendation) {
 
   public record Ollama(
       @NotBlank String baseUrl,
