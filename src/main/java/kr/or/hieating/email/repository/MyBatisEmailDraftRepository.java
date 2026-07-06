@@ -6,7 +6,7 @@ import kr.or.hieating.email.domain.EmailPublishStatus;
 import kr.or.hieating.email.domain.EmailSendStatus;
 import kr.or.hieating.email.domain.EmailValidationStatus;
 import kr.or.hieating.email.dto.EmailDraftDto;
-import kr.or.hieating.email.mapper.EmailSendLogMapper;
+import kr.or.hieating.email.mapper.AdminEmailSendLogMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class MyBatisEmailDraftRepository implements EmailDraftRepository {
 
-  private final EmailSendLogMapper emailSendLogMapper;
+  private final AdminEmailSendLogMapper adminEmailSendLogMapper;
 
   @Override
   public List<EmailDraftDto> findAll() {
-    return emailSendLogMapper.findReviewRequiredDrafts();
+    return adminEmailSendLogMapper.findReviewRequiredDrafts();
   }
 
   @Override
@@ -37,12 +37,12 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
 
   @Override
   public List<EmailDraftDto> findPublishReadyDrafts() {
-    return emailSendLogMapper.findPublishReadyDrafts();
+    return adminEmailSendLogMapper.findPublishReadyDrafts();
   }
 
   @Override
   public Optional<EmailDraftDto> findById(Long id) {
-    return emailSendLogMapper.findById(id);
+    return adminEmailSendLogMapper.findById(id);
   }
 
   @Override
@@ -52,7 +52,7 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
 
   @Override
   public EmailDraftDto updateContent(Long id, String subject, String content) {
-    int updated = emailSendLogMapper.updateContentAndApprove(id, subject, content);
+    int updated = adminEmailSendLogMapper.updateContentAndApprove(id, subject, content);
     if (updated == 0) {
       throw new IllegalArgumentException("검증 필요 이메일만 관리자 수정이 가능합니다.");
     }
@@ -86,7 +86,7 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
   }
 
   public EmailDraftDto updateSendStatus(Long id, EmailSendStatus sendStatus, String failureReason) {
-    int updated = emailSendLogMapper.updateStatus(id, sendStatus.name(), failureReason);
+    int updated = adminEmailSendLogMapper.updateStatus(id, sendStatus.name(), failureReason);
     if (updated == 0) {
       throw new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다.");
     }
@@ -94,6 +94,7 @@ public class MyBatisEmailDraftRepository implements EmailDraftRepository {
   }
 
   private EmailDraftDto findRequired(Long id) {
-    return findById(id).orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
+    return findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("이메일 발송 후보를 찾을 수 없습니다."));
   }
 }

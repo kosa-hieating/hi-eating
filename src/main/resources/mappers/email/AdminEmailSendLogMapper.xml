@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.or.hieating.email.mapper.EmailSendLogMapper">
+<mapper namespace="kr.or.hieating.email.mapper.AdminEmailSendLogMapper">
 
   <resultMap id="EmailDraftResultMap" type="kr.or.hieating.email.dto.EmailDraftDto">
     <id property="id" column="id"/>

@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface EmailSendLogMapper {
+public interface AdminEmailSendLogMapper {
 
   List<EmailDraftDto> findAll();
 
