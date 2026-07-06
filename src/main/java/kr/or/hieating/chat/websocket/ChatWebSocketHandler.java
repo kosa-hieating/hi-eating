@@ -30,7 +30,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
   private final ObjectMapper objectMapper;
   private final ChatService chatService;
   private final ConcurrentMap<Long, Set<WebSocketSession>> userSessions = new ConcurrentHashMap<>();
-  private final ConcurrentMap<Long, Set<WebSocketSession>> adminSessions = new ConcurrentHashMap<>();
+  private final ConcurrentMap<Long, Set<WebSocketSession>> adminSessions =
+      new ConcurrentHashMap<>();
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -42,17 +43,22 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     session.getAttributes().put(SESSION_USER_ATTRIBUTE, socketUser);
     if (socketUser.adminMode()) {
-      adminSessions.computeIfAbsent(socketUser.userId(), ignored -> ConcurrentHashMap.newKeySet()).add(session);
+      adminSessions
+          .computeIfAbsent(socketUser.userId(), ignored -> ConcurrentHashMap.newKeySet())
+          .add(session);
       chatService.markAdminConnected(socketUser.userId());
       return;
     }
 
-    userSessions.computeIfAbsent(socketUser.userId(), ignored -> ConcurrentHashMap.newKeySet()).add(session);
+    userSessions
+        .computeIfAbsent(socketUser.userId(), ignored -> ConcurrentHashMap.newKeySet())
+        .add(session);
   }
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-    ChatSocketUser socketUser = (ChatSocketUser) session.getAttributes().get(SESSION_USER_ATTRIBUTE);
+    ChatSocketUser socketUser =
+        (ChatSocketUser) session.getAttributes().get(SESSION_USER_ATTRIBUTE);
     if (socketUser == null) {
       sendToSession(session, ChatWebSocketEvent.error("Authentication is required."));
       return;
@@ -72,7 +78,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
           sendToSession(session, ChatWebSocketEvent.error("Chat room is required."));
           return;
         }
-        event = chatService.sendAdminMessage(socketUser.userId(), request.roomId(), request.content());
+        event =
+            chatService.sendAdminMessage(socketUser.userId(), request.roomId(), request.content());
       } else {
         event = chatService.sendUserMessage(socketUser.userId(), request.content());
       }
@@ -139,7 +146,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
   }
 
-  private void sendToSession(WebSocketSession session, ChatWebSocketEvent event) throws IOException {
+  private void sendToSession(WebSocketSession session, ChatWebSocketEvent event)
+      throws IOException {
     sendPayload(session, objectMapper.writeValueAsString(event));
   }
 

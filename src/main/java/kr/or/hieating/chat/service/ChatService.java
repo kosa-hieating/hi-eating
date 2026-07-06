@@ -30,7 +30,8 @@ public class ChatService {
     ChatRoomSummaryDto room = findOrCreateRoom(userId);
     chatMapper.markUserRead(room.getRoomId());
     ChatRoomSummaryDto updatedRoom = requireRoom(room.getRoomId());
-    return new ChatRoomResponseDto(updatedRoom, chatMapper.findMessagesByRoomId(updatedRoom.getRoomId()));
+    return new ChatRoomResponseDto(
+        updatedRoom, chatMapper.findMessagesByRoomId(updatedRoom.getRoomId()));
   }
 
   @Transactional(readOnly = true)
@@ -164,7 +165,9 @@ public class ChatService {
 
   private String normalizeAdminStatus(String rawStatus) {
     String status = rawStatus == null ? "" : rawStatus.trim().toUpperCase();
-    if (!ADMIN_STATUS_ONLINE.equals(status) && !ADMIN_STATUS_AWAY.equals(status) && !ADMIN_STATUS_OFFLINE.equals(status)) {
+    if (!ADMIN_STATUS_ONLINE.equals(status)
+        && !ADMIN_STATUS_AWAY.equals(status)
+        && !ADMIN_STATUS_OFFLINE.equals(status)) {
       throw new IllegalArgumentException("Unsupported admin status.");
     }
     return status;

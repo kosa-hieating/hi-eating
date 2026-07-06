@@ -237,7 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const connect = () => {
-    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+    if (
+      socket &&
+      (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)
+    ) {
       return;
     }
 
