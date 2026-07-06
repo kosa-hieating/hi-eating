@@ -38,6 +38,37 @@
   font-weight: 700;
 }
 
+.admin-chat-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-chat-presence {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 1px solid #eee5df;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0 10px;
+  color: #77716d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-chat-presence select {
+  border: 0;
+  background: transparent;
+  color: #191716;
+  font: inherit;
+  font-weight: 800;
+  outline: none;
+}
+
 .admin-chat-shell {
   display: grid;
   grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);

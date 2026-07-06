@@ -16,7 +16,11 @@ public interface ChatMapper {
 
   Optional<ChatRoomSummaryDto> findRoomById(@Param("roomId") long roomId);
 
-  List<ChatRoomSummaryDto> findRooms();
+  List<ChatRoomSummaryDto> findRoomsByAdminId(@Param("adminId") long adminId);
+
+  Optional<Long> findAssignableAdminId();
+
+  Optional<String> findAdminPresenceStatus(@Param("adminId") long adminId);
 
   List<ChatMessageDto> findMessagesByRoomId(@Param("roomId") long roomId);
 
@@ -29,6 +33,16 @@ public interface ChatMapper {
   int updateRoomForUserMessage(@Param("roomId") long roomId);
 
   int updateRoomForAdminMessage(@Param("roomId") long roomId, @Param("adminId") long adminId);
+
+  int assignAdminToRoom(@Param("roomId") long roomId, @Param("adminId") long adminId);
+
+  int markAdminConnected(@Param("adminId") long adminId);
+
+  int markAdminDisconnected(@Param("adminId") long adminId);
+
+  int updateAdminPresenceStatus(@Param("adminId") long adminId, @Param("status") String status);
+
+  int recordAdminUserMessageReceived(@Param("adminId") long adminId);
 
   int markUserRead(@Param("roomId") long roomId);
 

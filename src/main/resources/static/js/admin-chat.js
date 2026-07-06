@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const userNameElement = document.getElementById('admin-chat-user-name');
   const userEmailElement = document.getElementById('admin-chat-user-email');
   const statusElement = document.getElementById('admin-chat-status');
+  const statusSelect = document.getElementById('admin-chat-status-select');
   const form = document.getElementById('admin-chat-form');
   const input = document.getElementById('admin-chat-input');
 
@@ -168,6 +169,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const loadAdminStatus = async () => {
+    if (!statusSelect) {
+      return;
+    }
+
+    const result = await fetchApi(page.dataset.statusUrl);
+    statusSelect.value = result.status === 'AWAY' ? 'AWAY' : 'ONLINE';
+  };
+
+  const updateAdminStatus = async (status, showStatusMessage = true) => {
+    if (!statusSelect) {
+      return;
+    }
+
+    statusSelect.disabled = true;
+    try {
+      const result = await fetchApi(page.dataset.statusUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+      statusSelect.value = result.status;
+      if (showStatusMessage) {
+        setStatus(result.status === 'AWAY' ? '자리비움 상태' : '상담 가능');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus('상태를 변경하지 못했습니다');
+      await loadAdminStatus();
+    } finally {
+      statusSelect.disabled = false;
+    }
+  };
+
   async function selectRoom(roomId) {
     selectedRoomId = roomId;
     const selectedRoom = rooms.find((room) => room.roomId === selectedRoomId);
@@ -206,7 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket = new WebSocket(buildWsUrl());
 
-    socket.addEventListener('open', () => setStatus('실시간 연결됨'));
+    socket.addEventListener('open', () => {
+      setStatus('실시간 연결됨');
+      if (statusSelect?.value === 'AWAY') {
+        updateAdminStatus('AWAY', false);
+      } else if (statusSelect) {
+        statusSelect.value = 'ONLINE';
+      }
+    });
     socket.addEventListener('close', () => setStatus('실시간 연결 끊김'));
     socket.addEventListener('message', async (event) => {
       const payload = JSON.parse(event.data);
@@ -233,6 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(error);
       renderRoomState('상담방을 불러오지 못했습니다.');
     });
+  });
+
+  statusSelect?.addEventListener('change', () => {
+    updateAdminStatus(statusSelect.value);
   });
 
   input?.addEventListener('input', () => {
@@ -272,6 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   connect();
+  loadAdminStatus().catch((error) => {
+    console.error(error);
+    setStatus('상태를 불러오지 못했습니다');
+  });
   loadRooms().catch((error) => {
     console.error(error);
     renderRoomState('상담방을 불러오지 못했습니다.');

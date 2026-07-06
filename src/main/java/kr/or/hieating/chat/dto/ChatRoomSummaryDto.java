@@ -11,6 +11,7 @@ public class ChatRoomSummaryDto {
   private String userEmail;
   private Long assignedAdminId;
   private String assignedAdminName;
+  private String assignedAdminStatus;
   private String status;
   private int userUnreadCount;
   private int adminUnreadCount;

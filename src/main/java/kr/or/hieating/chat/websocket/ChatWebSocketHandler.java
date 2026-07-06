@@ -30,7 +30,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
   private final ObjectMapper objectMapper;
   private final ChatService chatService;
   private final ConcurrentMap<Long, Set<WebSocketSession>> userSessions = new ConcurrentHashMap<>();
-  private final Set<WebSocketSession> adminSessions = ConcurrentHashMap.newKeySet();
+  private final ConcurrentMap<Long, Set<WebSocketSession>> adminSessions = new ConcurrentHashMap<>();
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -42,7 +42,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     session.getAttributes().put(SESSION_USER_ATTRIBUTE, socketUser);
     if (socketUser.adminMode()) {
-      adminSessions.add(session);
+      adminSessions.computeIfAbsent(socketUser.userId(), ignored -> ConcurrentHashMap.newKeySet()).add(session);
+      chatService.markAdminConnected(socketUser.userId());
       return;
     }
 
@@ -127,8 +128,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
       }
     }
 
-    for (WebSocketSession session : adminSessions) {
-      sendPayload(session, payload);
+    Long adminId = event.room() == null ? null : event.room().getAssignedAdminId();
+    if (adminId != null) {
+      Set<WebSocketSession> sessions = adminSessions.get(adminId);
+      if (sessions != null) {
+        for (WebSocketSession session : sessions) {
+          sendPayload(session, payload);
+        }
+      }
     }
   }
 
@@ -148,10 +155,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
   }
 
   private void removeSession(WebSocketSession session) {
-    adminSessions.remove(session);
-
     Object value = session.getAttributes().get(SESSION_USER_ATTRIBUTE);
     if (!(value instanceof ChatSocketUser socketUser)) {
+      return;
+    }
+
+    if (socketUser.adminMode()) {
+      removeAdminSession(session, socketUser.userId());
       return;
     }
 
@@ -164,6 +174,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     if (sessions.isEmpty()) {
       userSessions.remove(socketUser.userId(), sessions);
     }
+  }
+
+  private void removeAdminSession(WebSocketSession session, Long adminId) {
+    Set<WebSocketSession> sessions = adminSessions.get(adminId);
+    if (sessions == null) {
+      return;
+    }
+
+    sessions.remove(session);
+    if (!sessions.isEmpty()) {
+      return;
+    }
+
+    adminSessions.remove(adminId, sessions);
+    chatService.markAdminDisconnected(adminId);
   }
 
   private record ChatSocketUser(Long userId, boolean adminMode) {}

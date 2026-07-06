@@ -19,6 +19,9 @@ public class ChatService {
   private static final int MAX_CONTENT_LENGTH = 1000;
   private static final String SENDER_TYPE_USER = "USER";
   private static final String SENDER_TYPE_ADMIN = "ADMIN";
+  private static final String ADMIN_STATUS_ONLINE = "ONLINE";
+  private static final String ADMIN_STATUS_AWAY = "AWAY";
+  private static final String ADMIN_STATUS_OFFLINE = "OFFLINE";
 
   private final ChatMapper chatMapper;
 
@@ -31,34 +34,67 @@ public class ChatService {
   }
 
   @Transactional(readOnly = true)
-  public List<ChatRoomSummaryDto> findRooms() {
-    return chatMapper.findRooms();
+  public List<ChatRoomSummaryDto> findRooms(long adminId) {
+    return chatMapper.findRoomsByAdminId(adminId);
   }
 
   @Transactional
-  public ChatRoomResponseDto getAdminRoomMessages(long roomId) {
-    requireRoom(roomId);
+  public ChatRoomResponseDto getAdminRoomMessages(long adminId, long roomId) {
+    ChatRoomSummaryDto room = requireAssignedRoom(adminId, roomId);
     chatMapper.markAdminRead(roomId);
     ChatRoomSummaryDto updatedRoom = requireRoom(roomId);
-    return new ChatRoomResponseDto(updatedRoom, chatMapper.findMessagesByRoomId(roomId));
+    return new ChatRoomResponseDto(updatedRoom, chatMapper.findMessagesByRoomId(room.getRoomId()));
   }
 
   @Transactional
   public ChatWebSocketEvent sendUserMessage(long userId, String rawContent) {
     String content = normalizeContent(rawContent);
     ChatRoomSummaryDto room = findOrCreateRoom(userId);
+    room = assignAdminIfNeeded(room);
     ChatMessageDto message = saveMessage(room.getRoomId(), userId, SENDER_TYPE_USER, content);
     chatMapper.updateRoomForUserMessage(room.getRoomId());
+    if (room.getAssignedAdminId() != null) {
+      chatMapper.recordAdminUserMessageReceived(room.getAssignedAdminId());
+    }
     return ChatWebSocketEvent.message(requireRoom(room.getRoomId()), message);
   }
 
   @Transactional
   public ChatWebSocketEvent sendAdminMessage(long adminId, long roomId, String rawContent) {
     String content = normalizeContent(rawContent);
-    requireRoom(roomId);
+    requireAssignedRoom(adminId, roomId);
     ChatMessageDto message = saveMessage(roomId, adminId, SENDER_TYPE_ADMIN, content);
-    chatMapper.updateRoomForAdminMessage(roomId, adminId);
+    int updated = chatMapper.updateRoomForAdminMessage(roomId, adminId);
+    if (updated == 0) {
+      throw new IllegalArgumentException("Chat room is not assigned to this admin.");
+    }
     return ChatWebSocketEvent.message(requireRoom(roomId), message);
+  }
+
+  @Transactional
+  public void markAdminConnected(long adminId) {
+    chatMapper.markAdminConnected(adminId);
+  }
+
+  @Transactional
+  public void markAdminDisconnected(long adminId) {
+    chatMapper.markAdminDisconnected(adminId);
+  }
+
+  @Transactional(readOnly = true)
+  public String findAdminStatus(long adminId) {
+    return chatMapper.findAdminPresenceStatus(adminId).orElse(ADMIN_STATUS_OFFLINE);
+  }
+
+  @Transactional
+  public String updateAdminStatus(long adminId, String status) {
+    String normalizedStatus = normalizeAdminStatus(status);
+    if (ADMIN_STATUS_OFFLINE.equals(normalizedStatus)) {
+      throw new IllegalArgumentException("Admin status cannot be changed to OFFLINE manually.");
+    }
+
+    chatMapper.updateAdminPresenceStatus(adminId, normalizedStatus);
+    return normalizedStatus;
   }
 
   private ChatRoomSummaryDto findOrCreateRoom(long userId) {
@@ -79,6 +115,27 @@ public class ChatService {
     return chatMapper
         .findRoomById(roomId)
         .orElseThrow(() -> new IllegalArgumentException("Chat room not found."));
+  }
+
+  private ChatRoomSummaryDto requireAssignedRoom(long adminId, long roomId) {
+    ChatRoomSummaryDto room = requireRoom(roomId);
+    if (room.getAssignedAdminId() == null || !room.getAssignedAdminId().equals(adminId)) {
+      throw new IllegalArgumentException("Chat room is not assigned to this admin.");
+    }
+    return room;
+  }
+
+  private ChatRoomSummaryDto assignAdminIfNeeded(ChatRoomSummaryDto room) {
+    if (room.getAssignedAdminId() != null) {
+      return room;
+    }
+
+    Long adminId =
+        chatMapper
+            .findAssignableAdminId()
+            .orElseThrow(() -> new IllegalArgumentException("No admin is available for chat."));
+    chatMapper.assignAdminToRoom(room.getRoomId(), adminId);
+    return requireRoom(room.getRoomId());
   }
 
   private ChatMessageDto saveMessage(
@@ -103,5 +160,13 @@ public class ChatService {
       throw new IllegalArgumentException("Message content is too long.");
     }
     return content;
+  }
+
+  private String normalizeAdminStatus(String rawStatus) {
+    String status = rawStatus == null ? "" : rawStatus.trim().toUpperCase();
+    if (!ADMIN_STATUS_ONLINE.equals(status) && !ADMIN_STATUS_AWAY.equals(status) && !ADMIN_STATUS_OFFLINE.equals(status)) {
+      throw new IllegalArgumentException("Unsupported admin status.");
+    }
+    return status;
   }
 }
