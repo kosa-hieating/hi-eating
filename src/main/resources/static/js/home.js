@@ -1,4 +1,198 @@
 (() => {
+  const homePage = document.querySelector('.home-page');
+  const tableDecorModal = document.querySelector('[data-home-table-decor-modal]');
+  const tableDecorAuthModal = document.querySelector('[data-home-table-decor-auth-modal]');
+  if (tableDecorModal) {
+    const image = tableDecorModal.querySelector('[data-home-table-decor-modal-image]');
+    const owner = tableDecorModal.querySelector('[data-home-table-decor-modal-owner]');
+    const date = tableDecorModal.querySelector('[data-home-table-decor-modal-date]');
+    const like = tableDecorModal.querySelector('[data-home-table-decor-modal-like]');
+    const likeButton = tableDecorModal.querySelector('[data-home-table-decor-modal-like-button]');
+    const authMessage = tableDecorAuthModal?.querySelector('[data-home-table-decor-auth-message]');
+    const isAuthenticated = homePage?.dataset.homeTableDecorAuthenticated === 'true';
+    let lastFocusedElement = null;
+
+    const setBodyLocked = () => {
+      document.body.style.overflow = 'hidden';
+    };
+
+    const releaseBodyLock = () => {
+      if (tableDecorModal.hidden && (!tableDecorAuthModal || tableDecorAuthModal.hidden)) {
+        document.body.style.overflow = '';
+      }
+    };
+
+    const setLikeState = (postId, liked, likeCount) => {
+      document
+        .querySelectorAll(`[data-home-table-decor-trigger][data-post-id="${postId}"]`)
+        .forEach((trigger) => {
+          trigger.dataset.likeCount = String(likeCount);
+          trigger.dataset.liked = String(liked);
+
+          const count = trigger.querySelector('[data-home-table-decor-like-count]');
+          if (count) {
+            count.textContent = String(likeCount);
+          }
+        });
+
+      if (likeButton?.dataset.postId === String(postId)) {
+        likeButton.classList.toggle('is-active', liked);
+        likeButton.setAttribute('aria-pressed', String(liked));
+        like.textContent = String(likeCount);
+      }
+    };
+
+    const closeTableDecorModal = () => {
+      tableDecorModal.hidden = true;
+      tableDecorModal.setAttribute('aria-hidden', 'true');
+      releaseBodyLock();
+
+      if (lastFocusedElement instanceof HTMLElement) {
+        lastFocusedElement.focus();
+      }
+    };
+
+    const openAuthModal = (message) => {
+      lastFocusedElement = document.activeElement;
+
+      if (!tableDecorAuthModal) {
+        return;
+      }
+
+      if (authMessage) {
+        authMessage.textContent = message;
+      }
+
+      tableDecorAuthModal.hidden = false;
+      tableDecorAuthModal.setAttribute('aria-hidden', 'false');
+      setBodyLocked();
+      tableDecorAuthModal.querySelector('[data-home-table-decor-auth-close]')?.focus();
+    };
+
+    const closeAuthModal = () => {
+      if (!tableDecorAuthModal) {
+        return;
+      }
+
+      tableDecorAuthModal.hidden = true;
+      tableDecorAuthModal.setAttribute('aria-hidden', 'true');
+      releaseBodyLock();
+
+      if (lastFocusedElement instanceof HTMLElement) {
+        lastFocusedElement.focus();
+      }
+    };
+
+    const openTableDecorModal = (trigger) => {
+      lastFocusedElement = document.activeElement;
+
+      image.src = trigger.dataset.imageSrc || window.__IMAGE_FALLBACK_SRC__;
+      image.alt = trigger.dataset.imageAlt || '\uc2dd\ud0c1 \ubbf8\ub9ac\ubcf4\uae30';
+      owner.textContent = trigger.dataset.owner || '\uc774\uc6a9\uc790\ub2d8\uc758 \uc2dd\ud0c1';
+      date.textContent = trigger.dataset.createdAt || '';
+      like.textContent = trigger.dataset.likeCount || '0';
+      if (likeButton) {
+        likeButton.dataset.postId = trigger.dataset.postId || '';
+        likeButton.classList.toggle('is-active', trigger.dataset.liked === 'true');
+        likeButton.setAttribute('aria-pressed', String(trigger.dataset.liked === 'true'));
+      }
+
+      tableDecorModal.hidden = false;
+      tableDecorModal.setAttribute('aria-hidden', 'false');
+      setBodyLocked();
+      tableDecorModal.querySelector('[data-home-table-decor-modal-close]')?.focus();
+    };
+
+    const toggleLike = async (button) => {
+      const postId = button.dataset.postId;
+
+      if (!postId || button.classList.contains('is-loading')) {
+        return;
+      }
+
+      if (!isAuthenticated) {
+        openAuthModal(
+          '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
+        );
+        return;
+      }
+
+      button.classList.add('is-loading');
+      button.disabled = true;
+
+      try {
+        const response = await fetch(`/api/table-decorations/${postId}/likes/toggle`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+
+        if (!response.ok || response.redirected) {
+          const error = new Error('Failed to toggle table decoration like.');
+          error.status = response.status;
+          throw error;
+        }
+
+        const data = await response.json();
+        setLikeState(String(data.postId), data.liked, data.likeCount);
+      } catch (error) {
+        console.error(error);
+        openAuthModal(
+          error.status === 401 || error.status === 403
+            ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
+            : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+        );
+      } finally {
+        button.classList.remove('is-loading');
+        button.disabled = false;
+      }
+    };
+
+    document.addEventListener('click', (event) => {
+      const likeButton = event.target.closest('[data-home-table-decor-like]');
+      if (likeButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleLike(likeButton);
+        return;
+      }
+
+      const trigger = event.target.closest('[data-home-table-decor-trigger]');
+      if (!trigger) {
+        return;
+      }
+
+      event.preventDefault();
+      openTableDecorModal(trigger);
+    });
+
+    tableDecorModal.querySelectorAll('[data-home-table-decor-modal-close]').forEach((button) => {
+      button.addEventListener('click', closeTableDecorModal);
+    });
+
+    tableDecorAuthModal
+      ?.querySelectorAll('[data-home-table-decor-auth-close]')
+      .forEach((button) => {
+        button.addEventListener('click', closeAuthModal);
+      });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      if (tableDecorAuthModal && !tableDecorAuthModal.hidden) {
+        closeAuthModal();
+        return;
+      }
+
+      if (!tableDecorModal.hidden) {
+        closeTableDecorModal();
+      }
+    });
+  }
+
   const revealSections = document.querySelectorAll('.reveal-section');
   if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver(
@@ -68,7 +262,9 @@
       icon.className = paused ? 'bi bi-play-fill' : 'bi bi-pause-fill';
       toggleButton.setAttribute(
         'aria-label',
-        paused ? '자동 슬라이드 재생' : '자동 슬라이드 일시정지',
+        paused
+          ? '\uc790\ub3d9 \uc2ac\ub77c\uc774\ub4dc \uc7ac\uc0dd'
+          : '\uc790\ub3d9 \uc2ac\ub77c\uc774\ub4dc \uc77c\uc2dc\uc815\uc9c0',
       );
     };
 
