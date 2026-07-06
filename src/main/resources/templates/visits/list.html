@@ -35,23 +35,25 @@
         >
           <article class="col" th:each="product : ${productPage.products}">
             <div class="h-100">
-              <a
-                class="ratio ratio-1x1 d-block position-relative overflow-hidden rounded-3 bg-body-tertiary"
-                th:href="@{/product/{id}(id=${product.productId})}"
-              >
-                <img
-                  class="product-history-img w-100 h-100 object-fit-cover"
-                  th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
-                  th:alt="${product.productName}"
-                  data-fallback-src="/images/logo-hi-eating.png"
-                />
+              <div class="position-relative">
+                <a
+                  class="ratio ratio-1x1 d-block overflow-hidden rounded-3 bg-body-tertiary"
+                  th:href="@{/product/{id}(id=${product.productId})}"
+                >
+                  <img
+                    class="product-history-img w-100 h-100 object-fit-cover"
+                    th:src="${#strings.isEmpty(product.pictureLocation) ? '/images/logo-hi-eating.png' : product.pictureLocation}"
+                    th:alt="${product.productName}"
+                    data-fallback-src="/images/logo-hi-eating.png"
+                  />
+                </a>
                 <span
                   class="badge text-bg-danger position-absolute top-0 start-0 m-2"
                   th:if="${product.discountRate > 0}"
                   th:text="|${product.discountRate}%|"
                   >20%</span
                 >
-              </a>
+              </div>
 
               <p
                 class="d-flex align-items-center gap-1 mb-1 mt-3 small fw-bold text-body-secondary"
