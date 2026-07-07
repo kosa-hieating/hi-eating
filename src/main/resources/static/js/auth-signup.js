@@ -39,40 +39,44 @@ const MASCOT_STATES = {
  *  필드별 설정
  * ───────────────────────────────────────────────────────────── */
 const FIELD_CONFIG = [
-  { selector: '#signup-name',             state: 'greeting' },
-  { selector: '#signup-email-local',      state: 'curious' },
-  { selector: '#signup-email-domain',     state: 'curious',  message: '이메일 도메인을 선택해 주세요' },
-  { selector: '#signup-password',         state: 'covering' },
+  { selector: '#signup-name', state: 'greeting' },
+  { selector: '#signup-email-local', state: 'curious' },
+  { selector: '#signup-email-domain', state: 'curious', message: '이메일 도메인을 선택해 주세요' },
+  { selector: '#signup-password', state: 'covering' },
   { selector: '#signup-password-confirm', state: 'peeking' },
-  { selector: '#signup-birth',            state: 'thinking' },
-  { selector: 'input[name="gender"]',     state: 'curious',  message: '어느 쪽이세요? 🤔', isRadio: true },
+  { selector: '#signup-birth', state: 'thinking' },
+  {
+    selector: 'input[name="gender"]',
+    state: 'curious',
+    message: '어느 쪽이세요? 🤔',
+    isRadio: true,
+  },
 ];
 
 /* ───────────────────────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const signupForm            = document.querySelector('.signup-form');
-  const emailLocalInput       = document.getElementById('signup-email-local');
-  const emailDomainSelect     = document.getElementById('signup-email-domain');
-  const emailCheckButton      = document.getElementById('signup-email-check-button');
-  const passwordInput         = document.getElementById('signup-password');
-  const passwordConfirmInput  = document.getElementById('signup-password-confirm');
-  const modalElement          = document.getElementById('signup-email-check-modal');
-  const modalTitle            = document.getElementById('signup-email-check-modal-title');
-  const modalMessage          = document.getElementById('signup-email-check-modal-message');
-  const signupMascot          = document.querySelector('[data-signup-mascot]');
-  const mascotMessageEl       = document.querySelector('[data-signup-mascot-message]');
-  const lottieContainer       = document.getElementById('mascot-lottie');
+  const signupForm = document.querySelector('.signup-form');
+  const emailLocalInput = document.getElementById('signup-email-local');
+  const emailDomainSelect = document.getElementById('signup-email-domain');
+  const emailCheckButton = document.getElementById('signup-email-check-button');
+  const passwordInput = document.getElementById('signup-password');
+  const passwordConfirmInput = document.getElementById('signup-password-confirm');
+  const modalElement = document.getElementById('signup-email-check-modal');
+  const modalTitle = document.getElementById('signup-email-check-modal-title');
+  const modalMessage = document.getElementById('signup-email-check-modal-message');
+  const signupMascot = document.querySelector('[data-signup-mascot]');
+  const mascotMessageEl = document.querySelector('[data-signup-mascot-message]');
+  const lottieContainer = document.getElementById('mascot-lottie');
 
   // 진단 로그 제거 완료
 
   if (!signupForm || !modalElement || !modalMessage) return;
 
-
   /* ── lottie-web 인스턴스 관리 ── */
-  let currentAnim  = null;
+  let currentAnim = null;
   let currentState = '';
-  let resetTimer   = null;
+  let resetTimer = null;
 
   /* ── JSON 캐시 (같은 파일 재요청 방지) ── */
   const jsonCache = {};
@@ -126,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── 마스코트 상태 전환 ── */
   const setMascotState = (stateName, customMessage) => {
-    const config  = MASCOT_STATES[stateName] || MASCOT_STATES.idle;
+    const config = MASCOT_STATES[stateName] || MASCOT_STATES.idle;
     const message = customMessage ?? config.message;
 
     if (mascotMessageEl) {
@@ -160,15 +164,24 @@ document.addEventListener('DOMContentLoaded', () => {
   FIELD_CONFIG.forEach(({ selector, state, message, isRadio }) => {
     if (isRadio) {
       document.querySelectorAll(selector).forEach((el) => {
-        el.addEventListener('focus',  () => { clearTimeout(resetTimer); setMascotState(state, message); });
-        el.addEventListener('change', () => { clearTimeout(resetTimer); setMascotState(state, message); });
-        el.addEventListener('blur',   scheduleReset);
+        el.addEventListener('focus', () => {
+          clearTimeout(resetTimer);
+          setMascotState(state, message);
+        });
+        el.addEventListener('change', () => {
+          clearTimeout(resetTimer);
+          setMascotState(state, message);
+        });
+        el.addEventListener('blur', scheduleReset);
       });
     } else {
       const el = document.querySelector(selector);
       if (!el) return;
-      el.addEventListener('focus', () => { clearTimeout(resetTimer); setMascotState(state, message); });
-      el.addEventListener('blur',  scheduleReset);
+      el.addEventListener('focus', () => {
+        clearTimeout(resetTimer);
+        setMascotState(state, message);
+      });
+      el.addEventListener('blur', scheduleReset);
     }
   });
 
@@ -187,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── 이메일 빌더 ── */
   const buildEmail = () => {
-    const local  = emailLocalInput.value.trim();
+    const local = emailLocalInput.value.trim();
     const domain = emailDomainSelect.value.trim();
     if (!local) return '';
     if (local.includes('@') || !domain) return local;
@@ -196,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── 이메일 중복확인 ── */
   emailCheckButton?.addEventListener('click', async () => {
-    const email    = buildEmail();
+    const email = buildEmail();
     const checkUrl = emailCheckButton.dataset.checkUrl;
 
     if (!email) {
@@ -214,7 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
       showModal('이메일 중복확인', result.message, result.available ? 'is-success' : 'is-danger');
     } catch {
-      showModal('이메일 중복확인', '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', 'is-danger');
+      showModal(
+        '이메일 중복확인',
+        '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        'is-danger',
+      );
     }
   });
 

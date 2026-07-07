@@ -3,8 +3,8 @@
  * 비밀번호 입력 시 covering, 아이디 입력 시 curious 상태
  */
 document.addEventListener('DOMContentLoaded', () => {
-  const loginForm     = document.querySelector('.auth-form');
-  const container     = document.getElementById('login-mascot-lottie');
+  const loginForm = document.querySelector('.auth-form');
+  const container = document.getElementById('login-mascot-lottie');
   const passwordInput = document.getElementById('login-password');
   const usernameInput = document.getElementById('login-username');
   const rememberInput = document.querySelector('input[name="rememberId"]');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const jsonCache = {};
   let currentAnim = null;
-  let loading     = false; // 중복 호출 방지 플래그
+  let loading = false; // 중복 호출 방지 플래그
 
   const loadAnimation = async (path) => {
     // 이전 애니메이션 파기 + 컨테이너 즉시 초기화 (SVG 누적 방지)
@@ -120,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 아이디 필드: curious
   usernameInput?.addEventListener('focus', () => setState('curious'));
-  usernameInput?.addEventListener('blur',  () => setState('idle'));
+  usernameInput?.addEventListener('blur', () => setState('idle'));
 
   // 비밀번호 필드: covering
   passwordInput?.addEventListener('focus', () => setState('covering'));
-  passwordInput?.addEventListener('blur',  () => setState('idle'));
+  passwordInput?.addEventListener('blur', () => setState('idle'));
 });
