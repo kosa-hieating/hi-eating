@@ -85,7 +85,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
       }
 
       broadcast(event);
-    } catch (com.fasterxml.jackson.core.JsonProcessingException | IllegalArgumentException exception) {
+    } catch (com.fasterxml.jackson.core.JsonProcessingException
+        | IllegalArgumentException exception) {
       sendToSession(session, ChatWebSocketEvent.error(exception.getMessage()));
     }
   }
