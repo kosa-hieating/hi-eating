@@ -25,6 +25,12 @@ public record EmailQualityValidationResult(
   }
 
   public String reason() {
-    return isPass() ? "모든 이메일 품질 검증 항목을 통과했습니다." : String.join("; ", issues);
+    if (isPass()) {
+      return "모든 이메일 품질 검증 항목을 통과했습니다.";
+    }
+    if (issues.isEmpty()) {
+      return "AI 검증에서 품질 기준을 통과하지 못했으나 상세 사유가 제공되지 않았습니다.";
+    }
+    return String.join("; ", issues);
   }
 }

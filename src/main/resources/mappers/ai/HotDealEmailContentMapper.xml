@@ -78,4 +78,17 @@
           AND status = 'PENDING'
     </update>
 
+    <select id="countSendLogs" resultType="int">
+        SELECT COUNT(*)
+        FROM email_send_logs
+        WHERE hot_deal_id = #{hotDealId}
+    </select>
+
+    <select id="countSendLogsByStatus" resultType="int">
+        SELECT COUNT(*)
+        FROM email_send_logs
+        WHERE hot_deal_id = #{hotDealId}
+          AND status = #{status}
+    </select>
+
 </mapper>
