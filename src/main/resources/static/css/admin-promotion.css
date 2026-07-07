@@ -1,45 +1,12 @@
 :root {
-  --bg-light: #fbfbfb;
-  --border-gray: #eee5df;
-  --text-dark: #191716;
-  --text-muted: #888888;
-  --orange-brand: #e05e2b;
-  --orange-bg-light: #fff0ea;
-  --orange-border-light: #ffc9c9;
   --orange-hover: #ff6b6b;
+  --orange-border-light: #ffc9c9;
   --orange-bg-alert: #fff8f5;
   --orange-border-alert: #ffebe3;
 }
 
-body {
-  font-family: var(--font-family-base, 'Inter', 'Noto Sans KR', sans-serif);
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-}
-
-.main-container {
-  padding: 2.5rem;
-}
-
-.header-panel {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.title-area h1 {
-  font-size: 1.6rem;
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -0.5px;
-}
-
-.title-area p {
-  font-size: 0.9rem;
-  margin: 0;
-}
-
 .text-orange {
-  color: var(--orange-brand) !important;
+  color: var(--admin-brand-accent) !important;
 }
 
 /* 프로모션 그리드 레이아웃 */
@@ -55,7 +22,7 @@ body {
 /* 프로모션 카드 기본 공통 스타일 */
 .promotion-card {
   background: #ffffff;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
@@ -66,7 +33,7 @@ body {
 
 .panel-title {
   font-size: 1.25rem;
-  color: var(--text-dark);
+  color: var(--admin-text);
 }
 
 /* 왼쪽 배너 목록 카드 스타일 */
@@ -98,7 +65,7 @@ body {
   background: transparent;
 }
 .banner-list::-webkit-scrollbar-thumb {
-  background: var(--border-gray);
+  background: var(--admin-line);
   border-radius: 4px;
 }
 
@@ -108,7 +75,7 @@ body {
   align-items: center;
   padding: 0.75rem 1.25rem;
   background: #ffffff;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   border-radius: 12px;
   margin-bottom: 0.75rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -149,7 +116,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   flex-shrink: 0;
 }
 
@@ -172,7 +139,7 @@ body {
 /* 배너 이름 */
 .banner-title {
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--admin-text);
   font-size: 0.95rem;
   white-space: nowrap;
   overflow: hidden;
@@ -190,8 +157,8 @@ body {
 .order-badge {
   width: 24px;
   height: 24px;
-  background: var(--orange-bg-light);
-  color: var(--orange-brand);
+  background: var(--admin-brand-soft);
+  color: var(--admin-brand-accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -227,7 +194,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  border: 2px dashed var(--border-gray);
+  border: 2px dashed var(--admin-line);
   border-radius: 12px;
   cursor: pointer;
   background: #fbfaf8;
@@ -263,19 +230,19 @@ body {
 .add-title {
   font-weight: 700;
   font-size: 0.9rem;
-  color: var(--text-dark);
+  color: var(--admin-text);
 }
 
 .add-desc {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--admin-muted);
 }
 
 /* 오른쪽 설정 영역 초기화 버튼 */
 .btn-reset {
   background: #f8f9fa;
   color: #495057;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   font-weight: 700;
   font-size: 0.85rem;
   padding: 0.5rem 1.25rem;
@@ -319,7 +286,7 @@ body {
   aspect-ratio: 16 / 7;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   background: #fdfdfd;
   display: flex;
   align-items: center;
@@ -346,12 +313,12 @@ body {
 /* 인풋 박스 스타일 */
 .form-control-custom {
   border-radius: 8px;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   padding: 0.65rem 1rem 0.65rem 2.5rem;
   font-size: 0.9rem;
   background: #fdfdfd;
   transition: all 0.2s ease;
-  color: var(--text-dark);
+  color: var(--admin-text);
 }
 
 .form-control-custom::placeholder {
@@ -367,16 +334,16 @@ body {
 
 .form-control-date {
   border-radius: 8px;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   padding: 0.6rem 0.9rem;
   font-size: 0.88rem;
   background: #ffffff;
   transition: all 0.2s ease;
-  color: var(--text-dark);
+  color: var(--admin-text);
 }
 
 .form-control-date:focus {
-  border-color: var(--orange-brand);
+  border-color: var(--admin-brand-accent);
   box-shadow: 0 0 0 2px rgba(224, 94, 43, 0.1);
   outline: none;
 }
@@ -404,7 +371,7 @@ body {
   align-items: center;
   padding: 0.75rem 1.25rem;
   background: #fbfaf8;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--admin-line);
   border-radius: 8px;
   min-height: 46px;
 }
@@ -419,7 +386,7 @@ body {
 }
 
 .link-preview-icon:hover {
-  color: var(--orange-brand);
+  color: var(--admin-brand-accent);
 }
 
 /* 안내사항 박스 */
@@ -431,7 +398,7 @@ body {
 }
 
 .info-title {
-  color: var(--orange-brand);
+  color: var(--admin-brand-accent);
   font-size: 0.9rem;
 }
 
@@ -455,7 +422,7 @@ body {
   content: '•';
   position: absolute;
   left: 0;
-  color: var(--orange-brand);
+  color: var(--admin-brand-accent);
   font-weight: bold;
 }
 

@@ -1,26 +1,21 @@
 :root {
   --statistics-bg: #fbfbfb;
   --statistics-text: #111111;
-  --statistics-orange: #ff7433;
   --statistics-orange-soft: #fff0e8;
 }
 
-body {
-  font-family: var(--font-family-base, 'Inter', 'Noto Sans KR', sans-serif);
-}
-
 .statistics-main {
-  padding: 4rem 3rem 3rem;
+  padding: 2.5rem;
 }
 
 .statistics-accent {
-  color: var(--statistics-orange);
+  color: var(--admin-brand-accent);
 }
 
 .btn-statistics-primary {
   --bs-btn-color: #ffffff;
-  --bs-btn-bg: var(--statistics-orange);
-  --bs-btn-border-color: var(--statistics-orange);
+  --bs-btn-bg: var(--admin-brand-accent);
+  --bs-btn-border-color: var(--admin-brand-accent);
   --bs-btn-hover-color: #ffffff;
   --bs-btn-hover-bg: #f06426;
   --bs-btn-hover-border-color: #f06426;
@@ -34,7 +29,7 @@ body {
   height: 42px;
   flex: 0 0 42px;
   border-radius: 12px;
-  color: var(--statistics-orange);
+  color: var(--admin-brand-accent);
   background: var(--statistics-orange-soft);
   font-size: 1.35rem;
 }
@@ -53,7 +48,7 @@ body {
 }
 
 .period-tabs .btn.active {
-  color: var(--statistics-orange);
+  color: var(--admin-brand-accent);
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(255, 116, 51, 0.12);
 }
@@ -115,7 +110,7 @@ body {
 
 @media (max-width: 760px) {
   .statistics-main {
-    padding: 3rem 1rem 2rem;
+    padding: 2rem 1rem;
   }
 
   .date-input,

@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <body>
-    <div th:fragment="content" class="admin-layout">
+    <div class="admin-layout" th:fragment="content">
       <aside th:replace="~{admin/fragments/sidebar :: adminSidebar('users')}"></aside>
 
       <main
-        class="main-container admin-users-main"
+        class="main-container"
         th:data-admin-candidates-url="@{/admin/api/users/admin-candidates}"
-        th:data-admins-url="@{/admin/api/users/admins}"
         th:data-admin-role-url-prefix="@{/admin/api/users}"
+        th:data-admins-url="@{/admin/api/users/admins}"
       >
         <div class="header-panel admin-users-header">
           <div class="title-area">
@@ -48,18 +48,18 @@
               관리자 계정 정보를 확인해 주세요.
             </p>
 
-            <form class="signup-form admin-users-form" th:action="@{/admin/users}" method="post">
+            <form class="signup-form admin-users-form" method="post" th:action="@{/admin/users}">
               <div class="admin-users-form-grid">
                 <div class="admin-users-field">
                   <label for="signup-name">이름</label>
                   <input
+                    autocomplete="name"
                     id="signup-name"
                     name="name"
-                    type="text"
-                    autocomplete="name"
                     placeholder="관리자 이름"
-                    th:value="${signupRequest != null ? signupRequest.name : ''}"
                     required
+                    th:value="${signupRequest != null ? signupRequest.name : ''}"
+                    type="text"
                   />
                 </div>
 
@@ -67,46 +67,46 @@
                   <label for="signup-email-local">이메일</label>
                   <div class="admin-users-email-line">
                     <input
+                      autocomplete="email"
                       id="signup-email-local"
                       name="emailLocal"
-                      type="text"
-                      autocomplete="email"
                       placeholder="admin"
-                      th:value="${signupRequest != null ? signupRequest.emailLocal : ''}"
                       required
+                      th:value="${signupRequest != null ? signupRequest.emailLocal : ''}"
+                      type="text"
                     />
                     <span>@</span>
-                    <select id="signup-email-domain" name="emailDomain" aria-label="이메일 도메인">
+                    <select aria-label="이메일 도메인" id="signup-email-domain" name="emailDomain">
                       <option value="">직접입력</option>
                       <option
-                        value="gmail.com"
                         th:selected="${signupRequest != null && signupRequest.emailDomain == 'gmail.com'}"
+                        value="gmail.com"
                       >
                         gmail.com
                       </option>
                       <option
-                        value="naver.com"
                         th:selected="${signupRequest != null && signupRequest.emailDomain == 'naver.com'}"
+                        value="naver.com"
                       >
                         naver.com
                       </option>
                       <option
-                        value="daum.net"
                         th:selected="${signupRequest != null && signupRequest.emailDomain == 'daum.net'}"
+                        value="daum.net"
                       >
                         daum.net
                       </option>
                       <option
-                        value="kakao.com"
                         th:selected="${signupRequest != null && signupRequest.emailDomain == 'kakao.com'}"
+                        value="kakao.com"
                       >
                         kakao.com
                       </option>
                     </select>
                     <button
                       id="signup-email-check-button"
-                      type="button"
                       th:data-check-url="@{/signup/email-check}"
+                      type="button"
                     >
                       중복확인
                     </button>
@@ -116,38 +116,38 @@
                 <div class="admin-users-field">
                   <label for="signup-password">임시 비밀번호</label>
                   <input
+                    autocomplete="new-password"
                     id="signup-password"
                     name="password"
-                    type="password"
-                    autocomplete="new-password"
                     placeholder="8자 이상"
                     required
+                    type="password"
                   />
                 </div>
 
                 <div class="admin-users-field">
                   <label for="signup-password-confirm">비밀번호 확인</label>
                   <input
+                    autocomplete="new-password"
                     id="signup-password-confirm"
                     name="passwordConfirm"
-                    type="password"
-                    autocomplete="new-password"
                     placeholder="비밀번호 재입력"
                     required
+                    type="password"
                   />
                 </div>
 
                 <div class="admin-users-field">
                   <label for="signup-birth">생년월일</label>
                   <input
-                    id="signup-birth"
-                    name="birth"
-                    type="text"
-                    inputmode="numeric"
                     autocomplete="bday"
+                    id="signup-birth"
+                    inputmode="numeric"
+                    name="birth"
                     placeholder="20010415"
-                    th:value="${signupRequest != null ? signupRequest.birth : ''}"
                     required
+                    th:value="${signupRequest != null ? signupRequest.birth : ''}"
+                    type="text"
                   />
                 </div>
 
@@ -156,21 +156,21 @@
                   <div class="admin-users-radio-group">
                     <label>
                       <input
-                        type="radio"
                         name="gender"
-                        value="MALE"
-                        th:checked="${signupRequest != null && signupRequest.gender == 'MALE'}"
                         required
+                        th:checked="${signupRequest != null && signupRequest.gender == 'MALE'}"
+                        type="radio"
+                        value="MALE"
                       />
                       <span aria-hidden="true"></span>
                       남성
                     </label>
                     <label>
                       <input
-                        type="radio"
                         name="gender"
-                        value="FEMALE"
                         th:checked="${signupRequest != null && signupRequest.gender == 'FEMALE'}"
+                        type="radio"
+                        value="FEMALE"
                       />
                       <span aria-hidden="true"></span>
                       여성
@@ -180,8 +180,8 @@
               </div>
 
               <div class="admin-users-actions">
-                <button type="reset" class="admin-users-secondary-button">초기화</button>
-                <button type="submit" class="admin-users-primary-button">관리자 계정 발급</button>
+                <button class="admin-users-secondary-button" type="reset">초기화</button>
+                <button class="admin-users-primary-button" type="submit">관리자 계정 발급</button>
               </div>
             </form>
           </section>
@@ -194,24 +194,24 @@
                   <p>관리자 권한이 없는 사용자를 선택해 권한을 부여합니다.</p>
                 </div>
                 <button
-                  type="button"
+                  aria-label="권한 부여 후보 새로고침"
                   class="admin-users-icon-button"
                   id="admin-candidates-refresh-button"
-                  aria-label="권한 부여 후보 새로고침"
                   title="새로고침"
+                  type="button"
                 >
                   <i class="bi bi-arrow-clockwise"></i>
                 </button>
               </div>
 
-              <p class="admin-users-role-message" id="admin-users-role-message" aria-live="polite">
+              <p aria-live="polite" class="admin-users-role-message" id="admin-users-role-message">
                 권한 관리 결과가 여기에 표시됩니다.
               </p>
               <div
                 class="admin-users-list"
-                id="admin-candidates-list"
                 data-empty-message="관리자 권한을 부여할 사용자가 없습니다."
                 data-loading-message="사용자 목록을 불러오는 중입니다."
+                id="admin-candidates-list"
               ></div>
             </section>
 
@@ -222,11 +222,11 @@
                   <p>다른 관리자 계정의 관리자 권한을 회수합니다.</p>
                 </div>
                 <button
-                  type="button"
+                  aria-label="관리자 목록 새로고침"
                   class="admin-users-icon-button"
                   id="admin-list-refresh-button"
-                  aria-label="관리자 목록 새로고침"
                   title="새로고침"
+                  type="button"
                 >
                   <i class="bi bi-arrow-clockwise"></i>
                 </button>
@@ -234,30 +234,30 @@
 
               <div
                 class="admin-users-list"
-                id="admin-list"
                 data-empty-message="권한을 회수할 다른 관리자가 없습니다."
                 data-loading-message="관리자 목록을 불러오는 중입니다."
+                id="admin-list"
               ></div>
             </section>
           </div>
         </div>
 
         <div
+          aria-hidden="true"
+          aria-labelledby="signup-email-check-modal-title"
           class="modal fade admin-users-modal"
           id="signup-email-check-modal"
           tabindex="-1"
-          aria-labelledby="signup-email-check-modal-title"
-          aria-hidden="true"
         >
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
                 <h2 class="modal-title" id="signup-email-check-modal-title">이메일 중복확인</h2>
                 <button
-                  type="button"
+                  aria-label="닫기"
                   class="btn-close"
                   data-bs-dismiss="modal"
-                  aria-label="닫기"
+                  type="button"
                 ></button>
               </div>
               <div class="modal-body">
@@ -266,7 +266,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="admin-users-modal-button" data-bs-dismiss="modal">
+                <button class="admin-users-modal-button" data-bs-dismiss="modal" type="button">
                   확인
                 </button>
               </div>
