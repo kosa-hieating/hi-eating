@@ -3,9 +3,63 @@
  * 비밀번호 입력 시 covering, 아이디 입력 시 curious 상태
  */
 document.addEventListener('DOMContentLoaded', () => {
+  const loginForm     = document.querySelector('.auth-form');
   const container     = document.getElementById('login-mascot-lottie');
   const passwordInput = document.getElementById('login-password');
   const usernameInput = document.getElementById('login-username');
+  const rememberInput = document.querySelector('input[name="rememberId"]');
+
+  const rememberStorageKey = 'hiEatingRememberedLoginId';
+
+  const getRememberedId = () => {
+    try {
+      return localStorage.getItem(rememberStorageKey);
+    } catch (err) {
+      console.warn('[LoginRememberId] read error:', err);
+      return null;
+    }
+  };
+
+  const setRememberedId = (value) => {
+    try {
+      localStorage.setItem(rememberStorageKey, value);
+    } catch (err) {
+      console.warn('[LoginRememberId] write error:', err);
+    }
+  };
+
+  const removeRememberedId = () => {
+    try {
+      localStorage.removeItem(rememberStorageKey);
+    } catch (err) {
+      console.warn('[LoginRememberId] remove error:', err);
+    }
+  };
+
+  if (usernameInput && rememberInput) {
+    const rememberedId = getRememberedId();
+    if (rememberedId) {
+      usernameInput.value = rememberedId;
+      rememberInput.checked = true;
+    }
+
+    rememberInput.addEventListener('change', () => {
+      if (!rememberInput.checked) {
+        removeRememberedId();
+      }
+    });
+  }
+
+  loginForm?.addEventListener('submit', () => {
+    if (!usernameInput || !rememberInput) return;
+
+    const username = usernameInput.value.trim();
+    if (rememberInput.checked && username) {
+      setRememberedId(username);
+    } else {
+      removeRememberedId();
+    }
+  });
 
   if (!container || typeof lottie === 'undefined') return;
 
