@@ -83,7 +83,7 @@ public class MyPageService {
       throw new IllegalArgumentException("생년월일은 오늘 이후 날짜를 입력할 수 없습니다.");
     }
 
-    if (!EDITABLE_GENDERS.contains(gender)) {
+    if (gender == null || !EDITABLE_GENDERS.contains(gender)) {
       throw new IllegalArgumentException("성별 값을 확인해 주세요.");
     }
   }
