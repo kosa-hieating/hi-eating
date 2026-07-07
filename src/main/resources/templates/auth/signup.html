@@ -132,14 +132,11 @@
                     class="auth-input"
                     id="signup-birth"
                     name="birth"
-                    type="text"
-                    inputmode="numeric"
+                    type="date"
                     autocomplete="bday"
-                    placeholder="예: 20010415"
                     th:value="${signupRequest != null ? signupRequest.birth : ''}"
                     required
                   />
-                  <i class="bi bi-calendar3" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
