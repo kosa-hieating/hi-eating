@@ -147,6 +147,7 @@
 }
 
 fieldset.member-edit-row {
+  min-width: 0;
   border: 0;
   padding: 0;
 }
@@ -158,16 +159,20 @@ fieldset.member-edit-row .member-edit-label {
 .member-edit-radio-group {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  grid-column: 2;
   gap: 40px;
 }
 
 .member-edit-radio {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 10px;
   color: #30343a;
   font-size: 18px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -386,6 +391,7 @@ fieldset.member-edit-row .member-edit-label {
   }
 
   .member-edit-radio-group {
+    grid-column: 1;
     gap: 28px;
   }
 
