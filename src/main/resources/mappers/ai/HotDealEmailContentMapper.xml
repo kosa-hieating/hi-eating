@@ -78,4 +78,12 @@
           AND status = 'PENDING'
     </update>
 
+    <select id="findApprovedEmailSendLogIds" resultType="long">
+        SELECT id
+        FROM email_send_logs
+        WHERE hot_deal_id = #{hotDealId}
+          AND status = 'APPROVED'
+        ORDER BY id ASC
+    </select>
+
 </mapper>
