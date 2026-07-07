@@ -78,6 +78,14 @@
           AND status = 'PENDING'
     </update>
 
+    <select id="findApprovedEmailSendLogIds" resultType="long">
+        SELECT id
+        FROM email_send_logs
+        WHERE hot_deal_id = #{hotDealId}
+          AND status = 'APPROVED'
+        ORDER BY id ASC
+    </select>
+
     <select id="countSendLogs" resultType="int">
         SELECT COUNT(*)
         FROM email_send_logs
