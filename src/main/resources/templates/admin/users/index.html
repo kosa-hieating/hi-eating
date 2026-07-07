@@ -5,12 +5,12 @@
       <aside th:replace="~{admin/fragments/sidebar :: adminSidebar('users')}"></aside>
 
       <main
-        class="main-container admin-users-main"
+        class="main-container"
         th:data-admin-candidates-url="@{/admin/api/users/admin-candidates}"
         th:data-admins-url="@{/admin/api/users/admins}"
         th:data-admin-role-url-prefix="@{/admin/api/users}"
       >
-        <div class="header-panel admin-users-header">
+        <div class="header-panel">
           <div class="title-area">
             <h1>관리자 계정</h1>
             <p>운영 권한이 필요한 담당자에게 관리자 계정을 발급하고 권한을 관리합니다.</p>
