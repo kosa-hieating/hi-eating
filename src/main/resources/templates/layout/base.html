@@ -21,6 +21,8 @@
       th:if="${pageStylesheet != null}"
       th:href="@{/css/{stylesheet}.css(stylesheet=${pageStylesheet})}"
     />
+    <!-- lottie-web: 동기 로드로 auth-signup.js 실행 전 전역 lottie 보장 -->
+    <script th:src="@{/js/lottie.min.js}"></script>
     <script>
       window.__IMAGE_FALLBACK_SRC__ = '/images/logo-hi-eating.png';
 
