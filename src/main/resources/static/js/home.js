@@ -235,6 +235,7 @@
 
   document.querySelectorAll('[data-carousel]').forEach((carousel) => {
     const track = carousel.querySelector('[data-carousel-track]');
+    const viewport = carousel.querySelector('[data-carousel-viewport]');
     const cards = Array.from(track.children);
     const current = carousel.querySelector('[data-carousel-current]');
     const prevButton = carousel.querySelector('[data-carousel-prev]');
@@ -251,7 +252,24 @@
     const maxIndex = () => Math.max(0, cards.length - visibleCount());
     let index = 0;
     let paused = carousel.dataset.carouselAutoplay !== 'true';
+    const draggable = carousel.dataset.carouselDrag === 'true';
     let intervalId = null;
+    let dragStartX = 0;
+    let dragDeltaX = 0;
+    let dragging = false;
+    let suppressClick = false;
+
+    const slideStep = () => {
+      const cardWidth = cards[0].getBoundingClientRect().width;
+      const style = getComputedStyle(track);
+      const parsedGap = parseFloat(style.columnGap || style.gap || '0');
+      const gap = Number.isNaN(parsedGap) ? 0 : parsedGap;
+      return cardWidth + gap;
+    };
+
+    const setTrackOffset = (offset) => {
+      track.style.transform = `translateX(${offset}px)`;
+    };
 
     const updateToggleIcon = () => {
       const icon = toggleButton?.querySelector('i');
@@ -270,11 +288,7 @@
 
     const moveTo = (nextIndex) => {
       index = Math.max(0, Math.min(nextIndex, maxIndex()));
-      const cardWidth = cards[0].getBoundingClientRect().width;
-      const style = getComputedStyle(track);
-      const parsedGap = parseFloat(style.columnGap || style.gap || '0');
-      const gap = Number.isNaN(parsedGap) ? 0 : parsedGap;
-      track.style.transform = `translateX(-${index * (cardWidth + gap)}px)`;
+      setTrackOffset(-index * slideStep());
 
       if (current) {
         current.textContent = String(index + 1);
@@ -315,6 +329,73 @@
       }
     });
     window.addEventListener('resize', () => moveTo(index));
+
+    if (draggable && viewport) {
+      const endDrag = () => {
+        if (!dragging) {
+          return;
+        }
+
+        dragging = false;
+        viewport.classList.remove('is-dragging');
+        track.classList.remove('is-dragging');
+
+        const threshold = Math.max(42, slideStep() * 0.18);
+        if (Math.abs(dragDeltaX) > threshold) {
+          moveTo(index + (dragDeltaX < 0 ? 1 : -1));
+        } else {
+          moveTo(index);
+        }
+
+        if (Math.abs(dragDeltaX) > 8) {
+          suppressClick = true;
+          window.setTimeout(() => {
+            suppressClick = false;
+          }, 0);
+        }
+
+        dragDeltaX = 0;
+      };
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== undefined && event.button !== 0) {
+          return;
+        }
+
+        stop();
+        dragging = true;
+        dragStartX = event.clientX;
+        dragDeltaX = 0;
+        viewport.classList.add('is-dragging');
+        track.classList.add('is-dragging');
+        viewport.setPointerCapture?.(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!dragging) {
+          return;
+        }
+
+        dragDeltaX = event.clientX - dragStartX;
+        setTrackOffset(-index * slideStep() + dragDeltaX);
+      });
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      viewport.addEventListener('lostpointercapture', endDrag);
+      viewport.addEventListener(
+        'click',
+        (event) => {
+          if (!suppressClick) {
+            return;
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+        },
+        true,
+      );
+    }
 
     moveTo(0);
     updateToggleIcon();

@@ -73,7 +73,7 @@
         class="popular-table-section container-xl reveal-section"
       >
         <div class="section-heading-row">
-          <h2 class="section-title">인기 <strong>식탁 꾸미기</strong></h2>
+          <h2 class="section-title">자랑해요 <strong>내 식탁</strong>🍽</h2>
           <a class="section-more-link" th:href="@{/table-decorations}">
             모두 보기
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -204,7 +204,13 @@
       </div>
 
       <section aria-label="원데이 핫딜" class="hot-deal-section container-xl reveal-section">
-        <h2 class="section-title">원데이 <strong>핫딜</strong></h2>
+        <h2 class="section-title"><strong>핫딜🔥</strong></h2>
+
+        <div class="hot-deal-section__headline">
+          <p>오늘만 만나는 특별한 가격</p>
+          <h2 class="section-title"><strong>핫딜🔥</strong></h2>
+          <span>한정 수량 · 소진 시 조기 종료</span>
+        </div>
 
         <p class="section-empty" th:if="${#lists.isEmpty(hotDealProducts)}">
           진행 중인 핫딜 상품이 없습니다.
@@ -214,7 +220,7 @@
           class="hot-deal-carousel"
           data-carousel
           data-carousel-autoplay="true"
-          data-carousel-visible="2"
+          data-carousel-visible="4"
           th:if="${!#lists.isEmpty(hotDealProducts)}"
         >
           <button
