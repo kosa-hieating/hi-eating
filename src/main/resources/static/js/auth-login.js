@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animationData: jsonCache[path],
       });
 
-      currentAnim.addEventListener('data_ready', () => {
+      currentAnim.addEventListener('DOMLoaded', () => {
         const svg = container.querySelector('svg');
         if (svg) {
           svg.setAttribute('width', '100%');

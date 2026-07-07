@@ -43,7 +43,6 @@ public class SecurityConfig {
                         "/css/**",
                         "/js/**",
                         "/images/**",
-                        "/ai/**", // TODO: 삭제 해야함 (AI 테스트하기 위해 추가)
                         "/fonts/**",
                         "/lotties/**") // 마스코트 Lottie 애니메이션 JSON
                     .permitAll()

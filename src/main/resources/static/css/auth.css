@@ -588,72 +588,6 @@ fieldset.signup-row .signup-label {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    pad  .auth-mascot-image {
-    display: block;
-    width: min(430px, 92%);
-    height: auto;
-  }
-}
-
-;
-  line-height: 1.5;
-}
-
-.auth-modal-message.is-success {
-  color: #22734b;
-}
-
-.auth-modal-message.is-danger {
-  color: #d73612;
-}
-
-.auth-modal-button {
-  min-width: 96px;
-  min-height: 44px;
-  border: 0;
-  border-radius: 6px;
-  color: #ffffff;
-  background: var(--color-brand);
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.auth-modal-button:hover,
-.auth-modal-button:focus-visible {
-  background: var(--color-brand-strong);
-}
-
-@media (min-width: 992px) {
-  .auth-login-page {
-    padding-top: 64px;
-  }
-
-  .auth-login-shell {
-    display: grid;
-    grid-template-columns: minmax(380px, 500px) minmax(360px, 1fr);
-    gap: clamp(52px, 7vw, 104px);
-    align-items: center;
-  }
-
-  .auth-login-page .auth-panel-narrow {
-    max-width: none;
-  }
-
-  .auth-login-page .auth-title-block {
-    margin-bottom: 52px;
-    text-align: left;
-  }
-
-  .auth-login-page .auth-title-block p {
-    max-width: 360px;
-  }
-
-  .auth-login-visual {
-    display: flex;
-    min-height: 560px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 18px 0 0;
   }
 
@@ -757,6 +691,8 @@ fieldset.signup-row .signup-label {
   .mascot-lottie-player {
     display: block;
     width: 100%;
+    height: 280px;
+  }
 }
 
 @media (max-width: 768px) {

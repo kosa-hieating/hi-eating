@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animationData: jsonCache[path],
       });
 
-      currentAnim.addEventListener('data_ready', () => {
+      currentAnim.addEventListener('DOMLoaded', () => {
         const svg = lottieContainer.querySelector('svg');
         if (svg) {
           svg.setAttribute('width', '100%');
@@ -126,19 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── 마스코트 상태 전환 ── */
   const setMascotState = (stateName, customMessage) => {
-    if (stateName === currentState) return;
-    currentState = stateName;
-
     const config  = MASCOT_STATES[stateName] || MASCOT_STATES.idle;
     const message = customMessage ?? config.message;
 
-    if (signupMascot) {
-      signupMascot.setAttribute('data-mascot-state', stateName);
-    }
     if (mascotMessageEl) {
       mascotMessageEl.textContent = message;
     }
 
+    if (stateName === currentState) return;
+    currentState = stateName;
+
+    if (signupMascot) {
+      signupMascot.setAttribute('data-mascot-state', stateName);
+    }
     loadAnimation(config.path);
   };
 
