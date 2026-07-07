@@ -35,4 +35,8 @@ public interface HotDealEmailContentMapper {
       @Param("hotDealId") long hotDealId,
       @Param("status") String status,
       @Param("reason") String reason);
+
+  int countSendLogs(@Param("hotDealId") long hotDealId);
+
+  int countSendLogsByStatus(@Param("hotDealId") long hotDealId, @Param("status") String status);
 }
