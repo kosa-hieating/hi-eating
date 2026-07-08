@@ -1,5 +1,6 @@
 package kr.or.hieating.review.controller;
 
+import kr.or.hieating.global.apiPayload.ApiResponse;
 import kr.or.hieating.global.apiPayload.exception.GeneralException;
 import kr.or.hieating.review.dto.ReviewFormResponseDto;
 import kr.or.hieating.review.service.ReviewService;
@@ -21,14 +22,16 @@ public class ReviewController {
 
   @GetMapping(value = "/review/new", headers = "X-Requested-With=XMLHttpRequest")
   @ResponseBody
-  public ResponseEntity<Void> validateNewReview(
+  public ResponseEntity<ApiResponse<Void>> validateNewReview(
       @RequestParam(required = false) Long purchaseId,
       @RequestParam(required = false) Long productId) {
     try {
       reviewService.findReviewForm(userResolver.requireCurrentUserId(), purchaseId, productId);
       return ResponseEntity.noContent().build();
     } catch (GeneralException e) {
-      return ResponseEntity.status(e.getErrorReasonHttpStatus().getHttpStatus()).build();
+      var error = e.getErrorReasonHttpStatus();
+      return ResponseEntity.status(error.getHttpStatus())
+          .body(ApiResponse.onFailure(error.getCode(), error.getMessage(), null));
     }
   }
 
