@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const feed = document.querySelector('[data-table-decor-feed]');
   const loader = document.querySelector('[data-table-decor-loader]');
   const sentinel = document.querySelector('[data-table-decor-sentinel]');
+  const likeLoginRequiredMessage =
+    '좋아요는 로그인한 사용자만 이용할 수 있습니다.\n로그인 후 다시 시도해주세요.';
   let lastFocusedElement = null;
   let currentPage = Number(page.dataset.tableDecorPage || '1');
   let totalPages = Number(page.dataset.tableDecorTotalPages || '1');
@@ -235,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!isAuthenticated) {
-      openAuthModal('좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.');
+      openAuthModal(likeLoginRequiredMessage);
       return;
     }
 
@@ -262,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(error);
       openAuthModal(
         error.status === 401 || error.status === 403
-          ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
+          ? likeLoginRequiredMessage
           : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
       );
     } finally {

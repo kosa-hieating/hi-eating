@@ -10,6 +10,8 @@
     const likeButton = tableDecorModal.querySelector('[data-home-table-decor-modal-like-button]');
     const authMessage = tableDecorAuthModal?.querySelector('[data-home-table-decor-auth-message]');
     const isAuthenticated = homePage?.dataset.homeTableDecorAuthenticated === 'true';
+    const likeLoginRequiredMessage =
+      '좋아요는 로그인한 사용자만 이용할 수 있습니다.\n로그인 후 다시 시도해주세요.';
     let lastFocusedElement = null;
 
     const setBodyLocked = () => {
@@ -111,9 +113,7 @@
       }
 
       if (!isAuthenticated) {
-        openAuthModal(
-          '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
-        );
+        openAuthModal(likeLoginRequiredMessage);
         return;
       }
 
@@ -140,7 +140,7 @@
         console.error(error);
         openAuthModal(
           error.status === 401 || error.status === 403
-            ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
+            ? likeLoginRequiredMessage
             : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
         );
       } finally {

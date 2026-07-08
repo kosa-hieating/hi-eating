@@ -229,7 +229,7 @@
   background: rgba(255, 255, 255, 0.9);
   color: #16110e;
   padding: 7px 11px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
   box-shadow: 0 8px 18px rgba(35, 28, 24, 0.12);
 }
@@ -462,6 +462,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.6;
+  white-space: pre-line;
 }
 
 .table-decor-auth-modal__panel div {
