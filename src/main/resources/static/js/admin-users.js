@@ -129,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let candidatesCurrentKeyword = '';
   let candidatesCurrentPage = 1;
   let candidatesTotalPages = 1;
+  let candidatesPageGeneration = 0;
 
   const setListState = (container, message, state) => {
     container.replaceChildren();
@@ -244,10 +245,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadCandidatesPage = async (keyword, page) => {
     setListState(candidatesList, candidatesList.dataset.loadingMessage, 'is-loading');
     candidatesPagination?.setAttribute('hidden', '');
+    const generation = ++candidatesPageGeneration;
 
     try {
       const params = new URLSearchParams({ keyword, page, size: '10' });
       const result = await fetchApi(`${urls.candidatesPage}?${params}`);
+      if (generation !== candidatesPageGeneration) {
+        return;
+      }
+
+      if (result.users.length === 0 && page > 1) {
+        candidatesCurrentPage = page - 1;
+        candidatesTotalPages = result.totalPages;
+        updatePagination();
+        return loadCandidatesPage(keyword, page - 1);
+      }
+
       renderList(candidatesList, result.users, {
         type: 'grant',
         label: '권한 부여',
@@ -259,7 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
       updatePagination();
       matchHeights();
     } catch (error) {
-      setListState(candidatesList, error.message, 'is-error');
+      if (generation === candidatesPageGeneration) {
+        setListState(candidatesList, error.message, 'is-error');
+      }
     }
   };
 

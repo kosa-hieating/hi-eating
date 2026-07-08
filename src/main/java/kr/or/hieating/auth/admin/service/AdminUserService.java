@@ -26,6 +26,13 @@ public class AdminUserService {
 
   @Transactional(readOnly = true)
   public AdminUserPageResponseDto findAdminCandidatesByPage(String keyword, int page, int size) {
+    if (page < 1) {
+      throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다.");
+    }
+    if (size < 1) {
+      throw new IllegalArgumentException("페이지 크기는 1 이상이어야 합니다.");
+    }
+
     int totalCount = authMapper.countAdminCandidates(keyword);
     int totalPages = (int) Math.ceil((double) totalCount / size);
     int offset = (page - 1) * size;
