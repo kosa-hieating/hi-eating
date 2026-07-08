@@ -59,8 +59,7 @@ public class ProductController {
       @RequestParam(defaultValue = "1") Integer page,
       Model model) {
     if (page == null || page < 1) {
-      return redirectCategoryProducts(
-          categoryId, minPrice, maxPrice, minDiscountRate, sort, 1);
+      return redirectCategoryProducts(categoryId, minPrice, maxPrice, minDiscountRate, sort, 1);
     }
 
     ProductListSearchCondition condition =
@@ -116,8 +115,7 @@ public class ProductController {
     return "redirect:" + builder.buildAndExpand(categoryId).encode().toUriString();
   }
 
-  private void addQueryParamIfPresent(
-      UriComponentsBuilder builder, String name, Integer value) {
+  private void addQueryParamIfPresent(UriComponentsBuilder builder, String name, Integer value) {
     if (value != null) {
       builder.queryParam(name, value);
     }

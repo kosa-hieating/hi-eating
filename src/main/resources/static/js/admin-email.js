@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  refreshDashboard(selectedEmailDraftId, { focusSelectedPage: Boolean(selectedEmailDraftId) }).catch(
-    (error) => showMessage(error.message, 'is-danger'),
-  );
+  refreshDashboard(selectedEmailDraftId, {
+    focusSelectedPage: Boolean(selectedEmailDraftId),
+  }).catch((error) => showMessage(error.message, 'is-danger'));
 });

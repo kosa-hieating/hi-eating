@@ -80,15 +80,13 @@ public class ProductSearchController {
     return "redirect:" + builder.build().encode().toUriString();
   }
 
-  private void addQueryParamIfPresent(
-      UriComponentsBuilder builder, String name, Integer value) {
+  private void addQueryParamIfPresent(UriComponentsBuilder builder, String name, Integer value) {
     if (value != null) {
       builder.queryParam(name, value);
     }
   }
 
-  private void addQueryParamIfPresent(
-      UriComponentsBuilder builder, String name, String value) {
+  private void addQueryParamIfPresent(UriComponentsBuilder builder, String name, String value) {
     if (value != null && !value.isBlank()) {
       builder.queryParam(name, value.trim());
     }

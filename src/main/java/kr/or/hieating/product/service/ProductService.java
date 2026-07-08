@@ -90,7 +90,8 @@ public class ProductService {
                 totalPages)
             : condition;
 
-    List<ProductListItemResponseDto> products = productMapper.findProductsByCategory(queryCondition);
+    List<ProductListItemResponseDto> products =
+        productMapper.findProductsByCategory(queryCondition);
     products.forEach(
         product ->
             product.setPictureLocation(imageUrlResolver.resolve(product.getPictureLocation())));
