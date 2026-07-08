@@ -158,12 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (!response.ok) {
-        throw new Error('Review form is not available.');
+        const body = await response.json().catch(() => null);
+        const errorCode = body?.code;
+
+        if (errorCode === 'REVIEW4002') {
+          alert('이미 리뷰를 작성한 상품입니다.');
+        } else {
+          alert('구매한 적 없는 상품입니다.');
+        }
+        return;
       }
 
       window.location.href = reviewWriteLink.href;
     } catch (error) {
-      alert('구매한 적 없는 상품입니다.');
+      alert('리뷰 작성 페이지를 불러올 수 없습니다.');
     }
   });
 

@@ -35,15 +35,34 @@ public class ReviewService {
   private final TransactionTemplate transactionTemplate;
 
   public ReviewFormResponseDto findReviewForm(Long userId, Long purchaseId, Long productId) {
-    ReviewFormResponseDto reviewForm =
-        purchaseId != null
-            ? reviewMapper
-                .findReviewFormByPurchaseId(userId, purchaseId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND))
-            : reviewMapper
-                .findLatestReviewFormByProductId(userId, productId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND));
+    if (purchaseId != null) {
+      if (reviewMapper.countReviewByPurchaseId(purchaseId) > 0) {
+        throw new GeneralException(ErrorStatus.DUPLICATE_REVIEW);
+      }
 
+      ReviewFormResponseDto reviewForm =
+          reviewMapper
+              .findReviewFormByPurchaseId(userId, purchaseId)
+              .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND));
+
+      return enrichReviewForm(reviewForm);
+    }
+
+    ReviewFormResponseDto reviewForm =
+        reviewMapper
+            .findLatestReviewFormByProductId(userId, productId)
+            .orElseThrow(
+                () -> {
+                  if (reviewMapper.countPurchaseExistForProduct(userId, productId) > 0) {
+                    return new GeneralException(ErrorStatus.DUPLICATE_REVIEW);
+                  }
+                  return new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND);
+                });
+
+    return enrichReviewForm(reviewForm);
+  }
+
+  private ReviewFormResponseDto enrichReviewForm(ReviewFormResponseDto reviewForm) {
     String productImageUrl = imageUrlResolver.resolve(reviewForm.getProductImageUrl());
     reviewForm.setProductImageUrl(
         productImageUrl == null || productImageUrl.isBlank()

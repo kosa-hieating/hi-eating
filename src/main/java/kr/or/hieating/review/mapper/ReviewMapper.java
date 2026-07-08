@@ -24,5 +24,8 @@ public interface ReviewMapper {
 
   int countReviewByPurchaseId(@Param("purchaseId") Long purchaseId);
 
+  int countPurchaseExistForProduct(
+      @Param("userId") Long userId, @Param("productId") Long productId);
+
   int insertReview(ReviewCreateCommand command);
 }
