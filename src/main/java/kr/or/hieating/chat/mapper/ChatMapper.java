@@ -18,7 +18,7 @@ public interface ChatMapper {
 
   List<ChatRoomSummaryDto> findRoomsByAdminId(@Param("adminId") long adminId);
 
-  Optional<Long> findAssignableAdminId();
+  Optional<Long> findAssignableAdminId(@Param("excludeUserId") long excludeUserId);
 
   Optional<String> findAdminPresenceStatus(@Param("adminId") long adminId);
 
