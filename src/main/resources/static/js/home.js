@@ -12,6 +12,11 @@
     const isAuthenticated = homePage?.dataset.homeTableDecorAuthenticated === 'true';
     let lastFocusedElement = null;
 
+    const getCsrfToken = () => {
+      const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : '';
+    };
+
     const setBodyLocked = () => {
       document.body.style.overflow = 'hidden';
     };
@@ -125,6 +130,7 @@
           method: 'POST',
           headers: {
             Accept: 'application/json',
+            'X-XSRF-TOKEN': getCsrfToken(),
           },
         });
 
