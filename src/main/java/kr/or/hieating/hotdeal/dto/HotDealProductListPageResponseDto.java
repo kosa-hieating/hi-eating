@@ -11,7 +11,11 @@ public record HotDealProductListPageResponseDto(
     boolean hasMore) {
 
   public HotDealProductListPageResponseDto(
-      List<HotDealProductListItemResponseDto> products, int page, int size, int totalCount, int totalPages) {
+      List<HotDealProductListItemResponseDto> products,
+      int page,
+      int size,
+      int totalCount,
+      int totalPages) {
     this(products, page, size, totalCount, totalPages, page < totalPages);
   }
 

@@ -25,7 +25,10 @@ public class HotDealProductSyncService {
     for (HotDealCreateRequestDTO.ProductItemDTO item : products) {
       adminHotDealMapper.insertHotDealProduct(
           createHotDealProduct(
-              hotDealId, item.getProductOptionId().longValue(), item.getOriginalPrice(), discountRate));
+              hotDealId,
+              item.getProductOptionId().longValue(),
+              item.getOriginalPrice(),
+              discountRate));
     }
   }
 
@@ -42,7 +45,10 @@ public class HotDealProductSyncService {
     for (HotDealUpdateRequestDTO.ProductItemDTO item : requestedProducts) {
       adminHotDealMapper.insertHotDealProduct(
           createHotDealProduct(
-              hotDealId, item.getProductOptionId().longValue(), item.getOriginalPrice(), discountRate));
+              hotDealId,
+              item.getProductOptionId().longValue(),
+              item.getOriginalPrice(),
+              discountRate));
     }
   }
 
@@ -58,8 +64,7 @@ public class HotDealProductSyncService {
         existing.stream()
             .collect(
                 Collectors.toMap(
-                    item -> item.getProductOptionId().longValue(),
-                    Function.identity()));
+                    item -> item.getProductOptionId().longValue(), Function.identity()));
 
     for (HotDealUpdateRequestDTO.ProductItemDTO requestedItem : requested) {
       HotDealDetailResponseDTO.ProductItemDTO existingItem =

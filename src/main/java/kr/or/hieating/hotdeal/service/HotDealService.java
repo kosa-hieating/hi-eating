@@ -40,9 +40,7 @@ public class HotDealService {
     int totalPages = (int) Math.ceil((double) totalCount / condition.getSize());
 
     List<HotDealProductListItemResponseDto> products =
-        totalCount == 0
-            ? List.of()
-            : hotDealMapper.findHotDealProducts(condition);
+        totalCount == 0 ? List.of() : hotDealMapper.findHotDealProducts(condition);
 
     products.forEach(
         product ->
