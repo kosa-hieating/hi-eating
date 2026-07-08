@@ -23,9 +23,13 @@
   --admin-header-mb: 2rem;
 }
 
+html {
+  font-size: 18px !important; /* +2px font size increase */
+}
+
 /* ---- Body ---- */
-body {
-  font-family: var(--admin-font-family);
+body, input, select, textarea, button {
+  font-family: var(--admin-font-family) !important;
   background: var(--admin-bg);
   color: var(--admin-text);
 }
