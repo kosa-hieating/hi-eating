@@ -41,6 +41,11 @@ public class EmailPublisher {
       throw new IllegalArgumentException("Only approved emails can be published to RabbitMQ.");
     }
 
+    if (!emailDraftRepository.claimForPublishing(emailDraftId)) {
+      throw new IllegalArgumentException(
+          "Email draft is already being published or was processed.");
+    }
+
     EmailPublishMessage message = createMessage(emailDraft);
     CorrelationData correlationData = new CorrelationData(String.valueOf(emailDraftId));
 

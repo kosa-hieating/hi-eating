@@ -153,7 +153,8 @@ public class AdminEmailService {
   }
 
   private boolean isPublishedFlow(EmailSendStatus sendStatus) {
-    return sendStatus == EmailSendStatus.PUBLISHED
+    return sendStatus == EmailSendStatus.PUBLISHING
+        || sendStatus == EmailSendStatus.PUBLISHED
         || sendStatus == EmailSendStatus.SENDING
         || sendStatus == EmailSendStatus.SENT
         || sendStatus == EmailSendStatus.RETRYING;
