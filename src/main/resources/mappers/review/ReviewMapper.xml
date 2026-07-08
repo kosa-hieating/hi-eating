@@ -77,6 +77,13 @@
     FETCH FIRST 1 ROWS ONLY
   </select>
 
+  <select id="countPurchaseByPurchaseIdAndUserId" resultType="int">
+    SELECT COUNT(*)
+    FROM purchases
+    WHERE id = #{purchaseId}
+      AND user_id = #{userId}
+  </select>
+
   <select id="countPurchaseExistForProduct" resultType="int">
     SELECT COUNT(*)
     FROM purchases

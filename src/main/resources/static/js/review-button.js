@@ -14,13 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
           var body = await response.json().catch(function () {
             return null;
           });
-          var errorCode = body && body.code;
-
-          if (errorCode === 'REVIEW4002') {
-            alert('이미 리뷰를 작성한 상품입니다.');
-          } else {
-            alert('구매한 적 없는 상품입니다.');
-          }
+          var message = body && body.message;
+          alert(message || '리뷰 작성 페이지를 불러올 수 없습니다.');
           return;
         }
 

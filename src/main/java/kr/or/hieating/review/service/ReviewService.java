@@ -36,10 +36,16 @@ public class ReviewService {
 
   public ReviewFormResponseDto findReviewForm(Long userId, Long purchaseId, Long productId) {
     if (purchaseId != null) {
+      // 1. 소유권 확인 (IDOR 방지)
+      if (reviewMapper.countPurchaseByPurchaseIdAndUserId(purchaseId, userId) == 0) {
+        throw new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND);
+      }
+      // 2. 리뷰 중복 확인
       if (reviewMapper.countReviewByPurchaseId(purchaseId) > 0) {
         throw new GeneralException(ErrorStatus.DUPLICATE_REVIEW);
       }
 
+      // 3. 폼 조회
       ReviewFormResponseDto reviewForm =
           reviewMapper
               .findReviewFormByPurchaseId(userId, purchaseId)
@@ -86,6 +92,10 @@ public class ReviewService {
   }
 
   public ReviewCreateResponseDto createReview(Long userId, ReviewCreateRequestDto request) {
+    if (reviewMapper.countPurchaseByPurchaseIdAndUserId(request.getPurchaseId(), userId) == 0) {
+      throw new GeneralException(ErrorStatus.REVIEW_FORM_NOT_FOUND);
+    }
+
     if (reviewMapper.countReviewByPurchaseId(request.getPurchaseId()) > 0) {
       throw new GeneralException(ErrorStatus.DUPLICATE_REVIEW);
     }
