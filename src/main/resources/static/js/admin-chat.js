@@ -30,12 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const fetchApi = async (url, options) => {
     const response = await fetch(url, {
+      ...options,
       headers: {
         Accept: 'application/json',
         'X-XSRF-TOKEN': getCsrfToken(),
         ...(options?.headers || {}),
       },
-      ...options,
     });
 
     const body = await response.json();
@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const buildWsUrl = () => {
-    const url = new URL(page.dataset.wsUrl || '/ws/chat', window.location.origin);
+    const url = new URL(page.dataset.wsUrl || '/ws/chat',
+        window.location.origin);
     url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     url.searchParams.set('mode', 'admin');
     return url.toString();
@@ -86,7 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     rooms.forEach((room) => {
       const item = document.createElement('button');
       item.type = 'button';
-      item.className = `admin-chat-room ${room.roomId === selectedRoomId ? 'is-active' : ''}`;
+      item.className = `admin-chat-room ${room.roomId === selectedRoomId
+          ? 'is-active' : ''}`;
 
       const head = document.createElement('div');
       head.className = 'admin-chat-room-head';
@@ -99,7 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (room.adminUnreadCount > 0) {
         const unread = document.createElement('span');
         unread.className = 'admin-chat-room-unread';
-        unread.textContent = room.adminUnreadCount > 99 ? '99+' : String(room.adminUnreadCount);
+        unread.textContent = room.adminUnreadCount > 99 ? '99+' : String(
+            room.adminUnreadCount);
         head.appendChild(unread);
       }
 
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const preview = document.createElement('span');
       preview.className = 'admin-chat-room-preview';
       preview.textContent =
-        room.lastMessageContent || `상담방 생성 · ${formatTime(room.createdAt)}`;
+          room.lastMessageContent || `상담방 생성 · ${formatTime(room.createdAt)}`;
 
       item.append(head, email, preview);
       item.addEventListener('click', () => selectRoom(room.roomId));
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const appendMessage = (message) => {
     const item = document.createElement('article');
     item.className = `admin-chat-message ${
-      message.senderType === 'ADMIN' ? 'is-admin' : 'is-user'
+        message.senderType === 'ADMIN' ? 'is-admin' : 'is-user'
     }`;
 
     const bubble = document.createElement('div');
@@ -134,7 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const meta = document.createElement('span');
     meta.className = 'admin-chat-meta';
-    meta.textContent = `${message.senderName || ''} · ${formatTime(message.createdAt)}`;
+    meta.textContent = `${message.senderName || ''} · ${formatTime(
+        message.createdAt)}`;
 
     item.append(bubble, meta);
     messagesElement.appendChild(item);
@@ -196,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({status}),
       });
       statusSelect.value = result.status;
       if (showStatusMessage) {
@@ -219,9 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('대화를 불러오는 중');
 
     try {
-      const result = await fetchApi(`${page.dataset.roomUrlPrefix}/${roomId}/messages`);
+      const result = await fetchApi(
+          `${page.dataset.roomUrlPrefix}/${roomId}/messages`);
       const updatedRoom = result.room;
-      rooms = rooms.map((room) => (room.roomId === updatedRoom.roomId ? updatedRoom : room));
+      rooms = rooms.map(
+          (room) => (room.roomId === updatedRoom.roomId ? updatedRoom : room));
       syncSelectedRoomHeader(updatedRoom);
       renderRooms();
       renderMessages(result.messages);
@@ -244,8 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const connect = () => {
     if (
-      socket &&
-      (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)
+        socket &&
+        (socket.readyState === WebSocket.OPEN || socket.readyState
+            === WebSocket.CONNECTING)
     ) {
       return;
     }
@@ -323,11 +330,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     socket.send(
-      JSON.stringify({
-        type: 'SEND_MESSAGE',
-        roomId: selectedRoomId,
-        content,
-      }),
+        JSON.stringify({
+          type: 'SEND_MESSAGE',
+          roomId: selectedRoomId,
+          content,
+        }),
     );
     input.value = '';
     input.style.height = 'auto';

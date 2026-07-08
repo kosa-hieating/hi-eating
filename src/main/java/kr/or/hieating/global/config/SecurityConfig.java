@@ -26,9 +26,12 @@ public class SecurityConfig {
         // - Thymeleaf 폼은 th:action에 의해 _csrf 필드가 자동 생성됨
         // - JS API 호출 시 XSRF-TOKEN 쿠키 값을 X-XSRF-TOKEN 헤더로 전송
         .csrf(
-            csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+            csrf -> {
+              CsrfTokenRequestAttributeHandler handler = new CsrfTokenRequestAttributeHandler();
+              handler.setCsrfRequestAttributeName(null);
+              csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                  .csrfTokenRequestHandler(handler);
+            })
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             authorize ->
