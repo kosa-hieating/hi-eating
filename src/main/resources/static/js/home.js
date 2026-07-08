@@ -14,6 +14,21 @@
       '좋아요는 로그인한 사용자만 이용할 수 있습니다.\n로그인 후 다시 시도해주세요.';
     let lastFocusedElement = null;
 
+    const getCsrfToken = () => {
+      const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : '';
+    };
+
+    const setLikeIcon = (button, liked) => {
+      const icon = button.querySelector('i');
+      if (!icon) {
+        return;
+      }
+
+      icon.classList.toggle('bi-heart-fill', liked);
+      icon.classList.toggle('bi-heart', !liked);
+    };
+
     const setBodyLocked = () => {
       document.body.style.overflow = 'hidden';
     };
@@ -35,11 +50,14 @@
           if (count) {
             count.textContent = String(likeCount);
           }
+
+          setLikeIcon(trigger, liked);
         });
 
       if (likeButton?.dataset.postId === String(postId)) {
         likeButton.classList.toggle('is-active', liked);
         likeButton.setAttribute('aria-pressed', String(liked));
+        setLikeIcon(likeButton, liked);
         like.textContent = String(likeCount);
       }
     };
@@ -97,6 +115,7 @@
         likeButton.dataset.postId = trigger.dataset.postId || '';
         likeButton.classList.toggle('is-active', trigger.dataset.liked === 'true');
         likeButton.setAttribute('aria-pressed', String(trigger.dataset.liked === 'true'));
+        setLikeIcon(likeButton, trigger.dataset.liked === 'true');
       }
 
       tableDecorModal.hidden = false;
@@ -125,6 +144,7 @@
           method: 'POST',
           headers: {
             Accept: 'application/json',
+            'X-XSRF-TOKEN': getCsrfToken(),
           },
         });
 
