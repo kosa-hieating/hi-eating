@@ -206,7 +206,8 @@ public class ChatService {
         chatMapper.findMessagesBeforeByRoomId(roomId, beforeMessageId, limit + 1), limit);
   }
 
-  private ChatMessagePageResponseDto toMessagePage(List<ChatMessageDto> fetchedMessages, int limit) {
+  private ChatMessagePageResponseDto toMessagePage(
+      List<ChatMessageDto> fetchedMessages, int limit) {
     boolean hasMoreMessages = fetchedMessages.size() > limit;
     List<ChatMessageDto> messages =
         hasMoreMessages

@@ -39,8 +39,7 @@ public class AdminChatRestController {
 
   @GetMapping("/rooms/{roomId}/messages/older")
   public ApiResponse<ChatMessagePageResponseDto> olderMessages(
-      @PathVariable("roomId") long roomId,
-      @RequestParam("beforeMessageId") long beforeMessageId) {
+      @PathVariable("roomId") long roomId, @RequestParam("beforeMessageId") long beforeMessageId) {
     return ApiResponse.onSuccess(
         chatService.findAdminMessagesBefore(
             userResolver.requireCurrentUserId(), roomId, beforeMessageId));
