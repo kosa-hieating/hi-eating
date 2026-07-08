@@ -74,16 +74,18 @@
 }
 
 .promotion-slide {
-  display: block;
+  display: grid;
   flex: 0 0 100%;
   min-width: 0;
+  place-items: center;
+  background: #fff7f1;
 }
 
 .promotion-slide img {
   display: block;
   width: 100%;
   height: clamp(260px, 36vw, 520px);
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .promotion-slide img[src$='logo-hi-eating.png'] {
