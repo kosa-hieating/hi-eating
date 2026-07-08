@@ -39,16 +39,16 @@ const MASCOT_STATES = {
  *  필드별 설정
  * ───────────────────────────────────────────────────────────── */
 const FIELD_CONFIG = [
-  {selector: '#signup-name', state: 'greeting'},
-  {selector: '#signup-email-local', state: 'curious'},
+  { selector: '#signup-name', state: 'greeting' },
+  { selector: '#signup-email-local', state: 'curious' },
   {
     selector: '#signup-email-domain',
     state: 'curious',
-    message: '이메일 도메인을 선택해 주세요'
+    message: '이메일 도메인을 선택해 주세요',
   },
-  {selector: '#signup-password', state: 'covering'},
-  {selector: '#signup-password-confirm', state: 'peeking'},
-  {selector: '#signup-birth', state: 'thinking'},
+  { selector: '#signup-password', state: 'covering' },
+  { selector: '#signup-password-confirm', state: 'peeking' },
+  { selector: '#signup-birth', state: 'thinking' },
   {
     selector: 'input[name="gender"]',
     state: 'curious',
@@ -65,15 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const emailDomainSelect = document.getElementById('signup-email-domain');
   const emailCheckButton = document.getElementById('signup-email-check-button');
   const passwordInput = document.getElementById('signup-password');
-  const passwordConfirmInput = document.getElementById(
-      'signup-password-confirm');
+  const passwordConfirmInput = document.getElementById('signup-password-confirm');
   const modalElement = document.getElementById('signup-email-check-modal');
   const modalTitle = document.getElementById('signup-email-check-modal-title');
-  const modalMessage = document.getElementById(
-      'signup-email-check-modal-message');
+  const modalMessage = document.getElementById('signup-email-check-modal-message');
   const signupMascot = document.querySelector('[data-signup-mascot]');
-  const mascotMessageEl = document.querySelector(
-      '[data-signup-mascot-message]');
+  const mascotMessageEl = document.querySelector('[data-signup-mascot-message]');
   const lottieContainer = document.getElementById('mascot-lottie');
 
   // 진단 로그 제거 완료
@@ -111,8 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!jsonCache[path]) {
         const res = await fetch(path);
         if (!res.ok) {
-          throw new Error(
-              `Lottie fetch failed: ${path} (${res.status})`);
+          throw new Error(`Lottie fetch failed: ${path} (${res.status})`);
         }
         jsonCache[path] = await res.json();
       }
@@ -179,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setMascotState('idle');
 
   /* ── 필드 이벤트 바인딩 ── */
-  FIELD_CONFIG.forEach(({selector, state, message, isRadio}) => {
+  FIELD_CONFIG.forEach(({ selector, state, message, isRadio }) => {
     if (isRadio) {
       document.querySelectorAll(selector).forEach((el) => {
         el.addEventListener('focus', () => {
@@ -247,22 +243,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch(
-          `${checkUrl}?email=${encodeURIComponent(email)}`, {
-            headers: {Accept: 'application/json'},
-          });
+      const response = await fetch(`${checkUrl}?email=${encodeURIComponent(email)}`, {
+        headers: { Accept: 'application/json' },
+      });
       if (!response.ok) {
         throw new Error('Email check request failed');
       }
 
       const result = await response.json();
-      showModal('이메일 중복확인', result.message,
-          result.available ? 'is-success' : 'is-danger');
+      showModal('이메일 중복확인', result.message, result.available ? 'is-success' : 'is-danger');
     } catch {
       showModal(
-          '이메일 중복확인',
-          '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-          'is-danger',
+        '이메일 중복확인',
+        '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        'is-danger',
       );
     }
   });
