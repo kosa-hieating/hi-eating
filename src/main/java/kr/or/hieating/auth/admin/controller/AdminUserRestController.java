@@ -1,6 +1,7 @@
 package kr.or.hieating.auth.admin.controller;
 
 import java.util.List;
+import kr.or.hieating.auth.admin.dto.AdminUserPageResponseDto;
 import kr.or.hieating.auth.admin.dto.AdminUserRoleTargetDto;
 import kr.or.hieating.auth.admin.service.AdminUserService;
 import kr.or.hieating.global.apiPayload.ApiResponse;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,6 +25,15 @@ public class AdminUserRestController {
   @GetMapping("/admin-candidates")
   public ApiResponse<List<AdminUserRoleTargetDto>> adminCandidates() {
     return ApiResponse.onSuccess(adminUserService.findAdminCandidates());
+  }
+
+  @GetMapping("/admin-candidates/page")
+  public ApiResponse<AdminUserPageResponseDto> adminCandidatesByPage(
+      @RequestParam(defaultValue = "") String keyword,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size) {
+    return ApiResponse.onSuccess(
+        adminUserService.findAdminCandidatesByPage(keyword, page, size));
   }
 
   @GetMapping("/admins")

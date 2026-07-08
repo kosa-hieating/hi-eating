@@ -7,6 +7,7 @@
       <main
         class="main-container"
         th:data-admin-candidates-url="@{/admin/api/users/admin-candidates}"
+        th:data-admin-candidates-page-url="@{/admin/api/users/admin-candidates/page}"
         th:data-admin-role-url-prefix="@{/admin/api/users}"
         th:data-admins-url="@{/admin/api/users/admins}"
       >
@@ -25,7 +26,8 @@
         </div>
 
         <div class="admin-users-grid">
-          <section class="admin-users-card admin-users-create-card">
+          <div class="admin-users-left-stack">
+            <section class="admin-users-card admin-users-create-card">
             <div class="admin-users-card-header">
               <div>
                 <h2>관리자 계정 발급</h2>
@@ -186,60 +188,101 @@
             </form>
           </section>
 
-          <div class="admin-users-role-stack">
-            <section class="admin-users-card admin-users-role-card">
-              <div class="admin-users-card-header">
-                <div>
-                  <h2>기존 사용자 권한 부여</h2>
-                  <p>관리자 권한이 없는 사용자를 선택해 권한을 부여합니다.</p>
-                </div>
-                <button
-                  aria-label="권한 부여 후보 새로고침"
-                  class="admin-users-icon-button"
-                  id="admin-candidates-refresh-button"
-                  title="새로고침"
-                  type="button"
-                >
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
+          <section class="admin-users-card admin-users-role-card">
+            <div class="admin-users-card-header">
+              <div>
+                <h2>관리자 권한 회수</h2>
+                <p>다른 관리자 계정의 관리자 권한을 회수합니다.</p>
               </div>
+              <button
+                aria-label="관리자 목록 새로고침"
+                class="admin-users-icon-button"
+                id="admin-list-refresh-button"
+                title="새로고침"
+                type="button"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
 
-              <p aria-live="polite" class="admin-users-role-message" id="admin-users-role-message">
-                권한 관리 결과가 여기에 표시됩니다.
-              </p>
-              <div
-                class="admin-users-list"
-                data-empty-message="관리자 권한을 부여할 사용자가 없습니다."
-                data-loading-message="사용자 목록을 불러오는 중입니다."
-                id="admin-candidates-list"
-              ></div>
-            </section>
+            <div
+              class="admin-users-list"
+              data-empty-message="권한을 회수할 다른 관리자가 없습니다."
+              data-loading-message="관리자 목록을 불러오는 중입니다."
+              id="admin-list"
+            ></div>
+          </section>
+          </div> <!-- /.admin-users-left-stack -->
 
-            <section class="admin-users-card admin-users-role-card">
-              <div class="admin-users-card-header">
-                <div>
-                  <h2>관리자 권한 회수</h2>
-                  <p>다른 관리자 계정의 관리자 권한을 회수합니다.</p>
-                </div>
-                <button
-                  aria-label="관리자 목록 새로고침"
-                  class="admin-users-icon-button"
-                  id="admin-list-refresh-button"
-                  title="새로고침"
-                  type="button"
-                >
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
+          <section class="admin-users-card admin-users-role-card admin-users-candidates-card">
+            <div class="admin-users-card-header">
+              <div>
+                <h2>기존 사용자 권한 부여</h2>
+                <p>관리자 권한이 없는 사용자를 선택해 권한을 부여합니다.</p>
               </div>
+              <button
+                aria-label="권한 부여 후보 새로고침"
+                class="admin-users-icon-button"
+                id="admin-candidates-refresh-button"
+                title="새로고침"
+                type="button"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
 
-              <div
-                class="admin-users-list"
-                data-empty-message="권한을 회수할 다른 관리자가 없습니다."
-                data-loading-message="관리자 목록을 불러오는 중입니다."
-                id="admin-list"
-              ></div>
-            </section>
-          </div>
+            <div class="admin-users-search-bar">
+              <input
+                class="admin-users-search-input"
+                id="admin-candidates-search-input"
+                type="text"
+                placeholder="이름 또는 이메일로 검색"
+                aria-label="사용자 검색"
+              />
+              <button
+                class="admin-users-search-button"
+                id="admin-candidates-search-button"
+                type="button"
+                aria-label="검색"
+              >
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+
+            <p aria-live="polite" class="admin-users-role-message" id="admin-users-role-message">
+              권한 관리 결과가 여기에 표시됩니다.
+            </p>
+            <div
+              class="admin-users-list"
+              data-empty-message="관리자 권한을 부여할 사용자가 없습니다."
+              data-loading-message="사용자 목록을 불러오는 중입니다."
+              id="admin-candidates-list"
+            ></div>
+            <nav
+              class="admin-users-pagination"
+              id="admin-candidates-pagination"
+              aria-label="사용자 페이지 탐색"
+              hidden
+            >
+              <button
+                class="admin-users-page-btn"
+                id="admin-candidates-page-prev"
+                type="button"
+                aria-label="이전 페이지"
+              >
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <span class="admin-users-page-info" id="admin-candidates-page-info"></span>
+              <button
+                class="admin-users-page-btn"
+                id="admin-candidates-page-next"
+                type="button"
+                aria-label="다음 페이지"
+              >
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </nav>
+          </section>
         </div>
 
         <div

@@ -1,6 +1,7 @@
 package kr.or.hieating.auth.admin.service;
 
 import java.util.List;
+import kr.or.hieating.auth.admin.dto.AdminUserPageResponseDto;
 import kr.or.hieating.auth.admin.dto.AdminUserRoleTargetDto;
 import kr.or.hieating.auth.mapper.AuthMapper;
 import kr.or.hieating.utils.UserResolver;
@@ -21,6 +22,17 @@ public class AdminUserService {
   @Transactional(readOnly = true)
   public List<AdminUserRoleTargetDto> findAdminCandidates() {
     return authMapper.findUsersWithoutAdminRole();
+  }
+
+  @Transactional(readOnly = true)
+  public AdminUserPageResponseDto findAdminCandidatesByPage(
+      String keyword, int page, int size) {
+    int totalCount = authMapper.countAdminCandidates(keyword);
+    int totalPages = (int) Math.ceil((double) totalCount / size);
+    int offset = (page - 1) * size;
+    List<AdminUserRoleTargetDto> users =
+        authMapper.findAdminCandidatesByPage(keyword, offset, size);
+    return new AdminUserPageResponseDto(users, page, size, totalCount, totalPages);
   }
 
   @Transactional(readOnly = true)

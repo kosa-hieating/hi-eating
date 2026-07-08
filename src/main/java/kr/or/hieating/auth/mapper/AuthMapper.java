@@ -20,6 +20,13 @@ public interface AuthMapper {
 
   List<AdminUserRoleTargetDto> findAdminUsersExcluding(@Param("userId") long userId);
 
+  int countAdminCandidates(@Param("keyword") String keyword);
+
+  List<AdminUserRoleTargetDto> findAdminCandidatesByPage(
+      @Param("keyword") String keyword,
+      @Param("offset") int offset,
+      @Param("size") int size);
+
   int countUserById(@Param("userId") long userId);
 
   int countUserAuthority(@Param("userId") long userId, @Param("auth") String auth);
