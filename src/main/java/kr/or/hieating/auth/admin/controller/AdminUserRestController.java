@@ -1,7 +1,6 @@
 package kr.or.hieating.auth.admin.controller;
 
 import java.util.List;
-import kr.or.hieating.auth.admin.dto.AdminUserPageResponseDto;
 import kr.or.hieating.auth.admin.dto.AdminUserRoleTargetDto;
 import kr.or.hieating.auth.admin.service.AdminUserService;
 import kr.or.hieating.global.apiPayload.ApiResponse;
@@ -33,10 +32,10 @@ public class AdminUserRestController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size) {
     try {
-      return ApiResponse.onSuccess(
-          adminUserService.findAdminCandidatesByPage(keyword, page, size));
+      return ApiResponse.onSuccess(adminUserService.findAdminCandidatesByPage(keyword, page, size));
     } catch (IllegalArgumentException exception) {
-      return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
+      return ApiResponse.onFailure(
+          ErrorStatus._BAD_REQUEST.getCode(), exception.getMessage(), null);
     }
   }
 
