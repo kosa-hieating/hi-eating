@@ -1,8 +1,5 @@
 package kr.or.hieating.product.controller;
 
-import java.util.List;
-import kr.or.hieating.category.dto.CategoryMenuResponseDto;
-import kr.or.hieating.category.service.CategoryService;
 import kr.or.hieating.product.dto.ProductListPageResponseDto;
 import kr.or.hieating.product.dto.ProductSearchCondition;
 import kr.or.hieating.product.service.ProductSearchService;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductSearchController {
 
   private final ProductSearchService productSearchService;
-  private final CategoryService categoryService;
   private final UserResolver userResolver;
 
   @GetMapping("/search")
@@ -40,12 +36,10 @@ public class ProductSearchController {
             sort,
             page);
     ProductListPageResponseDto productPage = productSearchService.searchProducts(condition);
-    List<CategoryMenuResponseDto> categories = categoryService.findCategories();
 
     model.addAttribute("contentTemplate", "search/list");
     model.addAttribute("contentFragment", "content");
     model.addAttribute("pageStylesheet", "product-list");
-    model.addAttribute("categories", categories);
     model.addAttribute("condition", condition);
     model.addAttribute("keyword", condition.getKeyword());
     model.addAttribute("productPage", productPage);

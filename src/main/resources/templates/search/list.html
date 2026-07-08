@@ -4,19 +4,6 @@
     <section th:fragment="content" class="product-list-page">
       <div class="product-list-shell">
         <aside class="product-filter" aria-label="상품 필터">
-          <section class="filter-panel">
-            <h2>카테고리</h2>
-            <nav class="category-filter" aria-label="카테고리 목록">
-              <a
-                th:each="category : ${categories}"
-                th:href="@{/categories/{categoryId}(categoryId=${category.id})}"
-              >
-                <span th:text="${category.name}">카테고리</span>
-                <small th:text="${category.productCount}">0</small>
-              </a>
-            </nav>
-          </section>
-
           <form class="filter-panel" th:action="@{/search}" method="get">
             <h2>필터</h2>
             <input type="hidden" name="keyword" th:value="${condition.keyword}" />

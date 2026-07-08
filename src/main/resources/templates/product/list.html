@@ -13,7 +13,6 @@
                 th:classappend="${selectedCategory != null && selectedCategory.id == category.id} ? ' is-active'"
               >
                 <span th:text="${category.name}">카테고리</span>
-                <small th:text="${category.productCount}">0</small>
               </a>
             </nav>
           </section>
