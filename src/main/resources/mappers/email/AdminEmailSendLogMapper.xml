@@ -19,6 +19,7 @@
     <result property="publishStatus" column="publish_status"/>
     <result property="publishErrorMessage" column="publish_error_message"/>
     <result property="publishedAt" column="published_at"/>
+    <result property="hotDealCreatedAt" column="hot_deal_created_at"/>
     <result property="createdAt" column="created_at"/>
     <result property="updatedAt" column="updated_at"/>
   </resultMap>
@@ -61,6 +62,7 @@
         WHEN esl.status IN ('PUBLISHING', 'PUBLISHED', 'SENDING', 'SENT', 'RETRYING') THEN esl.updated_at
         ELSE NULL
       END AS published_at,
+      hd.created_at AS hot_deal_created_at,
       esl.created_at,
       esl.updated_at
     FROM email_send_logs esl
