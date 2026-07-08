@@ -95,6 +95,7 @@
       LEFT JOIN chat_admin_presences p
         ON p.admin_id = u.id
       WHERE u.deleted_at IS NULL
+        AND u.id != #{excludeUserId}
       ORDER BY
         CASE NVL(p.status, 'OFFLINE')
           WHEN 'ONLINE' THEN 0

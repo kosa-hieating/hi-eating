@@ -172,7 +172,7 @@ public class ChatService {
 
     Long adminId =
         chatMapper
-            .findAssignableAdminId()
+            .findAssignableAdminId(room.getUserId())
             .orElseThrow(() -> new IllegalArgumentException("No admin is available for chat."));
     chatMapper.assignAdminToRoom(room.getRoomId(), adminId);
     return requireRoom(room.getRoomId());

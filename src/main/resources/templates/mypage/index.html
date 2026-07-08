@@ -94,7 +94,8 @@
             </a>
 
             <a
-              class="review-button btn d-flex align-items-center justify-content-center w-100"
+              class="review-button btn d-flex align-items-center justify-content-center w-100 review-write-btn"
+              th:data-purchase-id="${recentPurchaseProduct.purchaseId}"
               th:href="@{/review/new(purchaseId=${recentPurchaseProduct.purchaseId})}"
               >후기 작성</a
             >
@@ -113,7 +114,6 @@
         >
           <div class="section-heading d-flex align-items-end justify-content-between gap-3 mb-3">
             <h2 class="mb-0" id="recommend-section-title">맞춤형 상품 추천</h2>
-            <span>광고</span>
           </div>
 
           <div class="recommend-carousel position-relative">
@@ -149,6 +149,8 @@
       >
         <i aria-hidden="true" class="bi bi-arrow-up"></i>
       </a>
+
+      <script defer th:src="@{/js/review-button.js}"></script>
     </section>
   </body>
 </html>

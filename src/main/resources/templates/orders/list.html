@@ -83,8 +83,9 @@
 
               <div class="col-12 col-sm-auto p-3 pt-sm-3">
                 <a
-                  class="btn btn-outline-danger fw-bold w-100"
+                  class="btn btn-outline-danger fw-bold w-100 review-write-btn"
                   th:href="@{/review/new(purchaseId=${product.purchaseId})}"
+                  th:data-purchase-id="${product.purchaseId}"
                 >
                   후기 작성
                 </a>
@@ -145,6 +146,8 @@
           </ul>
         </nav>
       </div>
+
+      <script th:src="@{/js/review-button.js}" defer></script>
     </section>
   </body>
 </html>

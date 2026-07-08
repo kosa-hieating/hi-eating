@@ -17,10 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const feed = document.querySelector('[data-table-decor-feed]');
   const loader = document.querySelector('[data-table-decor-loader]');
   const sentinel = document.querySelector('[data-table-decor-sentinel]');
+  const likeLoginRequiredMessage =
+    '좋아요는 로그인한 사용자만 이용할 수 있습니다.\n로그인 후 다시 시도해주세요.';
   let lastFocusedElement = null;
   let currentPage = Number(page.dataset.tableDecorPage || '1');
   let totalPages = Number(page.dataset.tableDecorTotalPages || '1');
   let loading = false;
+
+  const getCsrfToken = () => {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
 
   const setBodyLocked = () => {
     document.body.style.overflow = 'hidden';
@@ -44,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     previewLikeButton.dataset.postId = trigger.dataset.postId || '';
     previewLikeButton.setAttribute('aria-pressed', String(trigger.dataset.liked === 'true'));
     previewLikeButton.classList.toggle('is-active', trigger.dataset.liked === 'true');
+    setLikeIcon(previewLikeButton, trigger.dataset.liked === 'true');
 
     previewModal.hidden = false;
     previewModal.setAttribute('aria-hidden', 'false');
@@ -84,12 +92,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const setLikeIcon = (button, liked) => {
+    const icon = button.querySelector('i');
+    if (!icon) {
+      return;
+    }
+
+    icon.classList.toggle('bi-heart-fill', liked);
+    icon.classList.toggle('bi-heart', !liked);
+  };
+
   const setLikeState = (postId, liked, likeCount) => {
     document
       .querySelectorAll(`[data-table-decor-like][data-post-id="${postId}"]`)
       .forEach((button) => {
         button.classList.toggle('is-active', liked);
         button.setAttribute('aria-pressed', String(liked));
+        setLikeIcon(button, liked);
 
         const count = button.querySelector('[data-table-decor-like-count]');
         if (count) {
@@ -107,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (previewLikeButton.dataset.postId === postId) {
       previewLikeButton.classList.toggle('is-active', liked);
       previewLikeButton.setAttribute('aria-pressed', String(liked));
+      setLikeIcon(previewLikeButton, liked);
       previewLikeCount.textContent = String(likeCount);
     }
   };
@@ -180,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data-post-id="${post.postId}"
             aria-pressed="${liked}"
           >
-            <i aria-hidden="true" class="bi bi-heart-fill"></i>
+            <i aria-hidden="true" class="bi ${liked ? 'bi-heart-fill' : 'bi-heart'}"></i>
             <span data-table-decor-like-count>${post.likeCount || 0}</span>
           </button>
         </div>
@@ -235,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!isAuthenticated) {
-      openAuthModal('좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.');
+      openAuthModal(likeLoginRequiredMessage);
       return;
     }
 
@@ -247,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
+          'X-XSRF-TOKEN': getCsrfToken(),
         },
       });
 
@@ -262,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(error);
       openAuthModal(
         error.status === 401 || error.status === 403
-          ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
+          ? likeLoginRequiredMessage
           : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
       );
     } finally {

@@ -45,7 +45,7 @@
   border-color: #eaded6;
   border-right: 0;
   border-radius: 999px 0 0 999px;
-  font-size: 15px;
+  font-size: 19.5px;
 }
 
 .header-search .form-control:focus {
@@ -70,6 +70,7 @@
 
 .auth-links {
   color: var(--color-muted);
+  font-size: 1.1em;
 }
 
 .auth-link-group {
@@ -97,6 +98,7 @@
   min-height: 40px;
   border-radius: 8px;
   color: #34302d;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -209,9 +211,9 @@
 }
 
 .nav-icon-link {
-  width: 40px;
+  width: 44px;
   border: 1px solid transparent;
-  font-size: 20px;
+  font-size: 24px;
 }
 
 @keyframes category-menu-in {
@@ -249,11 +251,11 @@
   .nav-category-trigger,
   .nav-table-decor,
   .nav-hotdeal {
-    font-size: 13px;
+    font-size: 17px;
   }
 
   .nav-icon-link {
-    width: 36px;
-    font-size: 18px;
+    width: 40px;
+    font-size: 22px;
   }
 }

@@ -19,6 +19,7 @@
     <result property="publishStatus" column="publish_status"/>
     <result property="publishErrorMessage" column="publish_error_message"/>
     <result property="publishedAt" column="published_at"/>
+    <result property="hotDealCreatedAt" column="hot_deal_created_at"/>
     <result property="createdAt" column="created_at"/>
     <result property="updatedAt" column="updated_at"/>
   </resultMap>
@@ -35,7 +36,7 @@
       esl.content,
       CASE
         WHEN esl.status = 'NEEDS_REVIEW' THEN 'FAIL'
-        WHEN esl.status IN ('APPROVED', 'PUBLISHED', 'SENDING', 'SENT', 'RETRYING') THEN 'PASS'
+        WHEN esl.status IN ('APPROVED', 'PUBLISHING', 'PUBLISHED', 'SENDING', 'SENT', 'RETRYING') THEN 'PASS'
         ELSE 'PENDING'
       END AS validation_status,
       CASE
@@ -45,6 +46,7 @@
       esl.status AS send_status,
       CASE
         WHEN esl.status = 'APPROVED' THEN 'READY'
+        WHEN esl.status = 'PUBLISHING' THEN 'PUBLISHING'
         WHEN esl.status = 'PUBLISHED' THEN 'PUBLISHED'
         WHEN esl.status = 'SENDING' THEN 'SENDING'
         WHEN esl.status = 'SENT' THEN 'SENT'
@@ -57,9 +59,10 @@
         ELSE NULL
       END AS publish_error_message,
       CASE
-        WHEN esl.status IN ('PUBLISHED', 'SENDING', 'SENT', 'RETRYING') THEN esl.updated_at
+        WHEN esl.status IN ('PUBLISHING', 'PUBLISHED', 'SENDING', 'SENT', 'RETRYING') THEN esl.updated_at
         ELSE NULL
       END AS published_at,
+      hd.created_at AS hot_deal_created_at,
       esl.created_at,
       esl.updated_at
     FROM email_send_logs esl
@@ -84,20 +87,35 @@
     ORDER BY esl.created_at ASC, esl.id ASC
   </select>
 
+  <select id="findPublishReadyDraftIds" resultType="long">
+    SELECT id
+    FROM (
+      SELECT id
+      FROM email_send_logs
+      WHERE status = 'APPROVED'
+      ORDER BY created_at ASC, id ASC
+    )
+    WHERE ROWNUM &lt;= #{limit}
+  </select>
+
   <select id="findById" resultMap="EmailDraftResultMap">
     <include refid="EmailDraftColumns"/>
     WHERE esl.id = #{id}
   </select>
 
   <update id="updateContentAndApprove">
-    UPDATE email_send_logs
-    SET title = #{subject},
-        content = #{content},
-        status = 'APPROVED',
-        failure_reason = NULL,
-        updated_at = SYSTIMESTAMP
-    WHERE id = #{id}
-      AND status = 'NEEDS_REVIEW'
+    UPDATE email_send_logs esl
+    SET esl.title = #{subject},
+        esl.content = REPLACE(
+            #{content},
+            '{{고객명}}',
+            NVL((SELECT u.name FROM users u WHERE u.id = esl.user_id), esl.recipient_email)
+        ),
+        esl.status = 'APPROVED',
+        esl.failure_reason = NULL,
+        esl.updated_at = SYSTIMESTAMP
+    WHERE esl.id = #{id}
+      AND esl.status = 'NEEDS_REVIEW'
   </update>
 
   <update id="updateStatus">
@@ -106,5 +124,14 @@
         failure_reason = #{failureReason},
         updated_at = SYSTIMESTAMP
     WHERE id = #{id}
+  </update>
+
+  <update id="claimForPublishing">
+    UPDATE email_send_logs
+    SET status = 'PUBLISHING',
+        failure_reason = NULL,
+        updated_at = SYSTIMESTAMP
+    WHERE id = #{id}
+      AND status = 'APPROVED'
   </update>
 </mapper>

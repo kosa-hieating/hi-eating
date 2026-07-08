@@ -523,20 +523,6 @@ fieldset.signup-row .signup-label {
   max-width: 560px;
 }
 
-.signup-date-wrap .auth-input {
-  padding-right: 62px;
-}
-
-.signup-date-wrap .bi {
-  position: absolute;
-  top: 50%;
-  right: 24px;
-  color: #7c828a;
-  font-size: 22px;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
 .signup-radio-group {
   display: flex;
   min-height: 40px;

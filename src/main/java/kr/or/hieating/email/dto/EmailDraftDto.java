@@ -31,6 +31,7 @@ public class EmailDraftDto {
   private EmailPublishStatus publishStatus;
   private String publishErrorMessage;
   private LocalDateTime publishedAt;
+  private LocalDateTime hotDealCreatedAt;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -66,6 +67,7 @@ public class EmailDraftDto {
     return switch (publishStatus) {
       case PENDING -> "관리자 검수 필요";
       case READY -> "발행 대기";
+      case PUBLISHING -> "발행 중";
       case PUBLISHED -> "발행 완료";
       case SENDING -> "발송 중";
       case SENT -> "발송 완료";
@@ -82,6 +84,7 @@ public class EmailDraftDto {
     return switch (publishStatus) {
       case PENDING -> "is-muted";
       case READY -> "is-brand";
+      case PUBLISHING -> "is-brand";
       case PUBLISHED -> "is-success";
       case SENDING -> "is-brand";
       case SENT -> "is-success";
