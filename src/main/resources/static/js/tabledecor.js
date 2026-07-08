@@ -8,12 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const isAuthenticated = page.dataset.tableDecorAuthenticated === 'true';
-  const previewImage = previewModal.querySelector('[data-table-decor-modal-image]');
-  const previewOwner = previewModal.querySelector('[data-table-decor-modal-owner]');
-  const previewDate = previewModal.querySelector('[data-table-decor-modal-date]');
-  const previewLikeCount = previewModal.querySelector('[data-table-decor-modal-like]');
-  const previewLikeButton = previewModal.querySelector('[data-table-decor-modal-like-button]');
-  const authMessage = authModal.querySelector('[data-table-decor-auth-message]');
+  const previewImage = previewModal.querySelector(
+      '[data-table-decor-modal-image]');
+  const previewOwner = previewModal.querySelector(
+      '[data-table-decor-modal-owner]');
+  const previewDate = previewModal.querySelector(
+      '[data-table-decor-modal-date]');
+  const previewLikeCount = previewModal.querySelector(
+      '[data-table-decor-modal-like]');
+  const previewLikeButton = previewModal.querySelector(
+      '[data-table-decor-modal-like-button]');
+  const authMessage = authModal.querySelector(
+      '[data-table-decor-auth-message]');
   const feed = document.querySelector('[data-table-decor-feed]');
   const loader = document.querySelector('[data-table-decor-loader]');
   const sentinel = document.querySelector('[data-table-decor-sentinel]');
@@ -21,6 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPage = Number(page.dataset.tableDecorPage || '1');
   let totalPages = Number(page.dataset.tableDecorTotalPages || '1');
   let loading = false;
+
+  const getCsrfToken = () => {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
 
   const setBodyLocked = () => {
     document.body.style.overflow = 'hidden';
@@ -35,15 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const openPreviewModal = (trigger) => {
     lastFocusedElement = document.activeElement;
 
-    previewImage.src = trigger.dataset.imageSrc || window.__IMAGE_FALLBACK_SRC__;
+    previewImage.src = trigger.dataset.imageSrc
+        || window.__IMAGE_FALLBACK_SRC__;
     previewImage.alt = trigger.dataset.imageAlt || '식탁 미리보기';
     previewOwner.textContent = trigger.dataset.owner || '이용자님의 식탁';
     previewDate.textContent = trigger.dataset.createdAt || '';
     previewLikeCount.textContent = trigger.dataset.likeCount || '0';
 
     previewLikeButton.dataset.postId = trigger.dataset.postId || '';
-    previewLikeButton.setAttribute('aria-pressed', String(trigger.dataset.liked === 'true'));
-    previewLikeButton.classList.toggle('is-active', trigger.dataset.liked === 'true');
+    previewLikeButton.setAttribute('aria-pressed',
+        String(trigger.dataset.liked === 'true'));
+    previewLikeButton.classList.toggle('is-active',
+        trigger.dataset.liked === 'true');
 
     previewModal.hidden = false;
     previewModal.setAttribute('aria-hidden', 'false');
@@ -86,23 +100,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const setLikeState = (postId, liked, likeCount) => {
     document
-      .querySelectorAll(`[data-table-decor-like][data-post-id="${postId}"]`)
-      .forEach((button) => {
-        button.classList.toggle('is-active', liked);
-        button.setAttribute('aria-pressed', String(liked));
+    .querySelectorAll(`[data-table-decor-like][data-post-id="${postId}"]`)
+    .forEach((button) => {
+      button.classList.toggle('is-active', liked);
+      button.setAttribute('aria-pressed', String(liked));
 
-        const count = button.querySelector('[data-table-decor-like-count]');
-        if (count) {
-          count.textContent = String(likeCount);
-        }
-      });
+      const count = button.querySelector('[data-table-decor-like-count]');
+      if (count) {
+        count.textContent = String(likeCount);
+      }
+    });
 
     document
-      .querySelectorAll(`[data-table-decor-trigger][data-post-id="${postId}"]`)
-      .forEach((trigger) => {
-        trigger.dataset.likeCount = String(likeCount);
-        trigger.dataset.liked = String(liked);
-      });
+    .querySelectorAll(`[data-table-decor-trigger][data-post-id="${postId}"]`)
+    .forEach((trigger) => {
+      trigger.dataset.likeCount = String(likeCount);
+      trigger.dataset.liked = String(liked);
+    });
 
     if (previewLikeButton.dataset.postId === postId) {
       previewLikeButton.classList.toggle('is-active', liked);
@@ -112,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const escapeHtml = (value) =>
-    String(value ?? '')
+      String(value ?? '')
       .replaceAll('&', '&amp;')
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
@@ -134,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
       month: '2-digit',
       day: '2-digit',
     })
-      .format(date)
-      .replace(/\.\s?/g, '.')
-      .replace(/\.$/, '');
+    .format(date)
+    .replace(/\.\s?/g, '.')
+    .replace(/\.$/, '');
   };
 
   const postCardTemplate = (post) => {
@@ -204,18 +218,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/table-decorations/posts?page=${currentPage + 1}`, {
-        headers: {
-          Accept: 'application/json',
-        },
-      });
+      const response = await fetch(
+          `/api/table-decorations/posts?page=${currentPage + 1}`, {
+            headers: {
+              Accept: 'application/json',
+            },
+          });
 
       if (!response.ok || response.redirected) {
         throw new Error('Failed to load table decoration posts.');
       }
 
       const postPage = await response.json();
-      feed.insertAdjacentHTML('beforeend', (postPage.posts || []).map(postCardTemplate).join(''));
+      feed.insertAdjacentHTML('beforeend',
+          (postPage.posts || []).map(postCardTemplate).join(''));
       currentPage = postPage.page;
       totalPages = postPage.totalPages;
       page.dataset.tableDecorPage = String(currentPage);
@@ -243,12 +259,14 @@ document.addEventListener('DOMContentLoaded', () => {
     button.disabled = true;
 
     try {
-      const response = await fetch(`/api/table-decorations/${postId}/likes/toggle`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
+      const response = await fetch(
+          `/api/table-decorations/${postId}/likes/toggle`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'X-XSRF-TOKEN': getCsrfToken(),
+            },
+          });
 
       if (!response.ok || response.redirected) {
         const error = new Error('Failed to toggle table decoration like.');
@@ -261,9 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error(error);
       openAuthModal(
-        error.status === 401 || error.status === 403
-          ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
-          : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+          error.status === 401 || error.status === 403
+              ? '좋아요는 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.'
+              : '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
       );
     } finally {
       button.classList.remove('is-loading');
@@ -272,11 +290,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.addEventListener('click', (event) => {
-    const loginRequiredLink = event.target.closest('[data-table-decor-login-required]');
+    const loginRequiredLink = event.target.closest(
+        '[data-table-decor-login-required]');
     if (loginRequiredLink && !isAuthenticated) {
       event.preventDefault();
       openAuthModal(
-        '내 식탁 등록은 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
+          '내 식탁 등록은 로그인한 사용자만 이용할 수 있습니다. 로그인 후 다시 시도해주세요.',
       );
       return;
     }
@@ -296,13 +315,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  previewModal.querySelectorAll('[data-table-decor-modal-close]').forEach((button) => {
-    button.addEventListener('click', closePreviewModal);
-  });
+  previewModal.querySelectorAll('[data-table-decor-modal-close]').forEach(
+      (button) => {
+        button.addEventListener('click', closePreviewModal);
+      });
 
-  authModal.querySelectorAll('[data-table-decor-auth-close]').forEach((button) => {
-    button.addEventListener('click', closeAuthModal);
-  });
+  authModal.querySelectorAll('[data-table-decor-auth-close]').forEach(
+      (button) => {
+        button.addEventListener('click', closeAuthModal);
+      });
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') {
@@ -321,12 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (sentinel && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          loadMorePosts();
-        }
-      },
-      { rootMargin: '480px 0px' },
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            loadMorePosts();
+          }
+        },
+        {rootMargin: '480px 0px'},
     );
 
     observer.observe(sentinel);
