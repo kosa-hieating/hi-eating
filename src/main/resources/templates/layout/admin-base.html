@@ -70,5 +70,59 @@
         }
       });
     </script>
+
+    <!-- 공통 알림 모달 -->
+    <div
+      aria-hidden="true"
+      aria-labelledby="common-alert-modal-title"
+      class="modal fade admin-common-modal"
+      id="common-alert-modal"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="common-alert-modal-title">알림</h2>
+            <button
+              aria-label="닫기"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              type="button"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="admin-common-modal-message" id="common-alert-modal-message">
+              메시지 내용
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="admin-common-modal-button" data-bs-dismiss="modal" type="button">
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        const alertModalEl = document.getElementById('common-alert-modal');
+        const alertTitleEl = document.getElementById('common-alert-modal-title');
+        const alertMessageEl = document.getElementById('common-alert-modal-message');
+
+        if (alertModalEl && alertMessageEl) {
+          window.alert = function (message, title = '알림') {
+            if (alertTitleEl) {
+              alertTitleEl.textContent = title;
+            }
+            alertMessageEl.innerHTML = String(message).replace(/\n/g, '<br>');
+            if (window.bootstrap?.Modal) {
+              const modal = window.bootstrap.Modal.getOrCreateInstance(alertModalEl);
+              modal.show();
+            }
+          };
+        }
+      })();
+    </script>
   </body>
 </html>
