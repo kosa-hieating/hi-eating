@@ -25,8 +25,7 @@ public class AdminUserService {
   }
 
   @Transactional(readOnly = true)
-  public AdminUserPageResponseDto findAdminCandidatesByPage(
-      String keyword, int page, int size) {
+  public AdminUserPageResponseDto findAdminCandidatesByPage(String keyword, int page, int size) {
     int totalCount = authMapper.countAdminCandidates(keyword);
     int totalPages = (int) Math.ceil((double) totalCount / size);
     int offset = (page - 1) * size;

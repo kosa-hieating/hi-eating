@@ -32,8 +32,7 @@ public class AdminUserRestController {
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size) {
-    return ApiResponse.onSuccess(
-        adminUserService.findAdminCandidatesByPage(keyword, page, size));
+    return ApiResponse.onSuccess(adminUserService.findAdminCandidatesByPage(keyword, page, size));
   }
 
   @GetMapping("/admins")

@@ -5,31 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const emailDomainSelect = document.getElementById('signup-email-domain');
   const emailCheckButton = document.getElementById('signup-email-check-button');
   const passwordInput = document.getElementById('signup-password');
-  const passwordConfirmInput = document.getElementById(
-      'signup-password-confirm');
+  const passwordConfirmInput = document.getElementById('signup-password-confirm');
   const modalElement = document.getElementById('signup-email-check-modal');
   const modalTitle = document.getElementById('signup-email-check-modal-title');
-  const modalMessage = document.getElementById(
-      'signup-email-check-modal-message');
+  const modalMessage = document.getElementById('signup-email-check-modal-message');
   const candidatesList = document.getElementById('admin-candidates-list');
   const adminList = document.getElementById('admin-list');
-  const candidatesRefreshButton = document.getElementById(
-      'admin-candidates-refresh-button');
-  const adminListRefreshButton = document.getElementById(
-      'admin-list-refresh-button');
+  const candidatesRefreshButton = document.getElementById('admin-candidates-refresh-button');
+  const adminListRefreshButton = document.getElementById('admin-list-refresh-button');
   const roleMessage = document.getElementById('admin-users-role-message');
-  const candidatesSearchInput = document.getElementById(
-      'admin-candidates-search-input');
-  const candidatesSearchButton = document.getElementById(
-      'admin-candidates-search-button');
-  const candidatesPagination = document.getElementById(
-      'admin-candidates-pagination');
-  const candidatesPagePrev = document.getElementById(
-      'admin-candidates-page-prev');
-  const candidatesPageNext = document.getElementById(
-      'admin-candidates-page-next');
-  const candidatesPageInfo = document.getElementById(
-      'admin-candidates-page-info');
+  const candidatesSearchInput = document.getElementById('admin-candidates-search-input');
+  const candidatesSearchButton = document.getElementById('admin-candidates-search-button');
+  const candidatesPagination = document.getElementById('admin-candidates-pagination');
+  const candidatesPagePrev = document.getElementById('admin-candidates-page-prev');
+  const candidatesPageNext = document.getElementById('admin-candidates-page-next');
+  const candidatesPageInfo = document.getElementById('admin-candidates-page-info');
 
   const showModal = (title, message, state) => {
     if (!modalElement || !modalMessage) {
@@ -92,25 +82,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch(
-          `${checkUrl}?email=${encodeURIComponent(email)}`, {
-            headers: {
-              Accept: 'application/json',
-            },
-          });
+      const response = await fetch(`${checkUrl}?email=${encodeURIComponent(email)}`, {
+        headers: {
+          Accept: 'application/json',
+        },
+      });
 
       if (!response.ok) {
         throw new Error('Email check request failed');
       }
 
       const result = await response.json();
-      showModal('이메일 중복확인', result.message,
-          result.available ? 'is-success' : 'is-danger');
+      showModal('이메일 중복확인', result.message, result.available ? 'is-success' : 'is-danger');
     } catch (error) {
       showModal(
-          '이메일 중복확인',
-          '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-          'is-danger',
+        '이메일 중복확인',
+        '중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        'is-danger',
       );
     }
   });
@@ -213,8 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     email.textContent = user.email;
 
     const meta = document.createElement('small');
-    meta.textContent = `${genderLabel(user.gender)} · ${formatBirth(
-        user.birth)}`;
+    meta.textContent = `${genderLabel(user.gender)} · ${formatBirth(user.birth)}`;
 
     details.append(name, email, meta);
 
@@ -255,12 +242,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const loadCandidatesPage = async (keyword, page) => {
-    setListState(candidatesList, candidatesList.dataset.loadingMessage,
-        'is-loading');
+    setListState(candidatesList, candidatesList.dataset.loadingMessage, 'is-loading');
     candidatesPagination?.setAttribute('hidden', '');
 
     try {
-      const params = new URLSearchParams({keyword, page, size: '10'});
+      const params = new URLSearchParams({ keyword, page, size: '10' });
       const result = await fetchApi(`${urls.candidatesPage}?${params}`);
       renderList(candidatesList, result.users, {
         type: 'grant',
@@ -287,8 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const updatePagination = () => {
-    if (!candidatesPagination || !candidatesPagePrev || !candidatesPageNext
-        || !candidatesPageInfo) {
+    if (
+      !candidatesPagination ||
+      !candidatesPagePrev ||
+      !candidatesPageNext ||
+      !candidatesPageInfo
+    ) {
       return;
     }
 
@@ -329,9 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
       });
       showRoleMessage(`${userName}님에게 관리자 권한을 부여했습니다.`, 'is-success');
-      await Promise.all(
-          [loadCandidatesPage(candidatesCurrentKeyword, candidatesCurrentPage),
-            loadAdmins()]);
+      await Promise.all([
+        loadCandidatesPage(candidatesCurrentKeyword, candidatesCurrentPage),
+        loadAdmins(),
+      ]);
     } catch (error) {
       showRoleMessage(error.message, 'is-danger');
     }
@@ -347,9 +338,10 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'DELETE',
       });
       showRoleMessage(`${userName}님의 관리자 권한을 회수했습니다.`, 'is-success');
-      await Promise.all(
-          [loadCandidatesPage(candidatesCurrentKeyword, candidatesCurrentPage),
-            loadAdmins()]);
+      await Promise.all([
+        loadCandidatesPage(candidatesCurrentKeyword, candidatesCurrentPage),
+        loadAdmins(),
+      ]);
     } catch (error) {
       showRoleMessage(error.message, 'is-danger');
     }
@@ -381,8 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   showRoleMessage('권한 목록을 불러오는 중입니다.', 'is-muted');
   Promise.all([loadCandidatesPage('', 1), loadAdmins()])
-  .then(() => showRoleMessage('권한 목록이 최신 상태입니다.', 'is-muted'))
-  .catch(() => showRoleMessage('권한 목록을 불러오지 못했습니다.', 'is-danger'));
+    .then(() => showRoleMessage('권한 목록이 최신 상태입니다.', 'is-muted'))
+    .catch(() => showRoleMessage('권한 목록을 불러오지 못했습니다.', 'is-danger'));
 
   const leftStack = document.querySelector('.admin-users-left-stack');
   if (leftStack && typeof ResizeObserver !== 'undefined') {
