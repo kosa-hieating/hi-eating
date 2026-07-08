@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalPages = Number(page.dataset.tableDecorTotalPages || '1');
   let loading = false;
 
+  const getCsrfToken = () => {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
+
   const setBodyLocked = () => {
     document.body.style.overflow = 'hidden';
   };
@@ -249,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
+          'X-XSRF-TOKEN': getCsrfToken(),
         },
       });
 
